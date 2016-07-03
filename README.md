@@ -1,5 +1,11 @@
 # Komorebi
 
+## Framework and overall design
+### Material-UI
+
+
+[Demo](http://www.material-ui.com/#/components/app-bar)
+
 ## Color Palette
    * green: 129793
    * dark-gray: 505050
