@@ -1,16 +1,14 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "komorebi"
+	"komorebi"
+	"log"
+	"net/http"
 )
-
 
 func main() {
 
-  router := komorebi.NewRouter()
+	router := komorebi.NewRouter()
 
-  log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
-
