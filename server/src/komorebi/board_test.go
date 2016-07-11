@@ -56,3 +56,23 @@ func TestNewBoard(t *testing.T) {
 		t.Error("Should retrive columns with BoardColumnView")
 	}
 }
+
+func TestBoardValidation(t *testing.T) {
+	b := NewBoard("testValidation")
+	if !b.Validate() {
+		t.Error("Name 'testValidation' should be valid")
+	}
+
+	b = NewBoard("test foo")
+	if b.Validate() {
+		t.Error("Name 'test foo' should not be valid")
+	}
+
+	b = NewBoard("gz")
+	b.Save()
+
+	b = NewBoard("gz")
+	if b.Validate() {
+		t.Error("Name 'gz' should be uniq")
+	}
+}

@@ -53,17 +53,21 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	check_err(err, "Error on Body.Close()")
 
 	if err := json.Unmarshal(body, &board); err != nil {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(422)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
-		}
+		w.WriteHeader(400)
+		return
 	}
+
 	board = NewBoard(board.Name)
+	if !board.Validate() {
+		w.WriteHeader(400)
+		return
+	}
+
 	if board.Save() {
 		w.WriteHeader(http.StatusCreated)
 	} else {
-		w.WriteHeader(422)
+		w.WriteHeader(400)
+		return
 	}
 }
 

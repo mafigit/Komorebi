@@ -2,6 +2,7 @@ package komorebi
 
 import (
 	"log"
+	"regexp"
 	"time"
 )
 
@@ -28,9 +29,26 @@ func NewBoard(name string) Board {
 	}
 }
 
+func (b Board) Validate() bool {
+	if len(b.Name) <= 0 {
+		log.Println("Board validation failed. Name not present")
+		return false
+	}
+	if match, _ := regexp.MatchString("^[a-zA-Z0-9-]+$", b.Name); match == false {
+		log.Println("Board validation failed. Name not valid")
+		return false
+	}
+	board := GetBoardColumnViewByName(b.Name)
+	if board.Id != 0 && board.CreatedAt != 0 {
+		log.Println("Board validation failed. Name not uniq")
+		return false
+	}
+	return true
+}
+
 func (b Board) Save() bool {
 	if err := dbMapper.Connection.Insert(&b); err != nil {
-		log.Fatalln("save of board failed", err)
+		log.Println("save of board failed", err)
 		return false
 	}
 	return true
@@ -41,7 +59,7 @@ func GetAllBoards() Boards {
 	_, err := dbMapper.Connection.
 		Select(&boards, "select * from boards order by id")
 	if err != nil {
-		log.Fatalln("could not find boards")
+		log.Println("could not find boards")
 	}
 	return boards
 }
