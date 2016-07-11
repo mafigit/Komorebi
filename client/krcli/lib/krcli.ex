@@ -16,4 +16,13 @@ defmodule Krcli do
     opts = [strategy: :one_for_one, name: Krcli.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  def main([arg]) do
+    IO.puts "Running Komoebi CLI client."
+    KrOpts.dispatch(arg)
+  end
+
+  def main(args) do
+    IO.puts "Can not handle given arguments. :-("
+  end
 end
