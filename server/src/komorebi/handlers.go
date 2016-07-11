@@ -31,7 +31,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 
 	//TODO get_board() implementation
 	//board := get_board(board_name)
-	board := Board{
+	board := BoardColumnView{
 		Name: "gz",
 		Id:   1,
 		Columns: []Column{
@@ -56,11 +56,14 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NotFound(w http.ResponseWriter, r *http.Request) {
+func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 	file := getPublicDir() + r.URL.Path
+
 	_, err := os.Stat(file)
 	if err == nil {
 		http.ServeFile(w, r, file)
+	} else {
+		http.NotFound(w, r)
 	}
 }
 
