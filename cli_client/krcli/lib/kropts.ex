@@ -1,7 +1,7 @@
 defmodule KrOpts do
   def dispatch(arg) do
     case arg do
-      "show" -> Board.show
+      "show" -> Krcli.Board.show
       _ -> error(:no_opt)
     end
   end
