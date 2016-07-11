@@ -12,6 +12,11 @@ import (
 	"strings"
 )
 
+type Response struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
 func Index(w http.ResponseWriter, r *http.Request) {
 	hostname := r.URL.Query().Get("hostname")
 	list := "<html><head></head><body>"
@@ -58,13 +63,20 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	board = NewBoard(board.Name)
-	if !board.Validate() {
-		w.WriteHeader(400)
+	success, msg := board.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 
 	if board.Save() {
 		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
 	} else {
 		w.WriteHeader(400)
 		return
