@@ -42,4 +42,16 @@ var routes = Routes{
 		"/{board_name}",
 		BoardShow,
 	},
+	Route{
+		"BoardCreate",
+		"POST",
+		"/boards",
+		BoardCreate,
+	},
+	Route{
+		"BoardDelete",
+		"DELETE",
+		"/boards",
+		BoardDelete,
+	},
 }

@@ -51,7 +51,7 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	err := dbMapper.Connection.
 		SelectOne(&board, "select * from boards where Name=?", name)
 	if err != nil {
-		log.Fatalln("could not find board with name", name)
+		log.Println("could not find board with name", name)
 		return board
 	}
 	var columns Columns
