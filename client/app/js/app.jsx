@@ -9,13 +9,25 @@ import Layout from './layout';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
-const App = () => (
-  <MuiThemeProvider>
-    <Layout>
-      <Board />
-    </Layout>
-  </MuiThemeProvider>
-);
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      title: "LOADING..."
+    }
+  }
+  boardLoadedHandler = (board) => {
+    this.setState({title: board.name});
+  }
+
+  render() {
+    return <MuiThemeProvider>
+      <Layout title={this.state.title}>
+        <Board boardLoadedHandler={this.boardLoadedHandler} />
+      </Layout>
+    </MuiThemeProvider>
+  }
+}
 
 ReactDOM.render(
   <App />,

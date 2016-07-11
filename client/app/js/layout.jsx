@@ -22,7 +22,7 @@ class Layout extends React.Component {
   render() {
     return <div>
       <AppBar
-        title="Title"
+        title={this.props.title}
         iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
       />

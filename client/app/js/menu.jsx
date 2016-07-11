@@ -11,6 +11,11 @@ class MyMenu extends React.Component {
     super(props);
   }
 
+  addStoryHandler = (event) => {
+    event.preventDefault();
+    console.log('add story');
+  }
+
   render() {
     return (
       <div>
@@ -22,10 +27,7 @@ class MyMenu extends React.Component {
           onRequestClose={this.props.touchAwayHandler}
         >
           <Menu>
-            <MenuItem primaryText="Refresh" />
-            <MenuItem primaryText="Help &amp; feedback" />
-            <MenuItem primaryText="Settings" />
-            <MenuItem primaryText="Sign out" />
+            <MenuItem primaryText="Add Story" onTouchTap={this.addStoryHandler} />
           </Menu>
         </Popover>
       </div>
