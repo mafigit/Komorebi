@@ -40,10 +40,12 @@ jspm_packages
 *~
 
 #go packages
-server/pkg/*
+server/pkg
 server/bin/*
 server/src/github.com
 server/src/gopkg.in/
+komorebi.db
+main
 
 #ruby gems
 client/vendor
