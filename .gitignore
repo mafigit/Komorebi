@@ -38,3 +38,6 @@ jspm_packages
 
 # editor files
 *~
+
+#compiled sources for client
+client/public
