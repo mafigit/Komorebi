@@ -29,21 +29,26 @@ func NewBoard(name string) Board {
 	}
 }
 
-func (b Board) Validate() bool {
+func (b Board) Validate() (bool, string) {
+	success, message := true, ""
+
 	if len(b.Name) <= 0 {
 		log.Println("Board validation failed. Name not present")
-		return false
+		success = false
+		message += "Name not present.\n"
 	}
 	if match, _ := regexp.MatchString("^[a-zA-Z0-9-]+$", b.Name); match == false {
 		log.Println("Board validation failed. Name not valid")
-		return false
+		success = false
+		message += "Name not valid.\n"
 	}
 	board := GetBoardColumnViewByName(b.Name)
 	if board.Id != 0 && board.CreatedAt != 0 {
 		log.Println("Board validation failed. Name not uniq")
-		return false
+		success = false
+		message += "Name not uniq.\n"
 	}
-	return true
+	return success, message
 }
 
 func (b Board) Save() bool {

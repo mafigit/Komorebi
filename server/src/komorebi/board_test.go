@@ -59,12 +59,12 @@ func TestNewBoard(t *testing.T) {
 
 func TestBoardValidation(t *testing.T) {
 	b := NewBoard("testValidation")
-	if !b.Validate() {
+	if success, _ := b.Validate(); success == false {
 		t.Error("Name 'testValidation' should be valid")
 	}
 
 	b = NewBoard("test foo")
-	if b.Validate() {
+	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'test foo' should not be valid")
 	}
 
@@ -72,7 +72,7 @@ func TestBoardValidation(t *testing.T) {
 	b.Save()
 
 	b = NewBoard("gz")
-	if b.Validate() {
+	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'gz' should be uniq")
 	}
 }
