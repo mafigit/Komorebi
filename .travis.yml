@@ -1,0 +1,17 @@
+language: node_js
+node_js:
+  - "6"
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y firefox curl build-essential
+  - \curl -L https://get.rvm.io | bash -s stable
+  - source ~/.rvm/scripts/rvm
+  - rvm reload
+  - rvm requirements
+  - rvm install ruby
+  - rvm rubygems current
+  - gem install bundler
+script:
+  - cd client
+  - npm install
+  - bundle install
