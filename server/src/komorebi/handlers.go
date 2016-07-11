@@ -5,12 +5,23 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	//"github.com/gorilla/mux"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome!")
+	//hostname := r.URL.Query().Get("hostname")
+	list := "<html><head></head><body>"
+
+	//TODO getAllBoards() implementation
+	//for _, board := range getAllBoards() {
+	//	list += "<a href=\"" + hostname + "/" + board.Name + "\">"
+	//	list += board.Name
+	//	list += "</a><br>"
+	//}
+	list += "</body></html>"
+	fmt.Fprintln(w, list)
 }
 
 func BoardShow(w http.ResponseWriter, r *http.Request) {
@@ -18,6 +29,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	//board_name := vars["board_name"]
 	content_type := r.Header.Get("Accept")
 
+	//TODO get_board() implementation
 	//board := get_board(board_name)
 	board := Board{
 		Name: "gz",
@@ -39,7 +51,28 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	if strings.Contains(content_type, "json") {
 		json.NewEncoder(w).Encode(board)
 	} else {
-		data, _ := ioutil.ReadFile("../index.html")
-		fmt.Fprintln(w, string(data))
+		data := getIndex()
+		fmt.Fprintln(w, data)
+	}
+}
+
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	file := getPublicDir() + r.URL.Path
+	_, err := os.Stat(file)
+	if err == nil {
+		http.ServeFile(w, r, file)
+	}
+}
+
+func getIndex() string {
+	data, _ := ioutil.ReadFile(getPublicDir() + "index.html")
+	return string(data)
+}
+
+func getPublicDir() string {
+	if len(os.Args) >= 2 {
+		return os.Args[1]
+	} else {
+		return ""
 	}
 }
