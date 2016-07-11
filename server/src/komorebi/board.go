@@ -35,3 +35,28 @@ func (b Board) Save() bool {
 	}
 	return true
 }
+
+func GetAllBoards() Boards {
+	var boards Boards
+	_, err := dbMapper.Connection.
+		Select(&boards, "select * from boards order by id")
+	if err != nil {
+		log.Fatalln("could not find boards")
+	}
+	return boards
+}
+
+func GetBoardColumnViewByName(name string) BoardColumnView {
+	var board BoardColumnView
+	err := dbMapper.Connection.
+		SelectOne(&board, "select * from boards where Name=?", name)
+	if err != nil {
+		log.Fatalln("could not find board with name", name)
+		return board
+	}
+	var columns Columns
+	_, err = dbMapper.Connection.Select(&columns,
+		"select * from columns where boardId=?", board.Id)
+	board.Columns = columns
+	return board
+}

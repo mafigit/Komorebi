@@ -1,20 +1,26 @@
 package komorebi
 
 import (
-	"math/rand"
+	"io/ioutil"
 	"os"
-	"strconv"
 	"testing"
 )
 
-func TestNewBoard(t *testing.T) {
-	r := rand.New(rand.NewSource(99))
-	rand_int := r.Int()
-	rand_str := strconv.Itoa(rand_int)
-	tmp_path := "/tmp/komorebi." + rand_str + ".db"
-	db := InitDb(tmp_path)
+func TestMain(m *testing.M) {
+	file, _ := ioutil.TempFile(os.TempDir(), "komorebi")
+	db := InitDb(file.Name())
 	db.AddTable(Board{}, "boards")
+	db.AddTable(Column{}, "columns")
 	db.CreateTables()
+
+	res := m.Run()
+
+	defer os.Remove(file.Name())
+
+	os.Exit(res)
+}
+
+func TestNewBoard(t *testing.T) {
 
 	b := NewBoard("test")
 	if b.Name != "test" {
@@ -23,5 +29,30 @@ func TestNewBoard(t *testing.T) {
 	if !b.Save() {
 		t.Error("Should save a board")
 	}
-	os.Remove(tmp_path)
+
+	boards := GetAllBoards()
+	b = boards[0]
+	if b.Name != "test" {
+		t.Error("Board should have name test")
+	}
+	if b.Id != 1 {
+		t.Error("Should return 1 board")
+	}
+
+	c1 := NewColumn("WIP", 0, b.Id)
+	c2 := NewColumn("TEST", 1, b.Id)
+	c1.Save()
+	c2.Save()
+
+	boardView := GetBoardColumnViewByName(b.Name)
+	if boardView.Name != "test" {
+		t.Error("Should retrive a BoardColumnView")
+	}
+	if len(boardView.Columns) <= 0 {
+		t.Error("Could not find any boardViews columns")
+	}
+	bcv1 := boardView.Columns[0]
+	if bcv1.Name != "WIP" {
+		t.Error("Should retrive columns with BoardColumnView")
+	}
 }
