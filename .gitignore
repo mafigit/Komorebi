@@ -44,3 +44,6 @@ client/public
 
 #go packages
 server/pkg/*
+server/bin/*
+server/src/github.com
+server/src/gopkg.in/
