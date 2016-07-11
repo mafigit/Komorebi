@@ -31,3 +31,9 @@ func (c Column) Save() bool {
 	}
 	return true
 }
+
+func (c Column) Validate() (bool, string) {
+	return true, ""
+	//name uniq pro board
+	//position nicht doppelt
+}

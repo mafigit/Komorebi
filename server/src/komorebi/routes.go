@@ -54,4 +54,10 @@ var routes = Routes{
 		"/boards",
 		BoardDelete,
 	},
+	Route{
+		"ColumnCreate",
+		"POST",
+		"/columns",
+		ColumnCreate,
+	},
 }
