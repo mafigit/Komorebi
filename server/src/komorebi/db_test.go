@@ -7,12 +7,21 @@ import (
 	"testing"
 )
 
-func TestinitDbMap(t *testing.T) {
+func TestInitDb(t *testing.T) {
 	r := rand.New(rand.NewSource(99))
 	rand_int := r.Int()
 	rand_str := strconv.Itoa(rand_int)
 	tmp_path := "/tmp/komorebi." + rand_str + ".db"
-	dbmap := initDbMap(tmp_path)
+	dbmap := InitDb(tmp_path)
+
+	type Test struct {
+		Id   int
+		Name string
+	}
+
+	dbmap.AddTable(Test{}, "test")
+	dbmap.CreateTables()
+
 	if dbmap.Path != tmp_path {
 		t.Error("Expected: " + tmp_path + " but got: " + dbmap.Path)
 	}
@@ -20,4 +29,6 @@ func TestinitDbMap(t *testing.T) {
 	if _, err := os.Stat(tmp_path); os.IsNotExist(err) {
 		t.Error("Expected " + tmp_path + " to exist.")
 	}
+
+	os.Remove(tmp_path)
 }
