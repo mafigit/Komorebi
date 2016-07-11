@@ -1,0 +1,9 @@
+{
+  "id": 5,
+  "name": "The ultimate board",
+  "columns": [
+    {"id": 5, "name": "test", "position": 3},
+    {"id": 33, "name": "prepare", "position": 1},
+    {"id": 77, "name": "in progress", "position": 2}
+  ]
+}
