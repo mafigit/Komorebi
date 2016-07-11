@@ -31,7 +31,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 
 	//TODO get_board() implementation
 	//board := get_board(board_name)
-	board := Board{
+	board := BoardColumnView{
 		Name: "gz",
 		Id:   1,
 		Columns: []Column{
