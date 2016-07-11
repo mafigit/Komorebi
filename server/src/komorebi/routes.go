@@ -24,7 +24,7 @@ func NewRouter() *mux.Router {
 			Name(route.Name).
 			Handler(route.HandlerFunc)
 	}
-	router.NotFoundHandler = http.HandlerFunc(NotFound)
+	router.NotFoundHandler = http.HandlerFunc(OwnNotFound)
 
 	return router
 }
