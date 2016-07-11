@@ -1,9 +1,9 @@
 package komorebi
 
 type Board struct {
-	id int
-	//columns
-	name string
+	Id      int      `json:"id"`
+	Columns []Column `json:"columns"`
+	Name    string   `json:"name"`
 }
 
 type Boards []Board
