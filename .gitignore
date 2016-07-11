@@ -47,3 +47,6 @@ server/pkg/*
 server/bin/*
 server/src/github.com
 server/src/gopkg.in/
+
+#ruby gems
+client/vendor
