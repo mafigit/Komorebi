@@ -27,5 +27,5 @@ function bundle() {
     .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
     .pipe(babel())
     .pipe(sourcemaps.write('./')) // writes .map file
-    .pipe(gulp.dest('./public/javascripts/'));
+    .pipe(gulp.dest('../server/public/javascripts/'));
 }
