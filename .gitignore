@@ -39,9 +39,6 @@ jspm_packages
 # editor files
 *~
 
-#compiled sources for client
-client/public
-
 #go packages
 server/pkg/*
 server/bin/*
@@ -50,3 +47,6 @@ server/src/gopkg.in/
 
 #ruby gems
 client/vendor
+
+#public javascript files
+server/public/javascripts/*
