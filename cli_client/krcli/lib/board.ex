@@ -26,7 +26,7 @@ defmodule Krcli.Board do
   end
 
   def print_board_list(board) do
-    :io.format("~-5d : ~-15s\n", [board.id, board.name])  
+    :io.format("~3B : ~-15s\n", [board["id"], board["name"]]) 
   end
 
   def show_boards(arg) do
