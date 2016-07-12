@@ -22,7 +22,7 @@ curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boar
 => {"success":true,"message":""}
 
 POST /columns
-curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "boardId":3}' localhost:8080/columns
+curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns
 => create columns for board boardId, json response
 => {"success":true,"message":""}
 
