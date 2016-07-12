@@ -17,16 +17,13 @@ type Response struct {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	hostname := r.URL.Query().Get("hostname")
-	list := "<html><head></head><body>"
+	data, _ := ioutil.ReadFile(getPublicDir() + "/landing.html")
+	site := string(data)
+	fmt.Fprintln(w, site)
+}
 
-	for _, board := range GetAllBoards() {
-		list += "<a href=\"" + hostname + "/" + board.Name + "\">"
-		list += board.Name
-		list += "</a><br>"
-	}
-	list += "</body></html>"
-	fmt.Fprintln(w, list)
+func BoardsGet(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(GetAllBoards())
 }
 
 func BoardShow(w http.ResponseWriter, r *http.Request) {

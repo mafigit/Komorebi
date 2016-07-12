@@ -1,0 +1,27 @@
+GET /
+curl  localhost:8080/
+=> served landing.html from public directory
+
+GET /boards
+curl  localhost:8080/boards
+=> json response with all boards
+=> [{"Id":1,"Name":"gz","CreatedAt":1468312137512189809}]
+
+GET /gz
+curl localhost:8080/gz
+=> served index.html form public directory
+
+GET /gz as json
+curl  -H "Accept: application/json" localhost:8080/gz
+=> json response with board gz
+=> {"id":1,"name":"here","created_at":1468312137512189809,"Columns":[]}
+
+POST /boards as json
+curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boards
+=> create board with name "gz", json response
+=> {"success":true,"message":""}
+
+POST /columns
+curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "boardId":3}' localhost:8080/columns
+=> create columns for board boardId, json response
+=> {"success":true,"message":""}
