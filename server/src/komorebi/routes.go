@@ -37,6 +37,12 @@ var routes = Routes{
 		Index,
 	},
 	Route{
+		"GetBoards",
+		"GET",
+		"/boards",
+		BoardsGet,
+	},
+	Route{
 		"BoardShow",
 		"GET",
 		"/{board_name}",
