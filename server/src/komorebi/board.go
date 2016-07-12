@@ -66,6 +66,21 @@ func (b Board) Save() bool {
 	return true
 }
 
+func (b Board) Destroy() bool {
+	if b.Id == 0 {
+		return true
+	}
+	for _, column := range GetColumnsByBoardId(b.Id) {
+		column.Destroy()
+	}
+
+	if _, errDelete := dbMapper.Connection.Delete(&b); errDelete != nil {
+		log.Println("delete of board failed.", errDelete)
+		return false
+	}
+	return true
+}
+
 func GetAllBoards() Boards {
 	var boards Boards
 	_, err := dbMapper.Connection.
