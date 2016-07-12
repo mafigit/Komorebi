@@ -9,7 +9,7 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
-    Ajax.get('/gz', {"Accept": "application/json"}).then(function(response) {
+    Ajax.get(window.location.pathname, {"Accept": "application/json"}).then(function(response) {
       var board = JSON.parse(response.responseText);
       this.props.boardLoadedHandler(board);
       //XXX: Mocked data will be removed later
