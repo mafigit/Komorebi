@@ -14,7 +14,7 @@ class BoardCanvas {
     this.stage.add(this.layer);
     this.layer.draw();
     this.columns = columns;
-    this.createColumns(this.columns);
+    this.createColumns();
   }
 
   createColumns() {

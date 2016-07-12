@@ -3,7 +3,7 @@ import React from 'react';
 import AppBar from 'material-ui/AppBar';
 import MyMenu from './menu';
 import Layout from './layout';
-import BoardDialog from './board_dialog';
+import ColumnDialog from './column_dialog';
 
 class BoardLayout extends Layout  {
   constructor(props) {
@@ -13,18 +13,25 @@ class BoardLayout extends Layout  {
       {
         name: "Add Story",
         handler: this.handleStorydAdd
+      },
+      {
+        name: "Add Column",
+        handler: this.handleColumnAdd
       }
     ]
-
   }
 
   handleStorydAdd = () => {
-    var achor_element = this.state.menu_achor;
-    this.setState({menu_open: false, story_open: true,
-      menu_achor: achor_element});
   }
 
-  handleStorySubmit = () => {
+  handleColumnAdd = () => {
+    this.setState({menu_open: false, story_open: true});
+  }
+
+  handleColumnAddClose = (reload) => {
+    if(reload) {
+      this.props.boardReloadHandler();
+    }
     this.setState({menu_open: false, story_open: false});
   }
 
@@ -47,7 +54,8 @@ class BoardLayout extends Layout  {
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu} items={this.menu_items}/>
-      <BoardDialog open={this.state.story_open} handleSubmit={this.handleStorySubmit}/>
+      <ColumnDialog board_id={this.props.board_id} open={this.state.story_open}
+        handleClose={this.handleColumnAddClose}/>
       {this.props.children}
      </div>
   }
