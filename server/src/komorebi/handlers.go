@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -40,6 +39,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.Contains(content_type, "json") {
+
 		json.NewEncoder(w).Encode(board_column)
 	} else {
 		data := getIndex()
@@ -311,11 +311,5 @@ func getPublicDir() string {
 		} else {
 			return dir
 		}
-	}
-}
-
-func check_err(err error, msg string) {
-	if err != nil {
-		log.Fatalln(msg, err)
 	}
 }
