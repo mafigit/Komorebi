@@ -10,6 +10,7 @@ import (
 func TestMain(m *testing.M) {
 	file, _ := ioutil.TempFile(os.TempDir(), "komorebi")
 	db := InitDb(file.Name())
+	db.AddTable(Story{}, "storys")
 	db.AddTable(Board{}, "boards")
 	db.AddTable(Column{}, "columns")
 	db.CreateTables()
@@ -18,8 +19,8 @@ func TestMain(m *testing.M) {
 	//Fixtures
 	b := NewBoard("test1")
 	b.Save()
-	c1 := NewColumn("WIP", 0, b.Id)
-	c2 := NewColumn("TEST", 1, b.Id)
+	c1 := NewColumn("WIP", 0, 1)
+	c2 := NewColumn("TEST", 1, 1)
 	c1.Save()
 	c2.Save()
 
@@ -58,6 +59,10 @@ func TestBoardDatabase(t *testing.T) {
 		t.Error("Should have saved the board", b.Name)
 	}
 	boards = GetAllBoards()
+	lenBoards := len(boards)
+	if lenBoards < 2 {
+		t.Error("Should retrieve all boards")
+	}
 	b = boards[1]
 	if b.Name != "update" {
 		t.Error("Should have updated the name to", b.Name)
@@ -67,6 +72,19 @@ func TestBoardDatabase(t *testing.T) {
 	c2 := NewColumn("TEST", 1, b.Id)
 	c1.Save()
 	c2.Save()
+
+	bDelete := boards[0]
+	if bDelete.Id != 1 {
+		t.Error("Unexpeted board to delete")
+	}
+	if !bDelete.Destroy() {
+		t.Error("Should destroy a board")
+	}
+	boards = GetAllBoards()
+	newlenboards := len(boards)
+	if lenBoards != (newlenboards + 1) {
+		t.Error("Did not destroy the board")
+	}
 
 	boardView := GetBoardColumnViewByName(b.Name)
 	if boardView.Name != "update" {

@@ -16,6 +16,7 @@ func main() {
 	db := komorebi.InitDb("komorebi.db")
 	db.AddTable(komorebi.Board{}, "boards")
 	db.AddTable(komorebi.Column{}, "columns")
+	db.AddTable(komorebi.Story{}, "storys")
 	db.CreateTables()
 
 	router := komorebi.NewRouter()

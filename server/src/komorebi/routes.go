@@ -55,6 +55,12 @@ var routes = Routes{
 		BoardCreate,
 	},
 	Route{
+		"BoardUpdate",
+		"POST",
+		"/boards/{board_id}",
+		BoardUpdate,
+	},
+	Route{
 		"BoardDelete",
 		"DELETE",
 		"/boards",
