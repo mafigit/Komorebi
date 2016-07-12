@@ -230,14 +230,41 @@ func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	if column.Id == 0 && column.CreatedAt == 0 {
 		response.Success = false
 		response.Message = "Column does not exist"
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	if column.Destroy() {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
 
+func StoryCreate(w http.ResponseWriter, r *http.Request) {
+	var story Story
+
+	if err := json.NewDecoder(r.Body).Decode(&story); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
+		story.ColumnId)
+	success, msg := story.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
-	if column.Destroy() {
-		w.WriteHeader(200)
+	if story.Save() {
+		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(response)
 	} else {
 		w.WriteHeader(400)

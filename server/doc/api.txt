@@ -45,3 +45,8 @@ DELETE /columns/{:id}
 curl  -X DELETE localhost:8080/columns/4
 => delete column with id 4, json response
 => {"success":true,"message":""}
+
+POST /stories as json
+curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1 }' localhost:8080/stories
+=> Create a user story
+=> {"success":true,"message":""}
