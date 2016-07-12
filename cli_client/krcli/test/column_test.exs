@@ -3,7 +3,7 @@ defmodule ColumnTest do
   doctest Krcli.Column
 
   test "Should create column from hash" do
-    col = Krcli.Column.create(%{"id" => 5, "name" => "blah",
+    col = Krcli.Column.parse(%{"id" => 5, "name" => "blah",
       "position" => 5})
     assert col.name == "blah"
     assert col.id == 5

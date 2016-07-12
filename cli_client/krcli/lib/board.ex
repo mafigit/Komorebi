@@ -16,10 +16,10 @@ defmodule Krcli.Board do
     end
   end
 
-  def parse_board(input) do
+  def parse(input) do
     with {:ok, json} <- input,
       {:ok, brd} <- JSX.decode(json),
-      cols = Enum.map(brd["columns"], &Krcli.Column.create/1) |>
+      cols = Enum.map(brd["columns"], &Krcli.Column.parse/1) |>
         Krcli.Column.sort,
     do: {:ok, %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}}
   end
@@ -49,7 +49,7 @@ defmodule Krcli.Board do
   end
 
   def display(boardname) do
-    case SbServer.get_json("/" <> boardname) |> parse_board |> show_board do
+    case SbServer.get_json("/" <> boardname) |> parse |> show_board do
         {:error, err} -> raise err
         {:ok, _} -> :ok
         unexpected -> raise unexpected

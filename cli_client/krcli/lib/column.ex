@@ -1,7 +1,7 @@
 defmodule Krcli.Column do
   defstruct [:id, :name, :position]
 
-  def create(col) do
+  def parse(col) do
     %Krcli.Column{ id: col["id"],
       name: col["name"], position: col["position"] }
   end
