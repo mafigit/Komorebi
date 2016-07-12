@@ -10,6 +10,7 @@ import (
 func TestMain(m *testing.M) {
 	file, _ := ioutil.TempFile(os.TempDir(), "komorebi")
 	db := InitDb(file.Name())
+	db.AddTable(Story{}, "storys")
 	db.AddTable(Board{}, "boards")
 	db.AddTable(Column{}, "columns")
 	db.CreateTables()
