@@ -35,7 +35,7 @@ func TestMain(m *testing.M) {
 	os.Exit(res)
 }
 
-func TestNewBoard(t *testing.T) {
+func TestBoardDatabase(t *testing.T) {
 	b := NewBoard("test")
 	if b.Name != "test" {
 		t.Error("Board should have name test")
@@ -53,13 +53,23 @@ func TestNewBoard(t *testing.T) {
 		t.Error("Should return 2 board:", b.Id)
 	}
 
+	b.Name = "update"
+	if !b.Save() {
+		t.Error("Should have saved the board", b.Name)
+	}
+	boards = GetAllBoards()
+	b = boards[1]
+	if b.Name != "update" {
+		t.Error("Should have updated the name to", b.Name)
+	}
+
 	c1 := NewColumn("WIP", 0, b.Id)
 	c2 := NewColumn("TEST", 1, b.Id)
 	c1.Save()
 	c2.Save()
 
 	boardView := GetBoardColumnViewByName(b.Name)
-	if boardView.Name != "test" {
+	if boardView.Name != "update" {
 		t.Error("Should retrive a BoardColumnView:", boardView.Name)
 	}
 	if len(boardView.Columns) <= 0 {
