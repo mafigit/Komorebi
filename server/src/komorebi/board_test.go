@@ -1,6 +1,7 @@
 package komorebi
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -12,16 +13,29 @@ func TestMain(m *testing.M) {
 	db.AddTable(Board{}, "boards")
 	db.AddTable(Column{}, "columns")
 	db.CreateTables()
+	fmt.Println("created db " + file.Name())
+
+	//Fixtures
+	b := NewBoard("test1")
+	b.Save()
+	c1 := NewColumn("WIP", 0, b.Id)
+	c2 := NewColumn("TEST", 1, b.Id)
+	c1.Save()
+	c2.Save()
 
 	res := m.Run()
 
-	defer os.Remove(file.Name())
+	err := os.Remove(file.Name())
+	if err != nil {
+		fmt.Println("Error while removing file:", err)
+	} else {
+		fmt.Println("removed file:", file.Name())
+	}
 
 	os.Exit(res)
 }
 
 func TestNewBoard(t *testing.T) {
-
 	b := NewBoard("test")
 	if b.Name != "test" {
 		t.Error("Board should have name test")
@@ -31,12 +45,12 @@ func TestNewBoard(t *testing.T) {
 	}
 
 	boards := GetAllBoards()
-	b = boards[0]
+	b = boards[1]
 	if b.Name != "test" {
-		t.Error("Board should have name test")
+		t.Error("Board should have name test", b.Name)
 	}
-	if b.Id != 1 {
-		t.Error("Should return 1 board")
+	if b.Id != 2 {
+		t.Error("Should return 2 board:", b.Id)
 	}
 
 	c1 := NewColumn("WIP", 0, b.Id)
@@ -46,7 +60,7 @@ func TestNewBoard(t *testing.T) {
 
 	boardView := GetBoardColumnViewByName(b.Name)
 	if boardView.Name != "test" {
-		t.Error("Should retrive a BoardColumnView")
+		t.Error("Should retrive a BoardColumnView:", boardView.Name)
 	}
 	if len(boardView.Columns) <= 0 {
 		t.Error("Could not find any boardViews columns")
