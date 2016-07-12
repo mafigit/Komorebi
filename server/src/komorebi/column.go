@@ -33,7 +33,26 @@ func (c Column) Save() bool {
 }
 
 func (c Column) Validate() (bool, string) {
-	return true, ""
-	//name uniq pro board
-	//position nicht doppelt
+	success, message := true, ""
+
+	if len(c.Name) <= 0 {
+		log.Println("Column validation failed. Name not present")
+		success = false
+		message += "Name not present.\n"
+	}
+
+	board := GetBoardColumnViewById(c.BoardId)
+	for _, column := range board.Columns {
+		if column.Name == c.Name {
+			log.Println("Column validation failed. Name not uniq")
+			success = false
+			message += "Name not uniq.\n"
+		}
+		if column.Position == c.Position {
+			log.Println("Column validation failed. Position not uniq")
+			success = false
+			message += "Position not uniq.\n"
+		}
+	}
+	return success, message
 }
