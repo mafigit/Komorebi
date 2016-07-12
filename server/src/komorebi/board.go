@@ -84,3 +84,18 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	board.Columns = columns
 	return board
 }
+
+func GetBoardColumnViewById(id int) BoardColumnView {
+	var board BoardColumnView
+	err := dbMapper.Connection.
+		SelectOne(&board, "select * from boards where Id=?", id)
+	if err != nil {
+		log.Println("could not find board with id", id)
+		return board
+	}
+	var columns Columns
+	_, err = dbMapper.Connection.Select(&columns,
+		"select * from columns where boardId=?", board.Id)
+	board.Columns = columns
+	return board
+}
