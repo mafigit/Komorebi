@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<body>
+		<script>
+		var exampleSocket = new WebSocket("ws://localhost:8080/gz/ws");
+		exampleSocket.onmessage = function(event) {
+			var test = document.getElementById("test");
+			var p = document.createElement("p");
+			var text = document.createTextNode(event.data);
+			p.appendChild(text);	
+			test.appendChild(p);
+		}
+		</script>
+
+		<h1>WebSocket Example</h1>
+		<div id="test"></div>
+	</body>
+</html>
+
