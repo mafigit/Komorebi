@@ -49,6 +49,12 @@ func (c Column) Validate() (bool, string) {
 	}
 
 	board := GetBoardColumnViewById(c.BoardId)
+	if board.Id == 0 && board.CreatedAt == 0 {
+		log.Println("Column validation failed. BoardId does not exist:", c.BoardId)
+		success = false
+		message += "Board does not exist.\n"
+	}
+
 	for _, column := range board.Columns {
 		if column.Name == c.Name {
 			log.Println("Column validation failed. Name not uniq")

@@ -45,4 +45,9 @@ func TestColumnValidation(t *testing.T) {
 	if success, _ := c.Validate(); success == true {
 		t.Error("Column name should be present")
 	}
+
+	c = NewColumn("", 2, 99999)
+	if success, _ := c.Validate(); success == true {
+		t.Error("BoardId should not exists")
+	}
 }
