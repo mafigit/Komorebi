@@ -63,7 +63,7 @@ var routes = Routes{
 	Route{
 		"BoardDelete",
 		"DELETE",
-		"/boards",
+		"/boards/{board_id}",
 		BoardDelete,
 	},
 	Route{
@@ -77,5 +77,11 @@ var routes = Routes{
 		"POST",
 		"/columns",
 		ColumnCreate,
+	},
+	Route{
+		"ColumnDelete",
+		"DELETE",
+		"/columns/{column_id}",
+		ColumnDelete,
 	},
 }

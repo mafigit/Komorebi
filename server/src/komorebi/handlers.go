@@ -117,6 +117,32 @@ func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_id := vars["board_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	id, _ := strconv.Atoi(board_id)
+	board := GetBoardById(id)
+
+	if board == nil {
+		response.Success = false
+		response.Message = "Board does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if board.Destroy() {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
 }
 
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
@@ -183,6 +209,35 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 	update_column.BoardId = old_column.BoardId
 	if update_column.Save() {
 		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
+func ColumnDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	column_id := vars["column_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	id, _ := strconv.Atoi(column_id)
+	column := GetColumnById(id)
+
+	if column.Id == 0 && column.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Column does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if column.Destroy() {
+		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 	} else {
 		w.WriteHeader(400)

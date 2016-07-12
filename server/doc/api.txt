@@ -35,3 +35,13 @@ POST /columns/{:id}
 curl  -H "Content-Type: application/json" -d '{"name":"WIPNEW", "position":99, "id":3}' localhost:8080/columns/3
 => Update column, json response
 => {"success":true,"message":""}
+
+DELETE /boards/{:id}
+curl  -X DELETE localhost:8080/boards/4
+=> delete board with id 4, json response
+=> {"success":true,"message":""}
+
+DELETE /columns/{:id}
+curl  -X DELETE localhost:8080/columns/4
+=> delete column with id 4, json response
+=> {"success":true,"message":""}

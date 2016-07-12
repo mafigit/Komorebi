@@ -16,7 +16,7 @@ type BoardColumnView struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	CreatedAt int64  `json:"created_at"`
-	Columns
+	Columns   `json:"columns"`
 }
 
 type Boards []Board
@@ -103,6 +103,17 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	_, err = dbMapper.Connection.Select(&columns,
 		"select * from columns where boardId=?", board.Id)
 	board.Columns = columns
+	return board
+}
+
+func GetBoardById(id int) *Board {
+	var board *Board
+	obj, err := dbMapper.Connection.Get(Board{}, id)
+	if err != nil || obj == nil {
+		log.Println("could not find board with id", id)
+		return nil
+	}
+	board = obj.(*Board)
 	return board
 }
 
