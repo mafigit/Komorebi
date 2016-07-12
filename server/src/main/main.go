@@ -6,6 +6,11 @@ import (
 	"net/http"
 )
 
+var (
+	Version   string
+	BuildTime string
+)
+
 func main() {
 
 	db := komorebi.InitDb("komorebi.db")
