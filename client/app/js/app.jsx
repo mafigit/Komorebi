@@ -4,7 +4,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Board from './board';
-import Layout from './layout';
+import LandingLayout from './landing_layout';
+import BoardLayout from './board_layout';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -21,15 +22,23 @@ class App extends React.Component {
   }
 
   render() {
-    return <MuiThemeProvider>
-      <Layout title={this.state.title}>
-        <Board boardLoadedHandler={this.boardLoadedHandler} />
-      </Layout>
-    </MuiThemeProvider>
+    if(this.props.landing) {
+      return <MuiThemeProvider>
+        <LandingLayout title="Boards">
+        </LandingLayout>
+      </MuiThemeProvider>
+    } else {
+      return <MuiThemeProvider>
+        <BoardLayout title={this.state.title}>
+          <Board boardLoadedHandler={this.boardLoadedHandler} />
+        </BoardLayout>
+      </MuiThemeProvider>
+    }
   }
 }
 
+var landing = window.location.pathname === "/";
 ReactDOM.render(
-  <App />,
+  <App landing={landing} />,
   document.getElementById('app')
 );
