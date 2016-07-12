@@ -44,10 +44,27 @@ func GetStoriesByBoradName(board_name string) Stories {
 	return stories
 }
 
+func GetStoryById(id int) Story {
+	var story Story
+	err := dbMapper.Connection.SelectOne(&story,
+		"select * from stories where Id=? ", id)
+	if err != nil {
+		log.Println("could not find story", id)
+	}
+	return story
+}
+
 func (s Story) Save() bool {
-	if err := dbMapper.Connection.Insert(&s); err != nil {
-		log.Println("save of story failed", err)
-		return false
+	if s.Id == 0 {
+		if err := dbMapper.Connection.Insert(&s); err != nil {
+			log.Println("save of story failed", err)
+			return false
+		}
+	} else {
+		if _, errUpdate := dbMapper.Connection.Update(&s); errUpdate != nil {
+			log.Println("save of story failed", errUpdate)
+			return false
+		}
 	}
 	return true
 }
