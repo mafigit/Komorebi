@@ -52,9 +52,16 @@ func (b Board) Validate() (bool, string) {
 }
 
 func (b Board) Save() bool {
-	if err := dbMapper.Connection.Insert(&b); err != nil {
-		log.Println("save of board failed", err)
-		return false
+	if b.Id == 0 {
+		if errInsert := dbMapper.Connection.Insert(&b); errInsert != nil {
+			log.Println("save of board failed", errInsert)
+			return false
+		}
+	} else {
+		if _, errUpdate := dbMapper.Connection.Update(&b); errUpdate != nil {
+			log.Println("save of board failed", errUpdate)
+			return false
+		}
 	}
 	return true
 }

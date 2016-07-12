@@ -25,9 +25,16 @@ func NewColumn(name string, position int, boardId int) Column {
 }
 
 func (c Column) Save() bool {
-	if err := dbMapper.Connection.Insert(&c); err != nil {
-		log.Fatalln("save of board failed", err)
-		return false
+	if c.Id == 0 {
+		if errInsert := dbMapper.Connection.Insert(&c); errInsert != nil {
+			log.Fatalln("save of board failed", errInsert)
+			return false
+		}
+	} else {
+		if errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
+			log.Fatalln("save of board failed", errUpdate)
+			return false
+		}
 	}
 	return true
 }
