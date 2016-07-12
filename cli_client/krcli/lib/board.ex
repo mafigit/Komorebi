@@ -22,12 +22,30 @@ defmodule Krcli.Board do
     with {:ok, board} <- input,
       :ok <- print_board(board),
       :ok <- print_columns(board.columns),
-    do: []
+    do: {:ok, []}
   end
 
-  def show do
-    # XXX[mh] need to actually get data from somewhere.
-    # IO.puts("There, a board! seen it?")
-    File.read("test_data/board_test.json") |> parse_board |> show_board
+  def print_board_list(board) do
+    :io.format("~-5d : ~-15s\n", [board.id, board.name])  
+  end
+
+  def show_boards(arg) do
+    case arg do
+      {:ok, boards} ->
+        Enum.map(boards, fn(b) -> print_board_list(b) end)
+      {:error, err} -> raise err  
+    end
+  end
+
+  def list do
+    SbServer.get_json("/boards") |> Util.unwrap |> JSX.decode |> show_boards
+  end
+
+  def show(boardname) do
+    case SbServer.get_json("/" <> boardname) |> parse_board |> show_board do
+      {:error, err} -> raise err
+      {:ok, _} -> IO.puts("all good")
+      foo -> raise foo
+    end
   end
 end
