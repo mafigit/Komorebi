@@ -43,7 +43,7 @@ export default class StoryDialog extends React.Component {
     Ajax.postJson('/stories', this.form_values).then(response => {
       var response_obj = JSON.parse(response.responseText);
       if (response_obj.success) {
-        this.handleClose();
+        this.handleClose(true);
       } else {
         this.setState({
           story_name_error: response_obj.message,
@@ -54,14 +54,14 @@ export default class StoryDialog extends React.Component {
    });
   }
 
-  handleClose = () => {
+  handleClose = (reload) => {
     this.setDefaultFormValues();
     this.setState({
       story_name_error: "",
       story_desc_error: "",
       story_req_error: ""
     });
-    this.props.handleClose();
+    this.props.handleClose(reload);
   }
 
   valueHandler = (value) => {

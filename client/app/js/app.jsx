@@ -16,17 +16,33 @@ class App extends React.Component {
     super(props);
     this.state = {
       title: "LOADING...",
-      board_id: null
+      board_id: null,
+      columns: [],
+      stories: []
     }
   }
 
   boardLoadedHandler = (board) => {
-    this.setState({board_id: board.id, title: board.name, columns: board.columns});
+    this.getStories((stories) => {
+      this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});
+    })
   }
 
   boardReloadHandler = () => {
     this.getBoard((board) => {
-      this.setState({board_id: board.id, title: board.name, columns: board.columns});
+      this.getStories((stories) => {
+        this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});
+      })
+    });
+  }
+
+  getStories = (callback) => {
+    Ajax.get(window.location.pathname + "/stories", {"Accept": "application/json"}).then(response => {
+      var stories = [];
+      if(response.status == 200) {
+        stories = JSON.parse(response.responseText);
+      }
+      callback(stories);
     });
   }
 
@@ -47,7 +63,7 @@ class App extends React.Component {
       return <MuiThemeProvider>
         <BoardLayout boardReloadHandler={this.boardReloadHandler}
           title={this.state.title} board_id={this.state.board_id} columns={this.state.columns}>
-          <Board getBoard={this.getBoard} columns={this.state.columns} boardLoadedHandler={this.boardLoadedHandler} />
+          <Board getBoard={this.getBoard} columns={this.state.columns} stories={this.state.stories} boardLoadedHandler={this.boardLoadedHandler} />
         </BoardLayout>
       </MuiThemeProvider>
     }

@@ -3,16 +3,18 @@ import Konva from 'konva';
 import Colors from './color';
 
 class ColumnCanvas {
-  constructor(width, height, title, pos) {
+  constructor(width, height, title, pos, id) {
     this.pos = pos;
     this.width = width;
     this.height = height;
+    this._id = id;
     this.title = title || "Column";
     this.KonvaElement = new Konva.Group({
        x: 2 + this.pos * this.width,
        y: 20,
        width: this.width,
-       height: this.height
+       height: this.height,
+       name: "column:" + id
     });
 
     var column_background = new Konva.Rect({

@@ -30,7 +30,10 @@ class BoardLayout extends Layout  {
     this.setState({menu_open: false, column_open: true, story_open: false});
   }
 
-  handleStoryAddClose = () => {
+  handleStoryAddClose = (reload) => {
+    if(reload) {
+      this.props.boardReloadHandler();
+    }
     this.setState({menu_open: false, column_open: false, story_open: false});
   }
 
