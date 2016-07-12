@@ -36,6 +36,7 @@ func (c Column) Save() bool {
 			return false
 		}
 	}
+	reorderColumns(c.BoardId)
 	return true
 }
 
@@ -48,7 +49,17 @@ func (c Column) Destroy() bool {
 		log.Println("delete of column failed.", errDelete)
 		return false
 	}
+	reorderColumns(c.BoardId)
 	return true
+}
+
+func reorderColumns(board_id int) {
+	for index, column := range GetColumnsByBoardId(board_id) {
+		column.Position = index
+		if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
+			log.Println("save of column failed", errUpdate)
+		}
+	}
 }
 
 func (c Column) Validate() (bool, string) {
@@ -73,18 +84,14 @@ func (c Column) Validate() (bool, string) {
 			success = false
 			message += "Name not uniq.\n"
 		}
-		if column.Position == c.Position {
-			log.Println("Column validation failed. Position not uniq")
-			success = false
-			message += "Position not uniq.\n"
-		}
 	}
 	return success, message
 }
 
 func GetColumnsByBoardId(board_id int) Columns {
 	var cols Columns
-	_, err := dbMapper.Connection.Select(&cols, "select * from columns where BoardId=?", board_id)
+	_, err := dbMapper.Connection.Select(&cols,
+		"select * from columns where BoardId=? order by Position, Id desc ", board_id)
 	if err != nil {
 		log.Println("Error while fetching columns", board_id)
 	}
