@@ -4,11 +4,12 @@ import AppBar from 'material-ui/AppBar';
 import MyMenu from './menu';
 import Layout from './layout';
 import ColumnDialog from './column_dialog';
+import StoryDialog from './story_dialog';
 
 class BoardLayout extends Layout  {
   constructor(props) {
     super(props);
-    this.state = {menu_open: false, story_open: false};
+    this.state = {menu_open: false, column_open: false, story_open: false};
     this.menu_items = [
       {
         name: "Add Story",
@@ -22,17 +23,22 @@ class BoardLayout extends Layout  {
   }
 
   handleStorydAdd = () => {
+    this.setState({menu_open: false, column_open: false, story_open: true});
   }
 
   handleColumnAdd = () => {
-    this.setState({menu_open: false, story_open: true});
+    this.setState({menu_open: false, column_open: true, story_open: false});
+  }
+
+  handleStoryAddClose = () => {
+    this.setState({menu_open: false, column_open: false, story_open: false});
   }
 
   handleColumnAddClose = (reload) => {
     if(reload) {
       this.props.boardReloadHandler();
     }
-    this.setState({menu_open: false, story_open: false});
+    this.setState({menu_open: false, column_open: false, story_open: false});
   }
 
   handleTouchTapMenuBtn = (event) => {
@@ -54,8 +60,10 @@ class BoardLayout extends Layout  {
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu} items={this.menu_items}/>
-      <ColumnDialog board_id={this.props.board_id} open={this.state.story_open}
+      <ColumnDialog board_id={this.props.board_id} open={this.state.column_open}
         handleClose={this.handleColumnAddClose}/>
+      <StoryDialog columns={this.props.columns} board_id={this.props.board_id} open={this.state.story_open}
+        handleClose={this.handleStoryAddClose}/>
       {this.props.children}
      </div>
   }
