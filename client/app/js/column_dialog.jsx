@@ -18,7 +18,7 @@ export default class ColumnDialog extends React.Component {
     var column_name =
       ReactDOM.findDOMNode(this.refs.column_name).querySelectorAll("input")[0].value;
     Ajax.postJson('/columns', {"name": column_name,
-      "boardId": this.props.board_id }).then(response => {
+      "board_id": this.props.board_id }).then(response => {
       var response_obj = JSON.parse(response.responseText);
       if (response_obj.success) {
         this.handleClose(true);
