@@ -6,6 +6,7 @@ import Layout from './layout';
 import BoardDialog from './board_dialog';
 import {List, ListItem} from 'material-ui/List';
 import Ajax from  'basic-ajax';
+import Colors from './color';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -64,6 +65,7 @@ class LandingLayout extends Layout  {
         title={this.props.title}
         iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
+        style={{backgroundColor: Colors.dark_gray}}
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu}
