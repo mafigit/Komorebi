@@ -47,6 +47,19 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetStories(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_name := vars["board_name"]
+	stories := GetStoriesByBoradName(board_name)
+
+	if len(stories) <= 0 {
+		OwnNotFound(w, r)
+		return
+	}
+
+	json.NewEncoder(w).Encode(stories)
+}
+
 func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	var board Board
 

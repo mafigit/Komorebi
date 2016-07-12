@@ -50,3 +50,8 @@ POST /stories as json
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1 }' localhost:8080/stories
 => Create a user story
 => {"success":true,"message":""}
+
+GET /gz/stories
+curl  localhost:8080/gz/stories
+=> Get all stories of board gz
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","created_at":1468338234914643720,"column_id":1}]
