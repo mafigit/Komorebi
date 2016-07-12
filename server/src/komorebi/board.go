@@ -101,7 +101,7 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	}
 	var columns Columns
 	_, err = dbMapper.Connection.Select(&columns,
-		"select * from columns where boardId=?", board.Id)
+		"select * from columns where boardId=? order by Position", board.Id)
 	board.Columns = columns
 	return board
 }

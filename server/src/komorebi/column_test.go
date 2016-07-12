@@ -31,11 +31,6 @@ func TestColumnValidation(t *testing.T) {
 	}
 	c.Save()
 
-	c = NewColumn("Test", 0, board.Id)
-	if success, _ := c.Validate(); success == true {
-		t.Error("Column position should be uniq")
-	}
-
 	c = NewColumn("WIP", 1, board.Id)
 	if success, _ := c.Validate(); success == true {
 		t.Error("Column name should be uniq")
