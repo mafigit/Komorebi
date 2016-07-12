@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -74,6 +76,46 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func BoardUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_board Board
+	vars := mux.Vars(r)
+	board_id := vars["board_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&update_board); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	id, _ := strconv.Atoi(board_id)
+
+	if id != update_board.Id {
+		w.WriteHeader(400)
+		return
+	}
+
+	old_board := GetBoardColumnViewById(id)
+	if old_board.Id == 0 && old_board.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Board does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if update_board.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
 }
 
@@ -126,7 +168,12 @@ func getPublicDir() string {
 	if len(os.Args) >= 2 {
 		return os.Args[1]
 	} else {
-		return ""
+		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		if err != nil {
+			return ""
+		} else {
+			return dir
+		}
 	}
 }
 
