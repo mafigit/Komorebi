@@ -1,7 +1,7 @@
 defmodule Krcli.Board do
   defstruct [:id, :name, :columns]
 
-  defp parse_board(input) do
+  def parse_board(input) do
     with {:ok, json} <- input,
       {:ok, brd} <- JSX.decode(json),
       cols = Enum.map(brd["columns"], &Krcli.Column.create/1) |>
