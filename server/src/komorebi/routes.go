@@ -107,5 +107,11 @@ var routes = Routes{
 		"POST",
 		"/users",
 		UserCreate,
+    },
+	Route{
+		"HandleWS",
+		"GET",
+		"/{board_name}/ws",
+		HandleWs,
 	},
 }

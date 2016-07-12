@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -119,5 +120,56 @@ func TestBoardValidation(t *testing.T) {
 	b = NewBoard("gz")
 	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'gz' should be uniq")
+	}
+}
+
+func TestBoardWs(t *testing.T) {
+	b := NewBoard("testValidationFoobar")
+	b.Save()
+	board := GetBoardColumnViewByName(b.Name)
+
+	c := NewColumn("WIP", 0, board.Id)
+	c.Save()
+	c = NewColumn("DONE", 0, board.Id)
+	c.Save()
+	cols := GetColumnsByBoardId(board.Id)
+
+	s := Story{
+		Name:         "Story 1",
+		Desc:         "description",
+		Points:       5,
+		Requirements: "Do this and that",
+		ColumnId:     cols[0].Id,
+	}
+	s.Save()
+	s = Story{
+		Name:         "Story 2",
+		Desc:         "description 2",
+		Points:       3,
+		Requirements: "Do this and that",
+		ColumnId:     cols[1].Id,
+	}
+	s.Save()
+	res1 := GetBoardWsByName(board.Name)
+	res2 := GetBoardWsByName(board.Name)
+	if !reflect.DeepEqual(res1, res2) {
+		t.Error("should be equal")
+	}
+	if res1.Name != "testValidationFoobar" {
+		t.Error("Board name should be 'testValidationFoobar'")
+	}
+	if res1.ColumnsWs[0].Name != "WIP" {
+		t.Error("First Column name should be 'WIP'. Is:", res1.ColumnsWs[0].Name)
+	}
+	if res1.ColumnsWs[0].Stories[0].Name != "Story 1" {
+		t.Error("First story of column 'WIP' should be 'Story 1'")
+	}
+	stories := GetStoriesByBoradName(board.Name)
+	stories[0].Name = "fooo"
+	stories[0].Save()
+	res2 = GetBoardWsByName(board.Name)
+
+	if reflect.DeepEqual(res1, res2) {
+		t.Error("should not be equal")
 	}
 }

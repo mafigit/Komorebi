@@ -66,6 +66,8 @@ func (s Story) Save() bool {
 			return false
 		}
 	}
+	board := GetBoardByColumnId(s.ColumnId)
+	UpdateWebsockets(board.Name, "Story updated")
 	return true
 }
 

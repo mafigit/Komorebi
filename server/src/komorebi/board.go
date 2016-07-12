@@ -19,6 +19,13 @@ type BoardColumnView struct {
 	Columns   `json:"columns"`
 }
 
+type BoardWs struct {
+	Id        int
+	Name      string
+	CreatedAt int64
+	ColumnsWs
+}
+
 type Boards []Board
 type BoardColumnViews []BoardColumnView
 
@@ -91,6 +98,26 @@ func GetAllBoards() Boards {
 	return boards
 }
 
+func GetBoardWsByName(name string) BoardWs {
+	var board BoardWs
+	err := dbMapper.Connection.
+		SelectOne(&board, "select * from boards where Name=?", name)
+	if err != nil {
+		log.Println("could not find board with name", name)
+		return board
+	}
+	_, err = dbMapper.Connection.Select(&board.ColumnsWs,
+		"select * from columns where boardId=? order by Position", board.Id)
+
+	var stories Stories
+	for col_index, col := range board.ColumnsWs {
+		_, err = dbMapper.Connection.Select(&stories,
+			"select * from stories where ColumnId=?", col.Id)
+		board.ColumnsWs[col_index].Stories = stories
+	}
+	return board
+}
+
 func GetBoardColumnViewByName(name string) BoardColumnView {
 	var board BoardColumnView
 	err := dbMapper.Connection.
@@ -106,14 +133,26 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	return board
 }
 
-func GetBoardById(id int) *Board {
-	var board *Board
-	obj, err := dbMapper.Connection.Get(Board{}, id)
-	if err != nil || obj == nil {
+func GetBoardById(id int) Board {
+	var board Board
+	err := dbMapper.Connection.SelectOne(&board,
+		"select * from boards where Id=?", id)
+	if err != nil {
 		log.Println("could not find board with id", id)
-		return nil
 	}
-	board = obj.(*Board)
+	return board
+}
+
+func GetBoardByColumnId(c_id int) Board {
+	var board Board
+
+	err := dbMapper.Connection.
+		SelectOne(&board, "select boards.* from boards left join "+
+			"columns on columns.BoardId = boards.Id "+
+			"where columns.Id=?", c_id)
+	if err != nil {
+		log.Println("could not find board")
+	}
 	return board
 }
 
