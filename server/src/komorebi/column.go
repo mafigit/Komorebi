@@ -90,3 +90,12 @@ func GetColumnsByBoardId(board_id int) Columns {
 	}
 	return cols
 }
+
+func GetColumnById(id int) Column {
+	var column Column
+	err := dbMapper.Connection.SelectOne(&column, "select * from columns where Id=?", id)
+	if err != nil {
+		log.Println("Error while fetching column", id)
+	}
+	return column
+}

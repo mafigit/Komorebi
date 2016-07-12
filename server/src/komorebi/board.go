@@ -7,9 +7,9 @@ import (
 )
 
 type Board struct {
-	Id        int
-	Name      string
-	CreatedAt int64
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	CreatedAt int64  `json:"created_at"`
 }
 
 type BoardColumnView struct {
