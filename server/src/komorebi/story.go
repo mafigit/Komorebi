@@ -1,7 +1,7 @@
 package komorebi
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -32,12 +32,30 @@ func NewStory(name string, desc string, requirements string, points int,
 
 func (s Story) Save() bool {
 	if err := dbMapper.Connection.Insert(&s); err != nil {
-		fmt.Println("save of story failed", err)
+		log.Println("save of story failed", err)
 		return false
 	}
 	return true
 }
 
 func (s Story) Validate() (bool, string) {
-	return true, ""
+	success, message := true, ""
+
+	if len(s.Name) <= 0 {
+		log.Println("Story validation failed. Name not present")
+		success = false
+		message += "Name not present.\n"
+	}
+	if s.Points <= 0 {
+		log.Println("Story validation failed. Points out of range.")
+		success = false
+		message += "Points out of range.\n"
+	}
+	if s.ColumnId <= 0 {
+		log.Println("Story validation failed. ColumnId not set.")
+		success = false
+		message += "ColumnId not set.\n"
+	}
+
+	return success, message
 }

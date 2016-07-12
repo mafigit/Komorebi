@@ -84,4 +84,10 @@ var routes = Routes{
 		"/columns/{column_id}",
 		ColumnDelete,
 	},
+	Route{
+		"StoryCreate",
+		"POST",
+		"/stories",
+		StoryCreate,
+	},
 }
