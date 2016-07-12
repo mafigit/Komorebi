@@ -285,6 +285,48 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func StoryUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_story Story
+	vars := mux.Vars(r)
+	story_id := vars["story_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&update_story); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	id, _ := strconv.Atoi(story_id)
+
+	if id != update_story.Id {
+		w.WriteHeader(400)
+		return
+	}
+
+	old_story := GetStoryById(id)
+
+	if old_story.Id == 0 && old_story.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Story does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if update_story.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+
+}
+
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 	file := getPublicDir() + r.URL.Path
 
