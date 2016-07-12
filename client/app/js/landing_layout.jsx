@@ -72,8 +72,8 @@ class LandingLayout extends Layout  {
       <List>
         {this.state.list_items.map((list_item, key) => {
           return <ListItem
-            onClick={event => {this.handleListClick(event, list_item.Name)}}
-            key={key} primaryText={list_item.Name}
+            onClick={event => {this.handleListClick(event, list_item.name)}}
+            key={key} primaryText={list_item.name}
           />
         })}
       </List>

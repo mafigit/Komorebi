@@ -34,10 +34,10 @@ class ColumnCanvas {
       fontStyle: 'bold',
       text: this.title,
     });
-    var new_x = text.position().x + text.getHeight()/2;
-    var new_y = text.position().y - text.getWidth()/2;
+    var new_x = text.position().x - text.getHeight()/2;
+    var new_y = text.position().y + text.getWidth()/2;
     text.position({x: new_x, y: new_y});
-    text.rotate(90);
+    text.rotate(-90);
     this.KonvaElement.add(column_background);
     this.KonvaElement.add(text);
   }
