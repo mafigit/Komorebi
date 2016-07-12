@@ -35,12 +35,12 @@ func (c Column) Save() bool {
 			}
 		}
 		if errInsert := dbMapper.Connection.Insert(&c); errInsert != nil {
-			log.Fatalln("save of column failed", errInsert)
+			log.Println("save of column failed", errInsert)
 			return false
 		}
 	} else {
 		if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
-			log.Fatalln("save of column failed", errUpdate)
+			log.Println("save of column failed", errUpdate)
 			return false
 		}
 	}
