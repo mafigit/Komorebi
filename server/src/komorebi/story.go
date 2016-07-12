@@ -30,6 +30,20 @@ func NewStory(name string, desc string, requirements string, points int,
 	}
 }
 
+func GetStoriesByBoradName(board_name string) Stories {
+	var stories Stories
+
+	_, err := dbMapper.Connection.
+		Select(&stories, "select stories.* from stories left join "+
+			"columns on columns.Id = stories.ColumnId left join "+
+			"boards on boards.Id = columns.BoardId where "+
+			"boards.Name =?", board_name)
+	if err != nil {
+		log.Println("could not find boards")
+	}
+	return stories
+}
+
 func (s Story) Save() bool {
 	if err := dbMapper.Connection.Insert(&s); err != nil {
 		log.Println("save of story failed", err)

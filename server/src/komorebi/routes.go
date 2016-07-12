@@ -43,6 +43,12 @@ var routes = Routes{
 		BoardsGet,
 	},
 	Route{
+		"GetStories",
+		"GET",
+		"/{board_name}/stories",
+		GetStories,
+	},
+	Route{
 		"BoardShow",
 		"GET",
 		"/{board_name}",
