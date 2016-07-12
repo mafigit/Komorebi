@@ -27,14 +27,26 @@ func NewColumn(name string, position int, boardId int) Column {
 func (c Column) Save() bool {
 	if c.Id == 0 {
 		if errInsert := dbMapper.Connection.Insert(&c); errInsert != nil {
-			log.Fatalln("save of board failed", errInsert)
+			log.Fatalln("save of column failed", errInsert)
 			return false
 		}
 	} else {
-		if errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
-			log.Fatalln("save of board failed", errUpdate)
+		if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
+			log.Fatalln("save of column failed", errUpdate)
 			return false
 		}
+	}
+	return true
+}
+
+func (c Column) Destroy() bool {
+	if c.Id == 0 {
+		return true
+	}
+	// TODO: Destroy all stroys with columnId = c.Id
+	if _, errDelete := dbMapper.Connection.Delete(&c); errDelete != nil {
+		log.Println("delete of column failed.", errDelete)
+		return false
 	}
 	return true
 }
@@ -68,4 +80,13 @@ func (c Column) Validate() (bool, string) {
 		}
 	}
 	return success, message
+}
+
+func GetColumnsByBoardId(board_id int) Columns {
+	var cols Columns
+	_, err := dbMapper.Connection.Select(&cols, "select * from columns where BoardId=?", board_id)
+	if err != nil {
+		log.Println("Error while fetching columns", board_id)
+	}
+	return cols
 }
