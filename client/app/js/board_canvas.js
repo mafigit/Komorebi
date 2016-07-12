@@ -1,7 +1,9 @@
 /*jshint esversion: 6 */
 import Konva from 'konva';
+import ColumnCanvas from './column_canvas';
+
 class BoardCanvas {
-  constructor(container) {
+  constructor(container, columns) {
     this.container = container;
     this.stage = new Konva.Stage({
       container: this.container,
@@ -11,22 +13,21 @@ class BoardCanvas {
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
     this.layer.draw();
-    this.createColumns();
+    this.columns = columns;
+    this.createColumns(this.columns);
   }
 
   createColumns() {
-    var column_height = document.getElementById(this.container).offsetHeight - 30;
-    var column = new Konva.Rect({
-        x: 0,
-        y: 20,
-        width: 300,
-        height: column_height,
-        fill: '#00D2FF',
-        stroke: 'black',
-        strokeWidth: 4,
-        draggable: false,
+    var column_count = this.columns.length;
+    var column_width =
+      Math.round(this.stage.attrs.width/column_count);
+    var column_height =
+      document.getElementById(this.container).offsetHeight - 30;
+    this.columns.forEach((column, pos) => {
+      var column_canvas =
+        new ColumnCanvas(column_width, column_height, column.name, pos);
+      this.layer.add(column_canvas.KonvaElement);
     });
-    this.layer.add(column);
     this.layer.draw();
   }
 }
