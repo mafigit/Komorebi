@@ -27,11 +27,11 @@ func NewColumn(name string, position int, boardId int) Column {
 func (c Column) Save() bool {
 	if c.Id == 0 {
 		if c.Position == 0 {
-			var max_pos int
-			_, err := dbMapper.Connection.Select(&max_pos,
-				"select Position from columns where BoardId=? order by Position Desc limit 1", c.BoardId)
+			var column Column
+			err := dbMapper.Connection.SelectOne(&column,
+				"select * from columns where BoardId=? order by Position Desc limit 1", c.BoardId)
 			if err == nil {
-				c.Position = max_pos + 1
+				c.Position = column.Position + 1
 			}
 		}
 		if errInsert := dbMapper.Connection.Insert(&c); errInsert != nil {
@@ -99,7 +99,7 @@ func (c Column) Validate() (bool, string) {
 func GetColumnsByBoardId(board_id int) Columns {
 	var cols Columns
 	_, err := dbMapper.Connection.Select(&cols,
-		"select * from columns where BoardId=? order by Position, Id desc ", board_id)
+		"select * from columns where BoardId=? order by Position, Id ", board_id)
 	if err != nil {
 		log.Println("Error while fetching columns", board_id)
 	}
