@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -51,13 +50,8 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 
 func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	var board Board
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 2^20))
-	check_err(err, "Can't read http body")
 
-	err = r.Body.Close()
-	check_err(err, "Error on Body.Close()")
-
-	if err := json.Unmarshal(body, &board); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&board); err != nil {
 		w.WriteHeader(400)
 		return
 	}
@@ -84,6 +78,35 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
+}
+
+func ColumnCreate(w http.ResponseWriter, r *http.Request) {
+	var column Column
+
+	if err := json.NewDecoder(r.Body).Decode(&column); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	column = NewColumn(column.Name, column.Position, column.BoardId)
+	success, msg := column.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if column.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
