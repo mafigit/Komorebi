@@ -148,6 +148,48 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_column Column
+	vars := mux.Vars(r)
+	column_id := vars["column_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&update_column); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	id, _ := strconv.Atoi(column_id)
+
+	if id != update_column.Id {
+		w.WriteHeader(400)
+		return
+	}
+
+	old_column := GetColumnById(id)
+
+	if old_column.Id == 0 && old_column.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Column does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	update_column.BoardId = old_column.BoardId
+	if update_column.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 	file := getPublicDir() + r.URL.Path
 
