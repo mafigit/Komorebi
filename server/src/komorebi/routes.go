@@ -102,4 +102,10 @@ var routes = Routes{
 		"/stories/{story_id}",
 		StoryUpdate,
 	},
+	Route{
+		"UserCreate",
+		"POST",
+		"/users",
+		UserCreate,
+	},
 }

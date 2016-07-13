@@ -187,6 +187,35 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func UserCreate(w http.ResponseWriter, r *http.Request) {
+	var user User
+
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	user = NewUser(user.Name, user.ImagePath)
+	success, msg := user.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if user.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_column Column
 	vars := mux.Vars(r)
