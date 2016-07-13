@@ -43,6 +43,12 @@ var routes = Routes{
 		BoardsGet,
 	},
 	Route{
+		"GetStories",
+		"GET",
+		"/{board_name}/stories",
+		GetStories,
+	},
+	Route{
 		"BoardShow",
 		"GET",
 		"/{board_name}",
@@ -83,5 +89,17 @@ var routes = Routes{
 		"DELETE",
 		"/columns/{column_id}",
 		ColumnDelete,
+	},
+	Route{
+		"StoryCreate",
+		"POST",
+		"/stories",
+		StoryCreate,
+	},
+	Route{
+		"StoryUpdate",
+		"POST",
+		"/stories/{story_id}",
+		StoryUpdate,
 	},
 }

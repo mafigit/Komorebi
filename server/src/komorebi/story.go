@@ -1,7 +1,7 @@
 package komorebi
 
 import (
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -30,14 +30,63 @@ func NewStory(name string, desc string, requirements string, points int,
 	}
 }
 
+func GetStoriesByBoradName(board_name string) Stories {
+	var stories Stories
+
+	_, err := dbMapper.Connection.
+		Select(&stories, "select stories.* from stories left join "+
+			"columns on columns.Id = stories.ColumnId left join "+
+			"boards on boards.Id = columns.BoardId where "+
+			"boards.Name =?", board_name)
+	if err != nil {
+		log.Println("could not find boards")
+	}
+	return stories
+}
+
+func GetStoryById(id int) Story {
+	var story Story
+	err := dbMapper.Connection.SelectOne(&story,
+		"select * from stories where Id=? ", id)
+	if err != nil {
+		log.Println("could not find story", id)
+	}
+	return story
+}
+
 func (s Story) Save() bool {
-	if err := dbMapper.Connection.Insert(&s); err != nil {
-		fmt.Println("save of story failed", err)
-		return false
+	if s.Id == 0 {
+		if err := dbMapper.Connection.Insert(&s); err != nil {
+			log.Println("save of story failed", err)
+			return false
+		}
+	} else {
+		if _, errUpdate := dbMapper.Connection.Update(&s); errUpdate != nil {
+			log.Println("save of story failed", errUpdate)
+			return false
+		}
 	}
 	return true
 }
 
 func (s Story) Validate() (bool, string) {
-	return true, ""
+	success, message := true, ""
+
+	if len(s.Name) <= 0 {
+		log.Println("Story validation failed. Name not present")
+		success = false
+		message += "Name not present.\n"
+	}
+	if s.Points <= 0 {
+		log.Println("Story validation failed. Points out of range.")
+		success = false
+		message += "Points out of range.\n"
+	}
+	if s.ColumnId <= 0 {
+		log.Println("Story validation failed. ColumnId not set.")
+		success = false
+		message += "ColumnId not set.\n"
+	}
+
+	return success, message
 }

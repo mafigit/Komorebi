@@ -6,6 +6,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Board from './board';
 import LandingLayout from './landing_layout';
 import BoardLayout from './board_layout';
+import Ajax from  'basic-ajax';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -14,11 +15,42 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: "LOADING..."
+      title: "LOADING...",
+      board_id: null,
+      columns: [],
+      stories: []
     }
   }
+
   boardLoadedHandler = (board) => {
-    this.setState({title: board.name});
+    this.getStories((stories) => {
+      this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});
+    })
+  }
+
+  boardReloadHandler = () => {
+    this.getBoard((board) => {
+      this.getStories((stories) => {
+        this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});
+      })
+    });
+  }
+
+  getStories = (callback) => {
+    Ajax.get(window.location.pathname + "/stories", {"Accept": "application/json"}).then(response => {
+      var stories = [];
+      if(response.status == 200) {
+        stories = JSON.parse(response.responseText);
+      }
+      callback(stories);
+    });
+  }
+
+  getBoard = (callback) => {
+    Ajax.get(window.location.pathname, {"Accept": "application/json"}).then(response => {
+      var board = JSON.parse(response.responseText);
+      callback(board);
+    });
   }
 
   render() {
@@ -29,8 +61,9 @@ class App extends React.Component {
       </MuiThemeProvider>
     } else {
       return <MuiThemeProvider>
-        <BoardLayout title={this.state.title}>
-          <Board boardLoadedHandler={this.boardLoadedHandler} />
+        <BoardLayout boardReloadHandler={this.boardReloadHandler}
+          title={this.state.title} board_id={this.state.board_id} columns={this.state.columns}>
+          <Board getBoard={this.getBoard} columns={this.state.columns} stories={this.state.stories} boardLoadedHandler={this.boardLoadedHandler} />
         </BoardLayout>
       </MuiThemeProvider>
     }

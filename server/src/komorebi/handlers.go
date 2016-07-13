@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -40,11 +39,25 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.Contains(content_type, "json") {
+
 		json.NewEncoder(w).Encode(board_column)
 	} else {
 		data := getIndex()
 		fmt.Fprintln(w, data)
 	}
+}
+
+func GetStories(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_name := vars["board_name"]
+	stories := GetStoriesByBoradName(board_name)
+
+	if len(stories) <= 0 {
+		OwnNotFound(w, r)
+		return
+	}
+
+	json.NewEncoder(w).Encode(stories)
 }
 
 func BoardCreate(w http.ResponseWriter, r *http.Request) {
@@ -230,12 +243,10 @@ func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	if column.Id == 0 && column.CreatedAt == 0 {
 		response.Success = false
 		response.Message = "Column does not exist"
-
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-
 	if column.Destroy() {
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
@@ -243,6 +254,77 @@ func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
+}
+
+func StoryCreate(w http.ResponseWriter, r *http.Request) {
+	var story Story
+
+	if err := json.NewDecoder(r.Body).Decode(&story); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
+		story.ColumnId)
+	success, msg := story.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if story.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
+func StoryUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_story Story
+	vars := mux.Vars(r)
+	story_id := vars["story_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&update_story); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	id, _ := strconv.Atoi(story_id)
+
+	if id != update_story.Id {
+		w.WriteHeader(400)
+		return
+	}
+
+	old_story := GetStoryById(id)
+
+	if old_story.Id == 0 && old_story.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Story does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if update_story.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
@@ -271,11 +353,5 @@ func getPublicDir() string {
 		} else {
 			return dir
 		}
-	}
-}
-
-func check_err(err error, msg string) {
-	if err != nil {
-		log.Fatalln(msg, err)
 	}
 }

@@ -3,16 +3,18 @@ import Konva from 'konva';
 import Colors from './color';
 
 class ColumnCanvas {
-  constructor(width, height, title, pos) {
+  constructor(width, height, title, pos, id) {
     this.pos = pos;
     this.width = width;
     this.height = height;
+    this._id = id;
     this.title = title || "Column";
     this.KonvaElement = new Konva.Group({
        x: 2 + this.pos * this.width,
        y: 20,
        width: this.width,
-       height: this.height
+       height: this.height,
+       name: "column:" + id
     });
 
     var column_background = new Konva.Rect({
@@ -34,10 +36,10 @@ class ColumnCanvas {
       fontStyle: 'bold',
       text: this.title,
     });
-    var new_x = text.position().x + text.getHeight()/2;
-    var new_y = text.position().y - text.getWidth()/2;
+    var new_x = text.position().x - text.getHeight()/2;
+    var new_y = text.position().y + text.getWidth()/2;
     text.position({x: new_x, y: new_y});
-    text.rotate(90);
+    text.rotate(-90);
     this.KonvaElement.add(column_background);
     this.KonvaElement.add(text);
   }

@@ -22,7 +22,7 @@ curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boar
 => {"success":true,"message":""}
 
 POST /columns
-curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "boardId":3}' localhost:8080/columns
+curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns
 => create columns for board boardId, json response
 => {"success":true,"message":""}
 
@@ -45,3 +45,17 @@ DELETE /columns/{:id}
 curl  -X DELETE localhost:8080/columns/4
 => delete column with id 4, json response
 => {"success":true,"message":""}
+
+POST /stories as json
+curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1 }' localhost:8080/stories
+=> Create a user story
+=> {"success":true,"message":""}
+
+GET /gz/stories
+curl  localhost:8080/gz/stories
+=> Get all stories of board gz
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","created_at":1468338234914643720,"column_id":1}]
+
+POST /stories/{:id}
+curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1, "id":3 }' localhost:8080/stories/3
+=> Update story
