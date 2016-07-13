@@ -147,3 +147,45 @@ func TestStoryCreateHandler(t *testing.T) {
 		t.Error("Response is not success")
 	}
 }
+
+func TestTaskCreateHandler(t *testing.T) {
+	b := NewBoard("testTaskCreate")
+	b.Save()
+	board := GetBoardColumnViewByName("testTaskCreate")
+	c := NewColumn("testColumn", 0, board.Id)
+	c.Save()
+	var column Column
+	columns := GetBoardColumnViewByName(board.Name).Columns
+	for _, col := range columns {
+		if col.Name == "testColumn" {
+			column = col
+		}
+	}
+	s := NewStory("testStory", "desc", "req", 0, column.Id)
+	s.Save()
+
+	stories := GetStoriesByBoradName(board.Name)
+	var story Story
+	for _, st := range stories {
+		if st.Name == "testStory" {
+			story = st
+		}
+	}
+
+	data := fmt.Sprintf("{\"name\":\"testTask\",\"desc\":\"foo desc\","+
+		"\"column_id\":%d,\"story_id\":%d}", column.Id, story.Id)
+
+	req, _ := http.NewRequest("POST", "/task",
+		bytes.NewBufferString(data))
+	w := httptest.NewRecorder()
+	TaskCreate(w, req)
+
+	if w.Code != 201 {
+		t.Error("Request on /tasks did not succeed")
+	}
+
+	body := w.Body.String()
+	if !strings.Contains(body, "success\":true") {
+		t.Error("Response is not success")
+	}
+}
