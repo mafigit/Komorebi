@@ -2,24 +2,24 @@
 import Konva from 'konva';
 import Colors from './color';
 
-class ColumnCanvas {
-  constructor(width, height, title, pos, id) {
-    this.pos = pos;
-    this.width = width;
-    this.height = height;
-    this._id = id;
-    this.title = title || "Column";
-    this.KonvaElement = new Konva.Group({
-       x: 2 + this.pos * this.width,
-       y: 20,
-       width: this.width,
-       height: this.height,
-       name: "column:" + id
+class ColumnGroup extends Konva.Group {
+  constructor(width, height, column) {
+    super({
+      x: 2 + column.position * width,
+      y: 20,
+      width: width,
+      height: height,
     });
+    this.my_attrs = column;
+  }
+}
 
+class ColumnCanvas {
+  constructor(width, height, column) {
+    this.KonvaElement = new ColumnGroup(width, height, column);
     var column_background = new Konva.Rect({
-      width: this.width,
-      height: this.height,
+      width: width,
+      height: height,
       fill: Colors.light_yellow,
       stroke: 'white',
       strokeWidth: 2,
@@ -34,7 +34,7 @@ class ColumnCanvas {
       fontSize: 70,
       fontFamily: 'Helvetica',
       fontStyle: 'bold',
-      text: this.title,
+      text: column.name,
     });
     var new_x = text.position().x - text.getHeight()/2;
     var new_y = text.position().y + text.getWidth()/2;
