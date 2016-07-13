@@ -13,6 +13,16 @@ type Column struct {
 	CreatedAt int64  `json:"created_at"`
 }
 
+type ColumnWs struct {
+	Id        int
+	Name      string
+	Position  int
+	BoardId   int
+	CreatedAt int64
+	Stories
+}
+
+type ColumnsWs []ColumnWs
 type Columns []Column
 
 func NewColumn(name string, position int, boardId int) Column {
@@ -45,6 +55,8 @@ func (c Column) Save() bool {
 		}
 	}
 	reorderColumns(c.BoardId)
+	board := GetBoardById(c.BoardId)
+	UpdateWebsockets(board.Name, "Columns updated")
 	return true
 }
 
