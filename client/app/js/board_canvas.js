@@ -12,10 +12,6 @@ class BoardCanvas {
       width: window.innerWidth - 20,
       height: window.innerHeight - 100
     });
-    this.board_objects = {
-      columns: [],
-      stories: []
-    };
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
     this.layer.draw();
@@ -33,13 +29,11 @@ class BoardCanvas {
     this.stage.on("dragend", (event) => {
       var pos = this.stage.getPointerPosition();
       var shape = this.layer.getIntersection(pos);
-      event.target.moveTo(this.layer);
-      var ref_str_target = event.target.getName();
-      var ref_str_drop = shape.parent.getName();
-      if (ref_str_drop && ref_str_target) {
-        var story = this.explodeRefStr(ref_str_target);
-        var column = this.explodeRefStr(ref_str_drop);
-        this.handler.story(story, column);
+      var _target = event.target;
+      _target.moveTo(this.layer);
+      var drop_element = shape.parent;
+      if (drop_element && _target) {
+        this.handler.story(_target.my_attrs, drop_element.my_attrs);
       }
     });
   }
@@ -52,23 +46,20 @@ class BoardCanvas {
   }
 
   createColumns() {
+    var column_canvas_elements = [];
     var column_count = this.columns.length;
     var column_width =
       Math.round(this.stage.attrs.width/column_count);
     var column_height =
       document.getElementById(this.container).offsetHeight - 30;
-    this.columns.forEach((column, pos) => {
+    this.columns.forEach((column) => {
       var column_canvas =
-        new ColumnCanvas(column_width, column_height, column.name, pos, column.id);
+        new ColumnCanvas(column_width, column_height, column);
       this.layer.add(column_canvas.KonvaElement);
-      this.board_objects.columns.push(column_canvas);
     });
-    var story_pos_y = 30;
-    var story_height = 100;
     this.stories.forEach((story) => {
-      var story_canvas = new StoryCanvas(story_pos_y, story_height, story.id, story.column_id, this.board_objects);
+      var story_canvas = new StoryCanvas(story, this.stage);
       this.layer.add(story_canvas.KonvaElement);
-      this.board_objects.stories.push(story_canvas);
     });
     this.layer.draw();
   }
