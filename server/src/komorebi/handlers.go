@@ -431,6 +431,35 @@ func UpdateWebsockets(board_name string, msg string) {
 	}
 }
 
+func TaskCreate(w http.ResponseWriter, r *http.Request) {
+	var task Task
+
+	if err := json.NewDecoder(r.Body).Decode(&task); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
+	success, msg := task.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if task.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 	file := getPublicDir() + r.URL.Path
 

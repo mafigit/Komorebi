@@ -64,3 +64,8 @@ POST /users
 curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg"}' localhost:8080/users
 => create a user
 => {"success":true,"message":""}
+
+POST /tasks
+curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2}' localhost:8080/tasks
+=> create a task
+=> {"success":true,"message":""}
