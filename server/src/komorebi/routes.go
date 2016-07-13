@@ -107,7 +107,7 @@ var routes = Routes{
 		"POST",
 		"/users",
 		UserCreate,
-    },
+	},
 	Route{
 		"HandleWS",
 		"GET",

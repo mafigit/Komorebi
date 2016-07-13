@@ -1,14 +1,17 @@
 package komorebi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
-func TestIndex(t *testing.T) {
+func TestIndexHandler(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/", nil)
 	w := httptest.NewRecorder()
 	Index(w, req)
@@ -19,7 +22,7 @@ func TestIndex(t *testing.T) {
 	}
 }
 
-func TestBoardsGet(t *testing.T) {
+func TestBoardsGetHandler(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/boards", nil)
 	w := httptest.NewRecorder()
 	BoardsGet(w, req)
@@ -32,5 +35,115 @@ func TestBoardsGet(t *testing.T) {
 	json.NewDecoder(w.Body).Decode(&boards)
 	if boards[0].Name != "update" {
 		t.Error("Request should contain a board with name update")
+	}
+}
+
+func TestBoardShowHandler(t *testing.T) {
+	b := NewBoard("testBoardShow")
+	b.Save()
+	req, _ := http.NewRequest("GET", "/testBoardShow", nil)
+	w := httptest.NewRecorder()
+	context.Set(req, 0, "testBoardShow")
+	BoardShow(w, req)
+	fmt.Printf("body: ", w.Code, w.Body.String())
+
+	//if w.Code == 404 {
+	//		t.Error("Request on /testBoardShow should not return 404")
+	//}
+}
+
+func TestBoardCreateHandler(t *testing.T) {
+	req, _ := http.NewRequest("POST", "/boards",
+		bytes.NewBufferString("{\"name\":\"testBoardCreate\"}"))
+	w := httptest.NewRecorder()
+	BoardCreate(w, req)
+
+	if w.Code != 201 {
+		t.Error("Request on /boards did not succeed")
+	}
+
+	body := w.Body.String()
+	if !strings.Contains(body, "success\":true") {
+		t.Error("Response is not success")
+	}
+
+	req, _ = http.NewRequest("POST", "/boards",
+		bytes.NewBufferString("{\"name\":\"testBoardCreate\"}"))
+	w = httptest.NewRecorder()
+	BoardCreate(w, req)
+
+	if w.Code == 201 {
+		t.Error("Request on /boards should not succeed with non-uniq name")
+	}
+
+	body = w.Body.String()
+	if strings.Contains(body, "success\":true") {
+		t.Error("Response is not success")
+	}
+}
+
+func TestColumnCreateHandler(t *testing.T) {
+	b := NewBoard("test123")
+	b.Save()
+	board := GetBoardWsByName("test123")
+	data := fmt.Sprintf("{\"name\":\"testColumnCreate\",\"board_id\":%d}", board.Id)
+
+	req, _ := http.NewRequest("POST", "/columns",
+		bytes.NewBufferString(data))
+	w := httptest.NewRecorder()
+	ColumnCreate(w, req)
+
+	if w.Code != 201 {
+		t.Error("Request on /columns did not succeed")
+	}
+
+	body := w.Body.String()
+	if !strings.Contains(body, "success\":true") {
+		t.Error("Response is not success")
+	}
+
+	req, _ = http.NewRequest("POST", "/columns",
+		bytes.NewBufferString(data))
+	w = httptest.NewRecorder()
+	ColumnCreate(w, req)
+
+	if w.Code == 201 {
+		t.Error("Request on /columns should not succeed with non-uniq name")
+	}
+
+	body = w.Body.String()
+	if strings.Contains(body, "success\":true") {
+		t.Error("Response is not success")
+	}
+}
+
+func TestStoryCreateHandler(t *testing.T) {
+	b := NewBoard("testStoryCreate")
+	b.Save()
+	board := GetBoardColumnViewByName("testStoryCreate")
+	c := NewColumn("testColumn", 0, board.Id)
+	c.Save()
+	var column Column
+	columns := GetBoardColumnViewByName(board.Name).Columns
+	for _, col := range columns {
+		if col.Name == "testColumn" {
+			column = col
+		}
+	}
+
+	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"column_id\":%d}", column.Id)
+
+	req, _ := http.NewRequest("POST", "/stories",
+		bytes.NewBufferString(data))
+	w := httptest.NewRecorder()
+	StoryCreate(w, req)
+
+	if w.Code != 201 {
+		t.Error("Request on /stories did not succeed")
+	}
+
+	body := w.Body.String()
+	if !strings.Contains(body, "success\":true") {
+		t.Error("Response is not success")
 	}
 }
