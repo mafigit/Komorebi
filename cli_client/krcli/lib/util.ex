@@ -13,4 +13,8 @@ defmodule Util do
 
   def good(_), do: {:ok, []}
   def good(), do: {:ok, []}
+
+  def error_check(item) do
+    Util.unwrap(item) |> Util.wrap
+  end
 end

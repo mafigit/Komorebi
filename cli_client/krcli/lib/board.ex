@@ -18,10 +18,14 @@ defmodule Krcli.Board do
 
   def parse(input) do
     with {:ok, json} <- input,
-      {:ok, brd} <- JSX.decode(json),
-      cols = Enum.map(brd["columns"], &Krcli.Column.parse/1) |>
-        Krcli.Column.sort,
-    do: {:ok, %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}}
+      {:ok, brd} <- JSX.decode(json),    
+    do: {:ok, from_hash(brd)}
+  end
+
+  def from_hash(brd) do
+    with cols = Enum.map(brd["columns"] || [], &Krcli.Column.parse/1)
+      |> Krcli.Column.sort,
+    do: %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}
   end
 
   def create_board(data) do
@@ -39,6 +43,14 @@ defmodule Krcli.Board do
         IO.puts("Board " <> nname <> " successfully created.") |> Util.good
       {:error, err} -> raise inspect(err)
       unexpected -> raise unexpected
+    end
+  end
+
+  def create_column(nname, board, pos) do
+    case  by_name(board) do
+      {:ok, board} -> Krcli.Column.create(nname, board.id, pos)
+        |> Util.error_check
+      {:error, msg} -> raise msg
     end
   end
 
@@ -61,6 +73,11 @@ defmodule Krcli.Board do
     SbServer.get_json("/boards") |> Util.unwrap |> JSX.decode
   end
 
+  def all_boards do
+    with map_parse = fn(x) -> Enum.map(x, &from_hash/1) end,
+    do: all |> Util.unwrap |> map_parse.() |> Util.wrap
+  end
+
   def list do
     case  all |> show_boards do
         {:error, err} -> raise err
@@ -77,6 +94,8 @@ defmodule Krcli.Board do
     do: if board == :error, do: {:error, "could not find board"},
       else: Util.wrap(board)
   end
+
+  def by_name(name), do: by_name(name, all_boards)
 
   def display(boardname) do
     case SbServer.get_json("/" <> boardname) |> parse |> show_board do
