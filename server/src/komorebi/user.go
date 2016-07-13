@@ -22,19 +22,12 @@ func NewUser(name string, image_path string) User {
 	}
 }
 
+func (u User) GetId() int {
+	return u.Id
+}
+
 func (u User) Save() bool {
-	if u.Id == 0 {
-		if err := dbMapper.Connection.Insert(&u); err != nil {
-			log.Println("save of user failed", err)
-			return false
-		}
-	} else {
-		if _, errUpdate := dbMapper.Connection.Update(&u); errUpdate != nil {
-			log.Println("save of user failed", errUpdate)
-			return false
-		}
-	}
-	return true
+	return dbMapper.Save(&u)
 }
 
 func GetUserByName(name string) User {
