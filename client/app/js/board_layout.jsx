@@ -5,6 +5,7 @@ import MyMenu from './menu';
 import Layout from './layout';
 import ColumnDialog from './column_dialog';
 import StoryDialog from './story_dialog';
+import Colors from './color';
 
 class BoardLayout extends Layout  {
   constructor(props) {
@@ -60,6 +61,7 @@ class BoardLayout extends Layout  {
         title={this.props.title}
         iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
+        style={{backgroundColor: Colors.dark_gray}}
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu} items={this.menu_items}/>
