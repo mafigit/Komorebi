@@ -4,7 +4,13 @@ defmodule Util do
   end
 
   def unwrap(item) do
-    with {:ok, data} <- item,
-    do: data
+    case item do
+      {:ok, data} -> data
+      {:error, err} -> raise err
+      unexpected -> unexpected
+    end
   end
+
+  def good(_), do: {:ok, []}
+  def good(), do: {:ok, []}
 end

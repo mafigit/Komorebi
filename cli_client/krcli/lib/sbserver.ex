@@ -16,4 +16,12 @@ defmodule SbServer do
     end
   end
 
+  def post_json(url, data) do
+    # XXX[mh] do true error handling of http
+    case post(url, data, %{"Content-Type" => "application/json"}, []) do
+      {:ok, data} -> {:ok, data.body}
+      result -> result
+    end
+  end
+
 end
