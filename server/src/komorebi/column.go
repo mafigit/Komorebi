@@ -34,6 +34,14 @@ func NewColumn(name string, position int, boardId int) Column {
 	}
 }
 
+func (c Column) GetId() int {
+	return c.Id
+}
+
+func (c Column) TableName() string {
+	return "columns"
+}
+
 func (c Column) Save() bool {
 	if c.Id == 0 {
 		if c.Position == 0 {
@@ -55,7 +63,8 @@ func (c Column) Save() bool {
 		}
 	}
 	reorderColumns(c.BoardId)
-	board := GetBoardById(c.BoardId)
+	var board Board
+	GetById(&board, c.BoardId)
 	UpdateWebsockets(board.Name, "Columns updated")
 	return true
 }
@@ -116,13 +125,4 @@ func GetColumnsByBoardId(board_id int) Columns {
 		log.Println("Error while fetching columns", board_id)
 	}
 	return cols
-}
-
-func GetColumnById(id int) Column {
-	var column Column
-	err := dbMapper.Connection.SelectOne(&column, "select * from columns where Id=?", id)
-	if err != nil {
-		log.Println("Error while fetching column", id)
-	}
-	return column
 }

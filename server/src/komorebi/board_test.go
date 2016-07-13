@@ -49,7 +49,8 @@ func TestBoardDatabase(t *testing.T) {
 		t.Error("Should save a board")
 	}
 
-	boards := GetAllBoards()
+	var boards Boards
+	GetAll(&boards)
 	b = boards[1]
 	if b.Name != "test" {
 		t.Error("Board should have name test", b.Name)
@@ -62,12 +63,13 @@ func TestBoardDatabase(t *testing.T) {
 	if !b.Save() {
 		t.Error("Should have saved the board", b.Name)
 	}
-	boards = GetAllBoards()
-	lenBoards := len(boards)
+	var new_boards Boards
+	GetAll(&new_boards)
+	lenBoards := len(new_boards)
 	if lenBoards < 2 {
 		t.Error("Should retrieve all boards")
 	}
-	b = boards[1]
+	b = new_boards[1]
 	if b.Name != "update" {
 		t.Error("Should have updated the name to", b.Name)
 	}
@@ -77,15 +79,16 @@ func TestBoardDatabase(t *testing.T) {
 	c1.Save()
 	c2.Save()
 
-	bDelete := boards[0]
+	bDelete := new_boards[0]
 	if bDelete.Id != 1 {
 		t.Error("Unexpeted board to delete")
 	}
 	if !bDelete.Destroy() {
 		t.Error("Should destroy a board")
 	}
-	boards = GetAllBoards()
-	newlenboards := len(boards)
+	var other_boards Boards
+	GetAll(&other_boards)
+	newlenboards := len(other_boards)
 	if lenBoards != (newlenboards + 1) {
 		t.Error("Did not destroy the board")
 	}

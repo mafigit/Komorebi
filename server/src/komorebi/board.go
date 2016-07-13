@@ -58,19 +58,20 @@ func (b Board) Validate() (bool, string) {
 	return success, message
 }
 
+func (b Board) GetId() int {
+	return b.Id
+}
+
+func (b Board) TableName() string {
+	return "boards"
+}
+
+func (b Boards) TableName() string {
+	return "boards"
+}
+
 func (b Board) Save() bool {
-	if b.Id == 0 {
-		if errInsert := dbMapper.Connection.Insert(&b); errInsert != nil {
-			log.Println("save of board failed", errInsert)
-			return false
-		}
-	} else {
-		if _, errUpdate := dbMapper.Connection.Update(&b); errUpdate != nil {
-			log.Println("save of board failed", errUpdate)
-			return false
-		}
-	}
-	return true
+	return dbMapper.Save(&b)
 }
 
 func (b Board) Destroy() bool {
@@ -86,16 +87,6 @@ func (b Board) Destroy() bool {
 		return false
 	}
 	return true
-}
-
-func GetAllBoards() Boards {
-	var boards Boards
-	_, err := dbMapper.Connection.
-		Select(&boards, "select * from boards order by id")
-	if err != nil {
-		log.Println("could not find boards")
-	}
-	return boards
 }
 
 func GetBoardWsByName(name string) BoardWs {
@@ -130,16 +121,6 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	_, err = dbMapper.Connection.Select(&columns,
 		"select * from columns where boardId=? order by Position", board.Id)
 	board.Columns = columns
-	return board
-}
-
-func GetBoardById(id int) Board {
-	var board Board
-	err := dbMapper.Connection.SelectOne(&board,
-		"select * from boards where Id=?", id)
-	if err != nil {
-		log.Println("could not find board with id", id)
-	}
 	return board
 }
 

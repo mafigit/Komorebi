@@ -41,7 +41,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func BoardsGet(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(GetAllBoards())
+	var boards Boards
+	GetAll(&boards)
+	json.NewEncoder(w).Encode(boards)
 }
 
 func BoardShow(w http.ResponseWriter, r *http.Request) {
@@ -155,7 +157,8 @@ func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, _ := strconv.Atoi(board_id)
-	board := GetBoardById(id)
+	var board Board
+	GetById(&board, id)
 
 	if board.Id == 0 && board.CreatedAt == 0 {
 		response.Success = false
@@ -254,7 +257,8 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	old_column := GetColumnById(id)
+	var old_column Column
+	GetById(&old_column, id)
 
 	if old_column.Id == 0 && old_column.CreatedAt == 0 {
 		response.Success = false
@@ -284,7 +288,8 @@ func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, _ := strconv.Atoi(column_id)
-	column := GetColumnById(id)
+	var column Column
+	GetById(&column, id)
 
 	if column.Id == 0 && column.CreatedAt == 0 {
 		response.Success = false

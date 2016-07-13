@@ -53,18 +53,17 @@ func GetStoryById(id int) Story {
 	}
 	return story
 }
+func (s Story) GetId() int {
+	return s.Id
+}
+
+func (s Story) TableName() string {
+	return "users"
+}
 
 func (s Story) Save() bool {
-	if s.Id == 0 {
-		if err := dbMapper.Connection.Insert(&s); err != nil {
-			log.Println("save of story failed", err)
-			return false
-		}
-	} else {
-		if _, errUpdate := dbMapper.Connection.Update(&s); errUpdate != nil {
-			log.Println("save of story failed", errUpdate)
-			return false
-		}
+	if !dbMapper.Save(&s) {
+		return false
 	}
 	board := GetBoardByColumnId(s.ColumnId)
 	UpdateWebsockets(board.Name, "Story updated")

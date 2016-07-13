@@ -26,19 +26,12 @@ func (u User) GetId() int {
 	return u.Id
 }
 
-func (u User) Save() bool {
-	return dbMapper.Save(&u)
+func (u User) TableName() string {
+	return "users"
 }
 
-func GetUserByName(name string) User {
-	var user User
-	err := dbMapper.Connection.
-		SelectOne(&user, "select * from users where Name=?", name)
-	if err != nil {
-		log.Println("could not find user with name", err)
-		log.Println("could not find user with name", name)
-	}
-	return user
+func (u User) Save() bool {
+	return dbMapper.Save(&u)
 }
 
 func (u User) Validate() (bool, string) {
@@ -50,7 +43,8 @@ func (u User) Validate() (bool, string) {
 		message += "Name not present.\n"
 	}
 
-	otherUser := GetUserByName(u.Name)
+	var otherUser User
+	GetByName(&otherUser, u.Name)
 	if otherUser.Id != 0 {
 		log.Println("User validation failed. Name not uniq")
 		success = false
