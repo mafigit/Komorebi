@@ -44,6 +44,19 @@ func GetStoriesByBoradName(board_name string) Stories {
 	return stories
 }
 
+func GetStoriesByColumnId(id int) Stories {
+	var stories Stories
+
+	_, err := dbMapper.Connection.
+		Select(&stories, "select stories.* from stories left join "+
+			"columns on columns.Id = stories.ColumnId "+
+			"where columns.Id=? order by stories.Id", id)
+	if err != nil {
+		log.Println("could not find stories")
+	}
+	return stories
+}
+
 func GetStoryById(id int) Story {
 	var story Story
 	err := dbMapper.Connection.SelectOne(&story,

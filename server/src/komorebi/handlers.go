@@ -142,6 +142,14 @@ func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func StoriesGetByColumn(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	column_id := vars["column_id"]
+	id, _ := strconv.Atoi(column_id)
+	stories := GetStoriesByColumnId(id)
+	json.NewEncoder(w).Encode(stories)
+}
+
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_id := vars["board_id"]
