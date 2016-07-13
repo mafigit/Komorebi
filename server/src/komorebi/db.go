@@ -15,6 +15,11 @@ type Db struct {
 
 type Model interface {
 	GetId() int
+	TableName() string
+}
+
+type Models interface {
+	TableName() string
 }
 
 var dbMapper Db
@@ -56,6 +61,37 @@ func (d Db) Save(i Model) bool {
 			log.Println("update failed", errUpdate)
 			return false
 		}
+	}
+	return true
+}
+
+func GetById(i Model, id int) bool {
+	err := dbMapper.Connection.SelectOne(i, "select * from "+
+		i.TableName()+" where Id=?", id)
+	if err != nil {
+		log.Println("could not find model", err)
+		return false
+	}
+	return true
+}
+
+func GetByName(i Model, name string) bool {
+	err := dbMapper.Connection.SelectOne(i, "select * from "+
+		i.TableName()+" where Name=?", name)
+	if err != nil {
+		log.Println("could not find model", err)
+		return false
+	}
+	return true
+}
+
+func GetAll(i Models) bool {
+	_, err := dbMapper.Connection.
+		Select(i, "select * from "+
+			i.TableName()+" order by id")
+	if err != nil {
+		log.Println("could not find model", err)
+		return false
 	}
 	return true
 }

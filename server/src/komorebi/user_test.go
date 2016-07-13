@@ -55,3 +55,13 @@ func TestUserValidation(t *testing.T) {
 		t.Error("Should be invalid by not uniq")
 	}
 }
+
+func TestGetById(t *testing.T) {
+	var u User
+	if !GetById(&u, 1) {
+		t.Error("Should get user by Id")
+	}
+	if u.Name != "haensel" {
+		t.Error("Should have name haensel got:", u.Name)
+	}
+}
