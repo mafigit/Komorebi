@@ -69,3 +69,8 @@ POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2}' localhost:8080/tasks
 => create a task
 => {"success":true,"message":""}
+
+GET /columns/{:column_id}/stories
+curl   localhost:8080/columns/1/stories
+=> get stories from column 1
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and thattttt","created_at":0,"column_id":1}]
