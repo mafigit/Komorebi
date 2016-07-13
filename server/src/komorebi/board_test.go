@@ -15,6 +15,7 @@ func TestMain(m *testing.M) {
 	tableMap.ColMap("Requirements").SetMaxSize(1024)
 	db.AddTable(Board{}, "boards")
 	db.AddTable(Column{}, "columns")
+	db.AddTable(User{}, "users")
 	db.CreateTables()
 	fmt.Println("created db " + file.Name())
 
