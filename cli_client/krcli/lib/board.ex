@@ -1,13 +1,17 @@
 defmodule Krcli.Board do
   defstruct [:id, :name, :columns]
 
+  use FN, url: "/boards", name: "Board"
+
   defmodule Print do
     def board(board) do
       IO.puts "Board is called: " <> board.name
     end
 
     def board_columns(cols) do
-      Enum.map(cols, fn(x) -> :io.format(" ~-15s|", [x.name]) end )
+      with map_fn = fn(x) -> :io.format(" ~-15s|", [x.name]) end,
+        {:ok, scols} <- Krcli.Column.sort({:ok, cols}),
+        do: Enum.map(scols, map_fn)
       IO.puts("")
     end
 
@@ -18,28 +22,30 @@ defmodule Krcli.Board do
 
   def parse(input) do
     with {:ok, json} <- input,
-      {:ok, brd} <- JSX.decode(json),
-      cols = Enum.map(brd["columns"], &Krcli.Column.parse/1) |>
-        Krcli.Column.sort,
-    do: {:ok, %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}}
+      {:ok, brd} <- JSX.decode(json),    
+    do: {:ok, from_hash(brd)}
+  end
+
+  def from_hash(brd) do
+    with cols = Enum.map(brd["columns"] || [], &Krcli.Column.parse/1)
+      |> Krcli.Column.sort,
+    do: %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}
   end
 
   def create_board(data) do
     with {:ok, json} <- data,
-      {:ok, json_result} <- SbServer.post_json("/boards", json),
-      {:ok, result} <- JSX.decode(json_result),
-      do:
-        if result["success"], do: {:ok, ""},
-          else: {:error, result["message"]}
+      {:ok, result} <- SbServer.post_json("/boards", json),
+      do: Util.success?(result)
   end
 
   def create(nname) do
-    case JSX.encode(%{name: nname}) |> create_board do
-      {:ok, _} ->
-        IO.puts("Board " <> nname <> " successfully created.") |> Util.good
-      {:error, err} -> raise inspect(err)
-      unexpected -> raise unexpected
-    end
+    JSX.encode(%{name: nname})
+    |> create_board
+    |> Util.comply!("Board " <> nname <> " successfully created.")
+  end
+
+  def create_column(nname, board) do
+    with_item(board, &(Krcli.Column.create(nname, &1.id)))
   end
 
   defp show_board(input) do
@@ -56,33 +62,20 @@ defmodule Krcli.Board do
       {:error, err} -> raise err  
     end
   end
-
-  def all do
-    SbServer.get_json("/boards") |> Util.unwrap |> JSX.decode
+ 
+  def destroy_column(column, board) do
+    with_item(board, &(Krcli.Column.destroy(column, &1) |> Util.comply_good))
   end
 
   def list do
-    case  all |> show_boards do
-        {:error, err} -> raise err
-        {:ok, _} -> Util.good()
-        unexpected -> raise unexpected
-      end
+    all_json |> show_boards |> Util.comply_good
   end
 
-  def by_name(name, board_data) do
-    with lname = String.downcase(name),
-      grep_by_name = fn(x) -> String.downcase(x.name) == lname end,
-      {:ok, boards} <- board_data,
-      board = Enum.find(boards, :error, grep_by_name),
-    do: if board == :error, do: {:error, "could not find board"},
-      else: Util.wrap(board)
+  def fetch(name) do
+    SbServer.get_json("/" <> name) |> parse
   end
 
   def display(boardname) do
-    case SbServer.get_json("/" <> boardname) |> parse |> show_board do
-        {:error, err} -> raise err
-        {:ok, _} -> :ok
-        unexpected -> raise unexpected
-    end
+    fetch(boardname) |> show_board |> Util.comply_good
   end
 end

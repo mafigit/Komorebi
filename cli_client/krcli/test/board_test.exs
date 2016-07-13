@@ -13,7 +13,7 @@ defmodule BoardTest do
   test "should find all boards by name" do
     match_test = (fn(x) -> x.name == "bcd" end)
     not_match_test = (fn({:error, message}) ->
-      message == "could not find board" end)
+      message == "could not find Board" end)
     boards = [%Krcli.Board{name: "abc"}, %Krcli.Board{name: "bcd"}]
     
     assert Krcli.Board.by_name("bcd", {:ok, boards}) |>
