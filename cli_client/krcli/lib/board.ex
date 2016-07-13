@@ -7,7 +7,9 @@ defmodule Krcli.Board do
     end
 
     def board_columns(cols) do
-      Enum.map(cols, fn(x) -> :io.format(" ~-15s|", [x.name]) end )
+      with map_fn = fn(x) -> :io.format(" ~-15s|", [x.name]) end,
+        {:ok, scols} <- Krcli.Column.sort({:ok, cols}),
+        do: Enum.map(scols, map_fn)
       IO.puts("")
     end
 
@@ -46,9 +48,9 @@ defmodule Krcli.Board do
     end
   end
 
-  def create_column(nname, board, pos) do
+  def create_column(nname, board) do
     case  by_name(board) do
-      {:ok, board} -> Krcli.Column.create(nname, board.id, pos)
+      {:ok, board} -> Krcli.Column.create(nname, board.id)
         |> Util.error_check
       {:error, msg} -> raise msg
     end

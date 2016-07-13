@@ -17,16 +17,13 @@ defmodule Krcli.Column do
       {:ok, json_result} <- SbServer.post_json("/columns", json),
       {:ok, result} <- JSX.decode(json_result),
       do:
-        if result["success"], do: {:ok, ""},
-          else: {:error, result["message"]}
+        if result["success"],
+          do: IO.puts("Column successfully created") |> Util.good,
+        else: {:error, result["message"]}
   end
 
-  def create(nname, board, pos) do
-    case Integer.parse(pos) do
-      :error -> {:error, "position not an integer"}
-      {posnr,_} -> JSX.encode(%{name: nname, position: posnr, board_id: board})
-        |> create_column
-    end
+  def create(nname, board) do
+    JSX.encode(%{name: nname, board_id: board}) |> create_column
   end
 
 end
