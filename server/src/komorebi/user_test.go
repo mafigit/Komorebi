@@ -43,4 +43,15 @@ func TestUserValidation(t *testing.T) {
 	if success == true || msg != "ImagePath not present.\n" {
 		t.Error("Should be invalid by missing ImagePath")
 	}
+	u2 := User{
+		Name:      "Franz",
+		ImagePath: "/tmp/foo",
+	}
+	u2.Save()
+	u.Name = u2.Name
+	u.ImagePath = "/tmp/foo"
+	success, msg = u.Validate()
+	if success == true || msg != "Name not uniq.\n" {
+		t.Error("Should be invalid by not uniq")
+	}
 }
