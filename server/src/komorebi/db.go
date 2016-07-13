@@ -28,9 +28,10 @@ func InitDb(path string) Db {
 	return dbMapper
 }
 
-func (d Db) AddTable(i interface{}, name string) {
+func (d Db) AddTable(i interface{}, name string) *gorp.TableMap {
 	con := d.Connection
-	con.AddTableWithName(i, name).SetKeys(true, "Id")
+	t := con.AddTableWithName(i, name).SetKeys(true, "Id")
+	return t
 }
 
 func (d Db) CreateTables() {

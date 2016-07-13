@@ -10,7 +10,9 @@ import (
 func TestMain(m *testing.M) {
 	file, _ := ioutil.TempFile(os.TempDir(), "komorebi")
 	db := InitDb(file.Name())
-	db.AddTable(Story{}, "stories")
+	tableMap := db.AddTable(Story{}, "stories")
+	tableMap.ColMap("Desc").SetMaxSize(1024)
+	tableMap.ColMap("Requirements").SetMaxSize(1024)
 	db.AddTable(Board{}, "boards")
 	db.AddTable(Column{}, "columns")
 	db.CreateTables()
