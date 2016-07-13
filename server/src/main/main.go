@@ -17,6 +17,7 @@ func main() {
 	db.AddTable(komorebi.Board{}, "boards")
 	db.AddTable(komorebi.Column{}, "columns")
 	db.AddTable(komorebi.User{}, "users")
+	db.AddTable(komorebi.Task{}, "tasks")
 	tableMap := db.AddTable(komorebi.Story{}, "stories")
 	tableMap.ColMap("Desc").SetMaxSize(1024)
 	tableMap.ColMap("Requirements").SetMaxSize(1024)
