@@ -59,3 +59,8 @@ curl  localhost:8080/gz/stories
 POST /stories/{:id}
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1, "id":3 }' localhost:8080/stories/3
 => Update story
+
+POST /users
+curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg"}' localhost:8080/users
+=> create a user
+=> {"success":true,"message":""}

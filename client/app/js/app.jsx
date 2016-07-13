@@ -22,6 +22,12 @@ class App extends React.Component {
     }
   }
 
+  componentDidMount = () => {
+    window.onresize = (event) => {
+      this.boardReloadHandler();
+    };
+  }
+
   boardLoadedHandler = (board) => {
     this.getStories((stories) => {
       this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});

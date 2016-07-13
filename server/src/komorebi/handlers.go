@@ -4,13 +4,30 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 )
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+type Connection struct {
+	Ws          *websocket.Conn
+	BoardStruct *BoardWs
+}
+
+var connections = make(map[string][]*Connection, 0)
 
 type Response struct {
 	Success bool   `json:"success"`
@@ -140,7 +157,7 @@ func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(board_id)
 	board := GetBoardById(id)
 
-	if board == nil {
+	if board.Id == 0 && board.CreatedAt == 0 {
 		response.Success = false
 		response.Message = "Board does not exist"
 
@@ -179,6 +196,35 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if column.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
+func UserCreate(w http.ResponseWriter, r *http.Request) {
+	var user User
+
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	user = NewUser(user.Name, user.ImagePath)
+	success, msg := user.Validate()
+	response := Response{
+		Success: success,
+		Message: msg,
+	}
+	if response.Success == false {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if user.Save() {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(response)
 	} else {
@@ -324,7 +370,66 @@ func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
+}
 
+func delete_ws_from_connections(ws *websocket.Conn, board_name string) {
+	for i := range connections[board_name] {
+		if connections[board_name][i].Ws == ws {
+			connections[board_name] =
+				connections[board_name][:i+copy(connections[board_name][i:],
+					connections[board_name][i+1:])]
+			break
+		}
+	}
+
+}
+
+func HandleWs(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, w.Header())
+	vars := mux.Vars(r)
+	board_name := vars["board_name"]
+
+	if err != nil {
+		fmt.Println("could not open websocket connection: ", err)
+		return
+	}
+
+	board_struct := GetBoardWsByName(board_name)
+	con := &Connection{
+		Ws:          ws,
+		BoardStruct: &board_struct,
+	}
+
+	defer func() {
+		fmt.Println("connection closing ", board_name)
+		con.Ws.Close()
+		delete_ws_from_connections(con.Ws, board_name)
+	}()
+
+	connections[board_name] = append(connections[board_name], con)
+	fmt.Println("connections: ", connections)
+	err = ws.WriteMessage(websocket.TextMessage, []byte("Connection established"))
+	if err != nil {
+		fmt.Println("error on write:", err)
+	}
+	ws.ReadMessage()
+}
+
+func UpdateWebsockets(board_name string, msg string) {
+	fmt.Println("Update Websockets for", board_name)
+	current_struct := GetBoardWsByName(board_name)
+
+	for i := range connections[board_name] {
+
+		if !reflect.DeepEqual(*connections[board_name][i].BoardStruct, current_struct) {
+			err := connections[board_name][i].Ws.WriteMessage(websocket.TextMessage, []byte(msg))
+			connections[board_name][i].BoardStruct = &current_struct
+			if err != nil {
+				fmt.Println("err", err)
+			}
+		}
+
+	}
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {

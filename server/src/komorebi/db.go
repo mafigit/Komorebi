@@ -13,6 +13,10 @@ type Db struct {
 	Path       string
 }
 
+type Model interface {
+	GetId() int
+}
+
 var dbMapper Db
 
 func InitDb(path string) Db {
@@ -39,6 +43,21 @@ func (d Db) CreateTables() {
 	// use a migration tool, or create the tables via scripts
 	err := d.Connection.CreateTablesIfNotExists()
 	checkErr(err, "Create tables failed")
+}
+
+func (d Db) Save(i Model) bool {
+	if i.GetId() == 0 {
+		if err := dbMapper.Connection.Insert(i); err != nil {
+			log.Println("create failed", err)
+			return false
+		}
+	} else {
+		if _, errUpdate := dbMapper.Connection.Update(i); errUpdate != nil {
+			log.Println("update failed", errUpdate)
+			return false
+		}
+	}
+	return true
 }
 
 func checkErr(err error, msg string) {
