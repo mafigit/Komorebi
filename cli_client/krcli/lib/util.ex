@@ -12,4 +12,5 @@ defmodule Util do
   end
 
   def good(_), do: {:ok, []}
+  def good(), do: {:ok, []}
 end

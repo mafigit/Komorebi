@@ -3,6 +3,7 @@ defmodule KrOpts do
     case args do
       [board, "show"] -> Krcli.Board.display(board)
       ["boards"] -> Krcli.Board.list
+      ["board", "new", board] -> Krcli.Board.create(board)
       _ -> error(:no_opt)
     end
   end

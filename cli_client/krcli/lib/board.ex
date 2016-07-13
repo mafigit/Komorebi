@@ -24,6 +24,24 @@ defmodule Krcli.Board do
     do: {:ok, %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}}
   end
 
+  def create_board(data) do
+    with {:ok, json} <- data,
+      {:ok, json_result} <- SbServer.post_json("/boards", json),
+      {:ok, result} <- JSX.decode(json_result),
+      do:
+        if result["success"], do: {:ok, ""},
+          else: {:error, result["message"]}
+  end
+
+  def create(nname) do
+    case JSX.encode(%{name: nname}) |> create_board do
+      {:ok, _} ->
+        IO.puts("Board " <> nname <> " successfully created.") |> Util.good
+      {:error, err} -> raise inspect(err)
+      unexpected -> raise unexpected
+    end
+  end
+
   defp show_board(input) do
     with {:ok, board} <- input,
       :ok <- Print.board(board),
@@ -39,13 +57,25 @@ defmodule Krcli.Board do
     end
   end
 
+  def all do
+    SbServer.get_json("/boards") |> Util.unwrap |> JSX.decode
+  end
+
   def list do
-    case SbServer.get_json("/boards") |>
-      Util.unwrap |> JSX.decode |> show_boards do
+    case  all |> show_boards do
         {:error, err} -> raise err
-        {:ok, _} -> :ok
+        {:ok, _} -> Util.good()
         unexpected -> raise unexpected
       end
+  end
+
+  def by_name(name, board_data) do
+    with lname = String.downcase(name),
+      grep_by_name = fn(x) -> String.downcase(x.name) == lname end,
+      {:ok, boards} <- board_data,
+      board = Enum.find(boards, :error, grep_by_name),
+    do: if board == :error, do: {:error, "could not find board"},
+      else: Util.wrap(board)
   end
 
   def display(boardname) do
