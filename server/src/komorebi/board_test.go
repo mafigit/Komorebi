@@ -17,6 +17,7 @@ func TestMain(m *testing.M) {
 	db.AddTable(Board{}, "boards")
 	db.AddTable(Column{}, "columns")
 	db.AddTable(User{}, "users")
+	db.AddTable(Task{}, "tasks")
 	db.CreateTables()
 	fmt.Println("created db " + file.Name())
 
