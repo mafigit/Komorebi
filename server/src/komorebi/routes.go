@@ -114,4 +114,10 @@ var routes = Routes{
 		"/{board_name}/ws",
 		HandleWs,
 	},
+	Route{
+		"TaskCreate",
+		"POST",
+		"/tasks",
+		TaskCreate,
+	},
 }
