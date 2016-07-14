@@ -48,3 +48,20 @@ func TestStoryValidation(t *testing.T) {
 		t.Error("Should be invalid by missing column id")
 	}
 }
+
+func TestStoryDelete(t *testing.T) {
+	s := NewStory(
+		"Story to delete",
+		"A description",
+		"a lot of requirements",
+		5,
+		1,
+	)
+	s.Save()
+
+	var story Story
+	GetByName(&story, "Story to delete")
+	if !story.Destroy() {
+		t.Error("Should destroy a story")
+	}
+}

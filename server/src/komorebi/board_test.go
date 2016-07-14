@@ -169,3 +169,54 @@ func TestBoardWs(t *testing.T) {
 		t.Error("should not be equal res2: ", res1)
 	}
 }
+
+func TestBoardNestedDelete(t *testing.T) {
+	b := NewBoard("testNestedDelete")
+	b.Save()
+	var board Board
+	GetByName(&board, b.Name)
+
+	c := NewColumn("ColumnToDelete", 0, board.Id)
+	c.Save()
+	var column Column
+	GetByName(&column, c.Name)
+
+	s := NewStory(
+		"Storytodelete",
+		"description",
+		"Do this and that",
+		5,
+		column.Id,
+	)
+	s.Save()
+	var story Story
+	GetByName(&story, s.Name)
+
+	ta := NewTask(
+		"TasktoDelete",
+		"a desc",
+		story.Id,
+		column.Id,
+	)
+	ta.Save()
+	var task Task
+	GetByName(&task, ta.Name)
+
+	board.Destroy()
+
+	if GetByName(&board, board.Name) {
+		t.Error("Board should be deleted")
+	}
+
+	if GetByName(&column, c.Name) {
+		t.Error("column should be deleted")
+	}
+
+	if GetByName(&story, s.Name) {
+		t.Error("story should be deleted")
+	}
+
+	if GetByName(&task, ta.Name) {
+		t.Error("task should be deleted")
+	}
+}
