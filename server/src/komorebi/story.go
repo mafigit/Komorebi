@@ -9,6 +9,7 @@ type Story struct {
 	DbModel
 	Desc         string `json:"desc"`
 	Points       int    `json:"points"`
+	Priority     int    `json:"priority"`
 	Requirements string `json:"requirements"`
 	ColumnId     int    `json:"column_id"`
 }
@@ -16,7 +17,7 @@ type Story struct {
 type Stories []Story
 
 func NewStory(name string, desc string, requirements string, points int,
-	columnId int) Story {
+	priority int, columnId int) Story {
 
 	return Story{
 		DbModel: DbModel{
@@ -24,6 +25,7 @@ func NewStory(name string, desc string, requirements string, points int,
 			Name:      name,
 		},
 		Requirements: requirements,
+		Priority:     priority,
 		Points:       points,
 		ColumnId:     columnId,
 		Desc:         desc,
@@ -125,6 +127,11 @@ func (s Story) Validate() (bool, string) {
 		log.Println("Story validation failed. ColumnId not set.")
 		success = false
 		message += "ColumnId not set.\n"
+	}
+	if s.Priority <= 0 || s.Priority > 10 {
+		log.Println("Story validation failed. Priority out of range")
+		success = false
+		message += "Priority out of range.\n"
 	}
 
 	return success, message

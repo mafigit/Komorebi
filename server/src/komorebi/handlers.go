@@ -318,7 +318,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
-		story.ColumnId)
+		story.Priority, story.ColumnId)
 	modelCreate(story, w, r)
 }
 
@@ -444,7 +444,8 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
+	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId,
+		task.Priority)
 	modelCreate(task, w, r)
 }
 

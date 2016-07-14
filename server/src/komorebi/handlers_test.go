@@ -131,7 +131,8 @@ func TestStoryCreateHandler(t *testing.T) {
 		}
 	}
 
-	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"column_id\":%d}", column.Id)
+	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"column_id\":%d, \"priority\":4}",
+		column.Id)
 
 	req, _ := http.NewRequest("POST", "/stories",
 		bytes.NewBufferString(data))
@@ -161,7 +162,7 @@ func TestTaskCreateHandler(t *testing.T) {
 			column = col
 		}
 	}
-	s := NewStory("testStory", "desc", "req", 0, column.Id)
+	s := NewStory("testStory", "desc", "req", 0, 4, column.Id)
 	s.Save()
 
 	stories := GetStoriesByBoradName(board.Name)
@@ -173,7 +174,8 @@ func TestTaskCreateHandler(t *testing.T) {
 	}
 
 	data := fmt.Sprintf("{\"name\":\"testTask\",\"desc\":\"foo desc\","+
-		"\"column_id\":%d,\"story_id\":%d}", column.Id, story.Id)
+		"\"column_id\":%d,\"story_id\":%d, \"priority\": 5}",
+		column.Id, story.Id)
 
 	req, _ := http.NewRequest("POST", "/task",
 		bytes.NewBufferString(data))
