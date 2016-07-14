@@ -186,6 +186,7 @@ func TestBoardNestedDelete(t *testing.T) {
 		"description",
 		"Do this and that",
 		5,
+		4,
 		column.Id,
 	)
 	s.Save()
@@ -197,6 +198,7 @@ func TestBoardNestedDelete(t *testing.T) {
 		"a desc",
 		story.Id,
 		column.Id,
+		1,
 	)
 	ta.Save()
 	var task Task

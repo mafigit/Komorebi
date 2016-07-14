@@ -3,7 +3,6 @@ package komorebi
 import (
 	"log"
 	"regexp"
-	"time"
 )
 
 type Board struct {
@@ -26,8 +25,7 @@ type BoardColumnViews []BoardColumnView
 func NewBoard(name string) Board {
 	return Board{
 		DbModel: DbModel{
-			CreatedAt: time.Now().UnixNano(),
-			Name:      name,
+			Name: name,
 		},
 	}
 }
@@ -46,7 +44,7 @@ func (b Board) Validate() (bool, string) {
 		message += "Name not valid.\n"
 	}
 	board := GetBoardColumnViewByName(b.Name)
-	if board.Id != 0 && board.CreatedAt != 0 {
+	if board.Id != 0 {
 		log.Println("Board validation failed. Name not uniq")
 		success = false
 		message += "Name not uniq.\n"

@@ -2,12 +2,11 @@ package komorebi
 
 import (
 	"log"
-	"time"
 )
 
 type Task struct {
 	DbModel
-	Desc     string `json:"Desc"`
+	Desc     string `json:"desc"`
 	StoryId  int    `json:"story_id"`
 	Priority int    `json:"priority"`
 	ColumnId int    `json:"column_id"`
@@ -19,8 +18,7 @@ func NewTask(name string, desc string, story_id int, column_id int,
 	priority int) Task {
 	return Task{
 		DbModel: DbModel{
-			Name:      name,
-			CreatedAt: time.Now().UnixNano(),
+			Name: name,
 		},
 		Desc:     desc,
 		Priority: priority,

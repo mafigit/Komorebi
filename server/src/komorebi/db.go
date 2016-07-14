@@ -17,18 +17,15 @@ type Db struct {
 type Model interface {
 	GetId() int
 	SetUpdatedAt()
-	SetCreatedAt(int64)
 	TableName() string
 	Save() bool
 	Validate() (bool, string)
-	GetCreatedAt() int64
 	Destroy() bool
 }
 
 type DbModel struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
-	CreatedAt int64  `json:"created_at"`
 	UpdatedAt int64  `json:"updated_at"`
 }
 
@@ -38,14 +35,6 @@ type Models interface {
 
 func (m DbModel) GetId() int {
 	return m.Id
-}
-
-func (m DbModel) GetCreatedAt() int64 {
-	return m.CreatedAt
-}
-
-func (m DbModel) SetCreatedAt(time int64) {
-	m.CreatedAt = time
 }
 
 func (m DbModel) SetUpdatedAt() {
@@ -80,23 +69,24 @@ func (d Db) CreateTables() {
 	checkErr(err, "Create tables failed")
 }
 
+func (m *DbModel) PreInsert(s gorp.SqlExecutor) error {
+	m.UpdatedAt = time.Now().UnixNano()
+	return nil
+}
+
+func (m *DbModel) PreUpdate(s gorp.SqlExecutor) error {
+	m.UpdatedAt = time.Now().UnixNano()
+	return nil
+}
+
 func (d Db) Save(i Model) bool {
 
-	i.SetUpdatedAt()
 	if i.GetId() == 0 {
 		if err := dbMapper.Connection.Insert(i); err != nil {
 			log.Println("create failed", err)
 			return false
 		}
 	} else {
-		var time int64
-		err := dbMapper.Connection.SelectOne(&time, "select CreatedAt from "+
-			i.TableName()+" where Id=?", i.GetId())
-		if err != nil {
-			log.Println("could not fetch CreatedAt", err)
-			return false
-		}
-		i.SetCreatedAt(time)
 		if _, errUpdate := dbMapper.Connection.Update(i); errUpdate != nil {
 			log.Println("update failed", errUpdate)
 			return false

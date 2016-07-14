@@ -52,7 +52,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	content_type := r.Header.Get("Accept")
 	board_column := GetBoardColumnViewByName(board_name)
 
-	if board_column.Id == 0 && board_column.CreatedAt == 0 {
+	if board_column.Id == 0 {
 		OwnNotFound(w, r)
 		return
 	}
@@ -105,13 +105,23 @@ func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter,
 		return
 	}
 
-	if old_m.GetId() == 0 && old_m.GetCreatedAt() == 0 {
+	if old_m.GetId() == 0 {
 		response.Success = false
 		response.Message = "Model does not exist"
 
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
+	}
+
+	success, msg := update_m.Validate()
+
+	if success == false {
+		response.Success = success
+		response.Message = msg
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
 	}
 
 	if update_m.Save() {
@@ -259,7 +269,7 @@ func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
 		Message: "",
 	}
 
-	if m.GetId() == 0 && m.GetCreatedAt() == 0 {
+	if m.GetId() == 0 {
 		response.Success = false
 		response.Message = "Model does not exist"
 		w.WriteHeader(200)

@@ -2,7 +2,6 @@ package komorebi
 
 import (
 	"log"
-	"time"
 )
 
 type Column struct {
@@ -24,8 +23,7 @@ type Columns []Column
 func NewColumn(name string, position int, boardId int) Column {
 	return Column{
 		DbModel: DbModel{
-			CreatedAt: time.Now().UnixNano(),
-			Name:      name,
+			Name: name,
 		},
 		Position: position,
 		BoardId:  boardId,
@@ -100,7 +98,7 @@ func (c Column) Validate() (bool, string) {
 	}
 
 	board := GetBoardColumnViewById(c.BoardId)
-	if board.Id == 0 && board.CreatedAt == 0 {
+	if board.Id == 0 {
 		log.Println("Column validation failed. BoardId does not exist:", c.BoardId)
 		success = false
 		message += "Board does not exist.\n"

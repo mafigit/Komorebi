@@ -66,6 +66,7 @@ func TestStoryDelete(t *testing.T) {
 		"A description",
 		"a lot of requirements",
 		5,
+		3,
 		1,
 	)
 	s.Save()
