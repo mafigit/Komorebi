@@ -68,7 +68,7 @@ func GetStoryById(id int) Story {
 }
 
 func (s Story) TableName() string {
-	return "users"
+	return "stories"
 }
 
 func (s Story) Save() bool {
@@ -78,6 +78,34 @@ func (s Story) Save() bool {
 	board := GetBoardByColumnId(s.ColumnId)
 	UpdateWebsockets(board.Name, "Story updated")
 	return true
+}
+
+func (s Story) Destroy() bool {
+	if s.Id == 0 {
+		return true
+	}
+
+	tasks := GetTasksByStoryId(s.Id)
+	for _, task := range tasks {
+		task.Destroy()
+	}
+
+	if _, errDelete := dbMapper.Connection.Delete(&s); errDelete != nil {
+		log.Println("delete of story failed.", errDelete)
+		return false
+	}
+	return true
+}
+
+func GetTasksByStoryId(story_id int) Tasks {
+	var tasks Tasks
+
+	_, err := dbMapper.Connection.Select(&tasks,
+		"select * from tasks where StoryId=? order by Id ", story_id)
+	if err != nil {
+		log.Println("Error while fetching tasks", story_id)
+	}
+	return tasks
 }
 
 func (s Story) Validate() (bool, string) {

@@ -47,3 +47,19 @@ func TestTaskValidation(t *testing.T) {
 		t.Error("Should be invalid by missing StoryId")
 	}
 }
+
+func TestTaskDelete(t *testing.T) {
+	ta := NewTask(
+		"Task to delete",
+		"A description",
+		1,
+		1,
+	)
+	ta.Save()
+
+	var task Task
+	GetByName(&task, "Task to delete")
+	if !task.Destroy() {
+		t.Error("Should destroy a task")
+	}
+}

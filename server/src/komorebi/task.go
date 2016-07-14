@@ -34,6 +34,17 @@ func (t Task) Save() bool {
 	return dbMapper.Save(&t)
 }
 
+func (t Task) Destroy() bool {
+	if t.Id == 0 {
+		return true
+	}
+	if _, errDelete := dbMapper.Connection.Delete(&t); errDelete != nil {
+		log.Println("delete of task failed.", errDelete)
+		return false
+	}
+	return true
+}
+
 func (t Task) Validate() (bool, string) {
 	success, message := true, ""
 

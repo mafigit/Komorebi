@@ -67,7 +67,12 @@ func (c Column) Destroy() bool {
 	if c.Id == 0 {
 		return true
 	}
-	// TODO: Destroy all stroys with columnId = c.Id
+
+	stories := GetStoriesByColumnId(c.Id)
+	for _, story := range stories {
+		story.Destroy()
+	}
+
 	if _, errDelete := dbMapper.Connection.Delete(&c); errDelete != nil {
 		log.Println("delete of column failed.", errDelete)
 		return false
