@@ -1,12 +1,27 @@
 # Komorebi
 
+Komorebi is a digital Kanban/Scrum Board solution with focus on a minimal
+feature set. It is designed as an inhouse solution. Which means there is no
+focus on security.
+
+![Screenshot](https://raw.github.com/mafigit/komorebi/master/screenshot.png)
+
 ## Framework and overall design
-### Material-UI
+
+### Frontend
+Frontend is written in React.js with Material-UI.
+To build the front end you need node/npm already installed.
+
+### Backend
+The backend is written in go and uses a sqlite3 Database.
 
 
+## Notes for contributers
+
+### Examples for material-ui
 [Demo](http://www.material-ui.com/#/components/app-bar)
 
-## Color Palette
+### Color Palette
    * green: 129793
    * dark-gray: 505050
    * light-yellow: FFF5C3
