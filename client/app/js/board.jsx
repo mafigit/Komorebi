@@ -8,14 +8,14 @@ class Board extends React.Component {
     super(props);
   }
 
-  updateStory = (story, column) => {
+  updateStory = (story, column_id) => {
     let data = {
       "id": parseInt(story.id),
       "name": story.name,
       "desc": story.desc,
       "requirements": story.requirements,
       "points": story.points,
-      "column_id": parseInt(column.id)
+      "column_id": parseInt(column_id)
     }
     Ajax.postJson('/stories/' + story.id, data).then(response => {
       var response_obj = JSON.parse(response.responseText);
@@ -33,7 +33,8 @@ class Board extends React.Component {
 
   componentDidUpdate() {
     this.board_canvas =
-      new BoardCanvas('board', this.props.columns, this.props.stories, {story: this.updateStory});
+      new BoardCanvas('board', this.props.columns, this.props.stories,
+        {story: this.updateStory, reload: this.props.boardReloadHandler});
   }
 
   render() {

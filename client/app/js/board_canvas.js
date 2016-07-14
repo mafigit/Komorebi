@@ -33,7 +33,14 @@ class BoardCanvas {
       _target.moveTo(this.layer);
       var drop_element = shape.parent;
       if (drop_element && _target) {
-        this.handler.story(_target.my_attrs, drop_element.my_attrs);
+        let column_id = 0;
+        if (drop_element.constructor.name == "ColumnGroup") {
+          column_id = drop_element.my_attrs.id;
+        } else {
+          column_id = drop_element.my_attrs.column_id;
+        }
+        this.handler.story(_target.my_attrs, column_id);
+        this.handler.reload();
       }
     });
   }
