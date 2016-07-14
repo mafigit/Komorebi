@@ -9,9 +9,10 @@ type Task struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	Desc      string `json:"Desc"`
-	CreatedAt int64  `json:"created_at"`
 	StoryId   int    `json:"story_id"`
 	ColumnId  int    `json:"column_id"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 }
 
 type Tasks []Task
@@ -32,6 +33,10 @@ func (t Task) GetId() int {
 
 func (t Task) GetCreatedAt() int64 {
 	return t.CreatedAt
+}
+
+func (t Task) SetUpdatedAt() {
+	t.UpdatedAt = time.Now().UnixNano()
 }
 
 func (t Task) TableName() string {

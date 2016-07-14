@@ -11,8 +11,9 @@ type Story struct {
 	Desc         string `json:"desc"`
 	Points       int    `json:"points"`
 	Requirements string `json:"requirements"`
-	CreatedAt    int64  `json:"created_at"`
 	ColumnId     int    `json:"column_id"`
+	CreatedAt    int64  `json:"created_at"`
+	UpdatedAt    int64  `json:"updated_at"`
 }
 
 type Stories []Story
@@ -76,6 +77,10 @@ func (s Story) GetCreatedAt() int64 {
 
 func (s Story) TableName() string {
 	return "users"
+}
+
+func (s Story) SetUpdatedAt() {
+	s.UpdatedAt = time.Now().UnixNano()
 }
 
 func (s Story) Save() bool {

@@ -10,12 +10,14 @@ type Board struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 }
 
 type BoardColumnView struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
 	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 	Columns   `json:"columns"`
 }
 
@@ -23,6 +25,7 @@ type BoardWs struct {
 	Id        int
 	Name      string
 	CreatedAt int64
+	UpdatedAt int64
 	ColumnsWs
 }
 
@@ -64,6 +67,9 @@ func (b Board) GetId() int {
 
 func (b Board) GetCreatedAt() int64 {
 	return b.CreatedAt
+}
+func (b Board) SetUpdatedAt() {
+	b.UpdatedAt = time.Now().UnixNano()
 }
 
 func (b Board) TableName() string {
@@ -118,7 +124,7 @@ func GetBoardColumnViewByName(name string) BoardColumnView {
 	err := dbMapper.Connection.
 		SelectOne(&board, "select * from boards where Name=?", name)
 	if err != nil {
-		log.Println("could not find board with name", name)
+		log.Println("could not find board by name", err)
 		return board
 	}
 	var columns Columns
