@@ -24,10 +24,7 @@ func TestUserCreate(t *testing.T) {
 
 func TestUserValidation(t *testing.T) {
 	success, msg := true, ""
-	u := User{
-		Name:      "About a boy",
-		ImagePath: "/tmp/foo",
-	}
+	u := NewUser("About a boy", "/tmp/foo")
 	success, msg = u.Validate()
 	if success == false {
 		t.Error("Should be valid")
@@ -43,10 +40,7 @@ func TestUserValidation(t *testing.T) {
 	if success == true || msg != "ImagePath not present.\n" {
 		t.Error("Should be invalid by missing ImagePath")
 	}
-	u2 := User{
-		Name:      "Franz",
-		ImagePath: "/tmp/foo",
-	}
+	u2 := NewUser("Franz", "/tmp/foo")
 	u2.Save()
 	u.Name = u2.Name
 	u.ImagePath = "/tmp/foo"

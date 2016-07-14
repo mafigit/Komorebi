@@ -6,22 +6,16 @@ import (
 )
 
 type Column struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	Position  int    `json:"position"`
-	BoardId   int    `json:"board_id"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
+	DbModel
+	BoardId  int `json:"board_id"`
+	Position int `json:"position"`
 }
 
 type ColumnWs struct {
-	Id        int
-	Name      string
-	Position  int
-	BoardId   int
-	CreatedAt int64
-	UpdatedAt int64
+	DbModel
 	Stories
+	Position int
+	BoardId  int
 }
 
 type ColumnsWs []ColumnWs
@@ -29,23 +23,13 @@ type Columns []Column
 
 func NewColumn(name string, position int, boardId int) Column {
 	return Column{
-		CreatedAt: time.Now().UnixNano(),
-		Name:      name,
-		Position:  position,
-		BoardId:   boardId,
+		DbModel: DbModel{
+			CreatedAt: time.Now().UnixNano(),
+			Name:      name,
+		},
+		Position: position,
+		BoardId:  boardId,
 	}
-}
-
-func (c Column) GetId() int {
-	return c.Id
-}
-
-func (c Column) GetCreatedAt() int64 {
-	return c.CreatedAt
-}
-
-func (c Column) SetUpdatedAt() {
-	c.UpdatedAt = time.Now().UnixNano()
 }
 
 func (c Column) TableName() string {

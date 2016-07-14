@@ -6,14 +6,11 @@ import (
 )
 
 type Story struct {
-	Id           int    `json:"id"`
-	Name         string `json:"name"`
+	DbModel
 	Desc         string `json:"desc"`
 	Points       int    `json:"points"`
 	Requirements string `json:"requirements"`
 	ColumnId     int    `json:"column_id"`
-	CreatedAt    int64  `json:"created_at"`
-	UpdatedAt    int64  `json:"updated_at"`
 }
 
 type Stories []Story
@@ -22,12 +19,14 @@ func NewStory(name string, desc string, requirements string, points int,
 	columnId int) Story {
 
 	return Story{
-		CreatedAt:    time.Now().UnixNano(),
-		Name:         name,
-		Desc:         desc,
+		DbModel: DbModel{
+			CreatedAt: time.Now().UnixNano(),
+			Name:      name,
+		},
 		Requirements: requirements,
 		Points:       points,
 		ColumnId:     columnId,
+		Desc:         desc,
 	}
 }
 
@@ -67,20 +66,9 @@ func GetStoryById(id int) Story {
 	}
 	return story
 }
-func (s Story) GetId() int {
-	return s.Id
-}
-
-func (s Story) GetCreatedAt() int64 {
-	return s.CreatedAt
-}
 
 func (s Story) TableName() string {
 	return "users"
-}
-
-func (s Story) SetUpdatedAt() {
-	s.UpdatedAt = time.Now().UnixNano()
 }
 
 func (s Story) Save() bool {
