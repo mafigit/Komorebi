@@ -89,8 +89,8 @@ class CardCanvas {
   constructor(card, stage, layout, type) {
     this.card = card;
     this.stage = stage;
-    this.card_height = 100;
-    this.card_width = 150;
+    this.card_height = 120;
+    this.card_width = 160;
     this.card_margin = 25;
     this.KonvaElement =
       new CardGroup(this.card, this.stage, this.card_height, this.card_width, this.card_margin, type);

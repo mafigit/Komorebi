@@ -11,26 +11,33 @@ class StoryCanvas extends CardCanvas {
         height: this.card_height,
         fill: Colors.green,
         shadowColor: 'black',
-        shadowOffsetX: 8,
-        shadowOffsetY: 8,
-        shadowBlur: 10,
+        shadowOffsetX: 5,
+        shadowOffsetY: 5,
+        shadowBlur: 5,
         shadowEnabled: true,
         shadowOpacity: 0.5
       });
       this.KonvaElement.add(card_rect);
 
       var title = new Konva.Text({
-        width: this.card_width - 20,
-        height: this.card_height - 105,
+        width: this.card_width - 60,
+        height: 30,
         fill: '#FFFFFF',
-        fontSize: 12,
+        fontSize: 16,
         fontFamily: 'Helvetica',
         fontStyle: 'bold',
         text: this.card.name
       });
-      var new_x_title = card_rect.getWidth()/2 - title.getWidth()/2;
+      var new_x_title = card_rect.getWidth()/3 - title.getWidth()/3;
       title.position({x: new_x_title, y: 5});
       this.KonvaElement.add(title);
+
+      var headerLine = new Konva.Line({
+        points: [5, 23, (this.card_width - 5), 23],
+        stroke: 'white',
+        strokeWidth: 1,
+      });
+      this.KonvaElement.add(headerLine);
 
       var points = new Konva.Text({
         x: card_rect.getWidth() - this.card_margin,
@@ -45,9 +52,9 @@ class StoryCanvas extends CardCanvas {
 
       var desc = new Konva.Text({
         x: 5,
-        y: 50,
-        width: 245,
-        height: 100,
+        y: 30,
+        width: this.card_width - 10,
+        height: this.card_height - 35,
         fill: 'white',
         fontSize: 12,
         fontFamily: 'Helvetica',
