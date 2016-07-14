@@ -6,6 +6,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Board from './board';
 import LandingLayout from './landing_layout';
 import BoardLayout from './board_layout';
+import MySnackbar from './snackbar';
 import Ajax from  'basic-ajax';
 
 // Needed for onTouchTap
@@ -102,6 +103,7 @@ class App extends React.Component {
             tasks={this.state.tasks}
             boardLoadedHandler={this.boardLoadedHandler}
           />
+          <MySnackbar boardName={this.state.title} boardReloadHandler={this.boardReloadHandler}/>
         </BoardLayout>
       </MuiThemeProvider>
     }

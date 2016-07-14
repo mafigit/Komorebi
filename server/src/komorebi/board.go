@@ -90,11 +90,17 @@ func GetBoardWsByName(name string) BoardWs {
 	_, err = dbMapper.Connection.Select(&board.ColumnsWs,
 		"select * from columns where boardId=? order by Position", board.Id)
 
-	var stories Stories
 	for col_index, col := range board.ColumnsWs {
-		_, err = dbMapper.Connection.Select(&stories,
+
+		_, err = dbMapper.Connection.Select(&board.ColumnsWs[col_index].StoriesWs,
 			"select * from stories where ColumnId=?", col.Id)
-		board.ColumnsWs[col_index].Stories = stories
+
+		var tasks Tasks
+		for story_index, st := range board.ColumnsWs[col_index].StoriesWs {
+			_, err = dbMapper.Connection.Select(&tasks,
+				"select * from tasks where StoryId=?", st.Id)
+			board.ColumnsWs[col_index].StoriesWs[story_index].Tasks = tasks
+		}
 	}
 	return board
 }
