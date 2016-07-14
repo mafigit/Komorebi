@@ -41,4 +41,18 @@ defmodule Util do
   def ln_cmp(val, fun) do
     &(fun.(&1) == String.downcase(val))
   end
+
+  def lift_maybe(inp, fun) do
+    case inp do
+      {:ok, data} -> fun.(data) |> wrap
+      {:error, _} -> inp
+     end
+  end
+
+  def lift_pr(inp, fun) do
+    case inp do
+      :ok -> fun.()
+      unexpected -> unexpected
+    end
+  end
 end
