@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 
 class Layout extends React.Component {
@@ -23,7 +24,6 @@ class Layout extends React.Component {
     return <div>
       <AppBar
         title={this.props.title}
-        iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}

@@ -11,18 +11,18 @@ export default class StoryPointPicker extends React.Component {
     }
     this.value = 0;
     this.iterrator = 0;
-    this.fibs= [
+    this.range = this.props.range || [
       0, 1, 2, 3, 5, 8, 13, 21, 34, 55
     ];
   }
 
   storyPointsHandler = (next, prev) => {
-    if(next && this.iterrator >= 0 && this.fibs.length - 1 > this.iterrator) {
+    if(next && this.iterrator >= 0 && this.range.length - 1 > this.iterrator) {
       this.iterrator++;
     } else if(prev && this.iterrator > 0) {
       this.iterrator--;
     }
-    this.value = this.fibs[this.iterrator];
+    this.value = this.range[this.iterrator];
     if (this.props.valueHandler) {
       this.props.valueHandler(this.value);
     }
@@ -38,6 +38,9 @@ export default class StoryPointPicker extends React.Component {
       fontSize: 30
     }
     return <div>
+      <br/>
+        {this.props.title}
+      <br/>
     <FloatingActionButton onClick={() => {this.storyPointsHandler(true, false)}} style={btnstyle} key="1">
       <ContentAdd />
     </FloatingActionButton>
@@ -46,7 +49,7 @@ export default class StoryPointPicker extends React.Component {
     </FloatingActionButton>
     <FloatingActionButton ref="story_points" style={btnstyle} key="2" disabled={true}>
       {this.state.value}
-    </FloatingActionButton>,
+    </FloatingActionButton>
     </div>
   }
 }
