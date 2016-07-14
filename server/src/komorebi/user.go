@@ -8,8 +8,9 @@ import (
 type User struct {
 	Id        int    `json:"id"`
 	Name      string `json:"name"`
-	CreatedAt int64  `json:"created_at"`
 	ImagePath string `json:"image_path"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 }
 
 type Users []User
@@ -26,8 +27,16 @@ func (u User) GetId() int {
 	return u.Id
 }
 
+func (u User) GetCreatedAt() int64 {
+	return u.CreatedAt
+}
+
 func (u User) TableName() string {
 	return "users"
+}
+
+func (u User) SetUpdatedAt() {
+	u.UpdatedAt = time.Now().UnixNano()
 }
 
 func (u User) Save() bool {

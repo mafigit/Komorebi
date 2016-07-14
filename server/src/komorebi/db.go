@@ -15,7 +15,11 @@ type Db struct {
 
 type Model interface {
 	GetId() int
+	SetUpdatedAt()
 	TableName() string
+	Save() bool
+	Validate() (bool, string)
+	GetCreatedAt() int64
 }
 
 type Models interface {
@@ -51,6 +55,7 @@ func (d Db) CreateTables() {
 }
 
 func (d Db) Save(i Model) bool {
+	i.SetUpdatedAt()
 	if i.GetId() == 0 {
 		if err := dbMapper.Connection.Insert(i); err != nil {
 			log.Println("create failed", err)

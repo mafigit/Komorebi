@@ -58,7 +58,6 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.Contains(content_type, "json") {
-
 		json.NewEncoder(w).Encode(board_column)
 	} else {
 		data := getIndex()
@@ -73,16 +72,9 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stories)
 }
 
-func BoardCreate(w http.ResponseWriter, r *http.Request) {
-	var board Board
+func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
+	success, msg := m.Validate()
 
-	if err := json.NewDecoder(r.Body).Decode(&board); err != nil {
-		w.WriteHeader(400)
-		return
-	}
-
-	board = NewBoard(board.Name)
-	success, msg := board.Validate()
 	response := Response{
 		Success: success,
 		Message: msg,
@@ -93,7 +85,7 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if board.Save() {
+	if m.Save() {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(response)
 	} else {
@@ -102,14 +94,51 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func BoardUpdate(w http.ResponseWriter, r *http.Request) {
-	var update_board Board
-	vars := mux.Vars(r)
-	board_id := vars["board_id"]
+func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter, r *http.Request) {
 	response := Response{
 		Success: true,
 		Message: "",
 	}
+
+	if var_id != update_m.GetId() {
+		w.WriteHeader(400)
+		return
+	}
+
+	if old_m.GetId() == 0 && old_m.GetCreatedAt() == 0 {
+		response.Success = false
+		response.Message = "Model does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if update_m.Save() {
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
+}
+
+func BoardCreate(w http.ResponseWriter, r *http.Request) {
+	var board Board
+
+	if err := json.NewDecoder(r.Body).Decode(&board); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	board = NewBoard(board.Name)
+	modelCreate(board, w, r)
+}
+
+func BoardUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_board Board
+	vars := mux.Vars(r)
+	board_id := vars["board_id"]
 
 	if err := json.NewDecoder(r.Body).Decode(&update_board); err != nil {
 		w.WriteHeader(400)
@@ -117,29 +146,9 @@ func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, _ := strconv.Atoi(board_id)
-
-	if id != update_board.Id {
-		w.WriteHeader(400)
-		return
-	}
-
-	old_board := GetBoardColumnViewById(id)
-	if old_board.Id == 0 && old_board.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "Board does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if update_board.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	var old_board Board
+	GetById(&old_board, id)
+	modelUpdate(old_board, update_board, id, w, r)
 }
 
 func StoriesGetByColumn(w http.ResponseWriter, r *http.Request) {
@@ -189,24 +198,7 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	column = NewColumn(column.Name, column.Position, column.BoardId)
-	success, msg := column.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if column.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(column, w, r)
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request) {
@@ -218,34 +210,13 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user = NewUser(user.Name, user.ImagePath)
-	success, msg := user.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if user.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(user, w, r)
 }
 
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_column Column
 	vars := mux.Vars(r)
 	column_id := vars["column_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	if err := json.NewDecoder(r.Body).Decode(&update_column); err != nil {
 		w.WriteHeader(400)
@@ -253,32 +224,10 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, _ := strconv.Atoi(column_id)
-
-	if id != update_column.Id {
-		w.WriteHeader(400)
-		return
-	}
-
 	var old_column Column
 	GetById(&old_column, id)
-
-	if old_column.Id == 0 && old_column.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "Column does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
 	update_column.BoardId = old_column.BoardId
-	if update_column.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelUpdate(old_column, update_column, id, w, r)
 }
 
 func ColumnDelete(w http.ResponseWriter, r *http.Request) {
@@ -318,34 +267,13 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
 		story.ColumnId)
-	success, msg := story.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if story.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(story, w, r)
 }
 
 func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_story Story
 	vars := mux.Vars(r)
 	story_id := vars["story_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	if err := json.NewDecoder(r.Body).Decode(&update_story); err != nil {
 		w.WriteHeader(400)
@@ -353,30 +281,8 @@ func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id, _ := strconv.Atoi(story_id)
-
-	if id != update_story.Id {
-		w.WriteHeader(400)
-		return
-	}
-
 	old_story := GetStoryById(id)
-
-	if old_story.Id == 0 && old_story.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "Story does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if update_story.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelUpdate(old_story, update_story, id, w, r)
 }
 
 func delete_ws_from_connections(ws *websocket.Conn, board_name string) {
@@ -448,24 +354,7 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
-	success, msg := task.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if task.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(task, w, r)
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
