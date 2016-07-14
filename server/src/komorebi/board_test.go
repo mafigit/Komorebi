@@ -165,6 +165,7 @@ func TestBoardWs(t *testing.T) {
 	res2 = GetBoardWsByName(board.Name)
 
 	if reflect.DeepEqual(res1, res2) {
-		t.Error("should not be equal")
+		t.Error("should not be equal res1: ", res1)
+		t.Error("should not be equal res2: ", res1)
 	}
 }

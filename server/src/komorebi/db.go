@@ -17,6 +17,7 @@ type Db struct {
 type Model interface {
 	GetId() int
 	SetUpdatedAt()
+	SetCreatedAt(int64)
 	TableName() string
 	Save() bool
 	Validate() (bool, string)
@@ -40,6 +41,10 @@ func (m DbModel) GetId() int {
 
 func (m DbModel) GetCreatedAt() int64 {
 	return m.CreatedAt
+}
+
+func (m DbModel) SetCreatedAt(time int64) {
+	m.CreatedAt = time
 }
 
 func (m DbModel) SetUpdatedAt() {
@@ -75,6 +80,7 @@ func (d Db) CreateTables() {
 }
 
 func (d Db) Save(i Model) bool {
+
 	i.SetUpdatedAt()
 	if i.GetId() == 0 {
 		if err := dbMapper.Connection.Insert(i); err != nil {
@@ -82,6 +88,14 @@ func (d Db) Save(i Model) bool {
 			return false
 		}
 	} else {
+		var time int64
+		err := dbMapper.Connection.SelectOne(&time, "select CreatedAt from "+
+			i.TableName()+" where Id=?", i.GetId())
+		if err != nil {
+			log.Println("could not fetch CreatedAt", err)
+			return false
+		}
+		i.SetCreatedAt(time)
 		if _, errUpdate := dbMapper.Connection.Update(i); errUpdate != nil {
 			log.Println("update failed", errUpdate)
 			return false
