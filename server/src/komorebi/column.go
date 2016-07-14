@@ -11,6 +11,7 @@ type Column struct {
 	Position  int    `json:"position"`
 	BoardId   int    `json:"board_id"`
 	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 }
 
 type ColumnWs struct {
@@ -19,6 +20,7 @@ type ColumnWs struct {
 	Position  int
 	BoardId   int
 	CreatedAt int64
+	UpdatedAt int64
 	Stories
 }
 
@@ -40,6 +42,10 @@ func (c Column) GetId() int {
 
 func (c Column) GetCreatedAt() int64 {
 	return c.CreatedAt
+}
+
+func (c Column) SetUpdatedAt() {
+	c.UpdatedAt = time.Now().UnixNano()
 }
 
 func (c Column) TableName() string {
