@@ -5,12 +5,16 @@ import StoryCanvas from './story_canvas';
 
 class BoardCanvas {
   constructor(container, columns, stories, handler) {
+    let scale_factor = (window.innerWidth - 20)/window.screen.availWidth;
+
     this.container = container;
     this.handler = handler;
     this.stage = new Konva.Stage({
       container: this.container,
       width: window.innerWidth - 20,
-      height: window.innerHeight - 100
+      height: window.innerHeight - 100,
+      scaleY: scale_factor,
+      scaleX: scale_factor
     });
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
@@ -56,9 +60,8 @@ class BoardCanvas {
     var column_canvas_elements = [];
     var column_count = this.columns.length;
     var column_width =
-      Math.round(this.stage.attrs.width/column_count);
-    var column_height =
-      document.getElementById(this.container).offsetHeight - 30;
+      Math.round(this.stage.getWidth()/column_count);
+    var column_height = this.stage.getHeight();
     this.columns.forEach((column) => {
       var column_canvas =
         new ColumnCanvas(column_width, column_height, column);
