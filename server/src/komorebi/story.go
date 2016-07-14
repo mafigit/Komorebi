@@ -68,7 +68,7 @@ func GetStoryById(id int) Story {
 }
 
 func (s Story) TableName() string {
-	return "users"
+	return "stories"
 }
 
 func (s Story) Save() bool {
