@@ -91,7 +91,7 @@ class App extends React.Component {
       </MuiThemeProvider>
     } else {
       return <MuiThemeProvider>
-        <BoardLayout boardReloadHandler={this.boardReloadHandler}
+        <BoardLayout boardReloadHandler={this.boardReloadHandler} stories={this.state.stories}
           title={this.state.title} board_id={this.state.board_id} columns={this.state.columns}>
           <Board boardReloadHandler={this.boardReloadHandler}
             getBoard={this.getBoard} columns={this.state.columns}
