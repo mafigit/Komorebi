@@ -3,8 +3,8 @@ import Konva from 'konva';
 import Colors from './color';
 
 class StoryGroup extends Konva.Group {
-  constructor(story, stage) {
-    var scale_factor = stage.getWidth()/1920;
+  constructor(story, stage, height, width, margin) {
+
     let story_column = stage.find('Group').filter((group) => {
       if (group.constructor.name == "ColumnGroup" &&
           group.my_attrs.id == story.column_id) {
@@ -21,40 +21,28 @@ class StoryGroup extends Konva.Group {
 
     let story_column_height = story_column.getHeight();
     let stories_on_column_count = stories_on_column.length;
-    let story_height_with_margin = 150 + 30;
-    let story_count_per_col =
-      Math.round(story_column_height / story_height_with_margin);
+    let story_height_with_margin = height + margin;
 
-    let story_x_pos = 10 + story_column.position().x;
-    let story_y_pos = 30 + (stories_on_column.length * 140);
+    let story_count_per_col = Math.round(story_column_height / story_height_with_margin);
 
+    let story_x_pos = 15 + story_column.position().x;
+    let story_y_pos = 30 + (stories_on_column.length * (height + margin));
 
-    if (stories_on_column_count > story_count_per_col) {
-      story_x_pos = 10 + story_column.position().x + 250;
-      story_y_pos = 30 + ((stories_on_column.length - 1 - story_count_per_col) * 140);
+    if (stories_on_column_count >= story_count_per_col) {
+      let move_left_fak = stories_on_column_count / story_count_per_col;
+      let  move_left = Math.round(move_left_fak*5);
+      story_x_pos = 15 + story_column.position().x - move_left;
+      story_y_pos = story_count_per_col * (height + margin) - height + move_left;
     }
-
-    if (stories_on_column_count > story_count_per_col * 2) {
-      let move_left_fak = stories_on_column_count / story_count_per_col - 3;
-      let move_left = 0;
-      if (stories_on_column_count > story_count_per_col * 2 + 1) {
-        move_left = Math.round(move_left_fak*5);
-      }
-      story_x_pos = 10 + story_column.position().x + 250 - move_left;
-      story_y_pos = 30 + story_count_per_col * 140 + move_left;
-    }
-
     super({
-       x: story_x_pos,
-       y: story_y_pos,
-       width: 250,
-       height: 150,
+       x: Math.round(story_x_pos),
+       y: Math.round(story_y_pos),
+       width: width,
+       height: height,
        draggable: true,
-       scaleY: scale_factor,
-       scaleX: scale_factor,
        dragBoundFunc: function(pos) {
-         var x_max = stage.getWidth() - Math.round(250 * scale_factor);
-         var y_max = stage.getHeight() - Math.round(150 * scale_factor);
+         var x_max = stage.getWidth() - width;
+         var y_max = stage.getHeight() - height;
          var x_min = 0;
          var y_min = 5;
          if ((pos.x < x_min && pos.y < y_min) ||
@@ -98,11 +86,15 @@ class StoryGroup extends Konva.Group {
 
 class StoryCanvas {
   constructor(story, stage) {
-    this.KonvaElement = new StoryGroup(story, stage);
+    let story_height = 100;
+    let story_width = 150;
+    let story_margin = 25;
+
+    this.KonvaElement = new StoryGroup(story, stage, story_height, story_width, story_margin);
 
     var story_rect = new Konva.Rect({
-      width: 250,
-      height: 150,
+      width: story_width,
+      height: story_height,
       fill: Colors.green,
       shadowColor: 'black',
       shadowOffsetX: 8,
@@ -114,10 +106,10 @@ class StoryCanvas {
     this.KonvaElement.add(story_rect);
 
     var title = new Konva.Text({
-      width: 230,
-      height: 45,
+      width: story_width - 20,
+      height: story_height - 105,
       fill: '#FFFFFF',
-      fontSize: 16,
+      fontSize: 12,
       fontFamily: 'Helvetica',
       fontStyle: 'bold',
       text: story.name
@@ -127,10 +119,10 @@ class StoryCanvas {
     this.KonvaElement.add(title);
 
     var points = new Konva.Text({
-      x: story_rect.getWidth() - 30,
+      x: story_rect.getWidth() - story_margin,
       y: 5,
       fill: Colors.dark_gray,
-      fontSize: 20,
+      fontSize: 16,
       fontFamily: 'Helvetica',
       fontStyle: 'bold',
       text: story.points
@@ -143,7 +135,7 @@ class StoryCanvas {
       width: 245,
       height: 100,
       fill: 'white',
-      fontSize: 16,
+      fontSize: 12,
       fontFamily: 'Helvetica',
       text: story.desc
     });
