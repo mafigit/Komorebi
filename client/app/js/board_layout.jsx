@@ -6,13 +6,18 @@ import MyMenu from './menu';
 import Layout from './layout';
 import ColumnDialog from './column_dialog';
 import StoryDialog from './story_dialog';
+import TaskDialog from './task_dialog';
 import Colors from './color';
 
 class BoardLayout extends Layout  {
   constructor(props) {
     super(props);
-    this.state = {menu_open: false, column_open: false, story_open: false};
+    this.state = {menu_open: false, column_open: false, story_open: false, task_open: false};
     this.menu_items = [
+      {
+        name: "Add Task",
+        handler: this.handleTaskAdd
+      },
       {
         name: "Add Story",
         handler: this.handleStorydAdd
@@ -25,25 +30,36 @@ class BoardLayout extends Layout  {
   }
 
   handleStorydAdd = () => {
-    this.setState({menu_open: false, column_open: false, story_open: true});
+    this.setState({menu_open: false, column_open: false, story_open: true, task_open: false});
   }
 
   handleColumnAdd = () => {
-    this.setState({menu_open: false, column_open: true, story_open: false});
+    this.setState({menu_open: false, column_open: true, story_open: false, task_open: false});
+  }
+
+  handleTaskAdd = () => {
+    this.setState({menu_open: false, column_open: false, story_open: false, task_open: true});
+  }
+
+  handleTaskAddClose = (reload) => {
+    if(reload) {
+      this.props.boardReloadHandler();
+    }
+    this.setState({menu_open: false, column_open: false, story_open: false, task_open: false});
   }
 
   handleStoryAddClose = (reload) => {
     if(reload) {
       this.props.boardReloadHandler();
     }
-    this.setState({menu_open: false, column_open: false, story_open: false});
+    this.setState({menu_open: false, column_open: false, story_open: false, task_open: false});
   }
 
   handleColumnAddClose = (reload) => {
     if(reload) {
       this.props.boardReloadHandler();
     }
-    this.setState({menu_open: false, column_open: false, story_open: false});
+    this.setState({menu_open: false, column_open: false, story_open: false, task_open: false});
   }
 
   handleTouchTapMenuBtn = (event) => {
@@ -71,8 +87,13 @@ class BoardLayout extends Layout  {
         touchAwayHandler={this.handleTouchTapCloseMenu} items={this.menu_items}/>
       <ColumnDialog board_id={this.props.board_id} open={this.state.column_open}
         handleClose={this.handleColumnAddClose}/>
-      <StoryDialog columns={this.props.columns} board_id={this.props.board_id} open={this.state.story_open}
+      <StoryDialog columns={this.props.columns}
+        board_id={this.props.board_id} open={this.state.story_open}
         handleClose={this.handleStoryAddClose}/>
+      <TaskDialog tasks={this.props.tasks} columns={this.props.columns}
+        board_id={this.props.board_id} open={this.state.task_open}
+        stories={this.props.stories}
+        handleClose={this.handleTaskAddClose}/>
       {this.props.children}
      </div>
   }

@@ -70,8 +70,6 @@ class BoardCanvas {
       this.layer.add(column_canvas.KonvaElement);
     });
     this.stories.forEach((story) => {
-      var story_canvas = new StoryCanvas(story, this.stage);
-      this.layer.add(story_canvas.KonvaElement);
       var story_tasks = this.tasks.reduce((acc, task) => {
         if (task.story_id == story.id) {
           acc = task.tasks;
@@ -82,6 +80,8 @@ class BoardCanvas {
         var task_canvas = new TaskCanvas(task, this.stage);
         this.layer.add(task_canvas.KonvaElement);
       });
+      var story_canvas = new StoryCanvas(story, this.stage);
+      this.layer.add(story_canvas.KonvaElement);
     });
     this.layer.draw();
   }
