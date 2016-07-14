@@ -25,6 +25,7 @@ export default class StoryDialog extends React.Component {
       name: "",
       desc: "",
       points: 0,
+      priority: 1,
       requirements: "",
       column_id: "",
       priority: 1
@@ -65,13 +66,12 @@ export default class StoryDialog extends React.Component {
     this.props.handleClose(reload);
   }
 
-  valueHandler = (value) => {
+  pointsHandler = (value) => {
     this.form_values.points = value;
   }
 
   render() {
     const header = [
-       <StoryPointPicker key='0' valueHandler={this.valueHandler}/>
     ];
     const actions = [
       <FlatButton
@@ -84,13 +84,17 @@ export default class StoryDialog extends React.Component {
 
     return (
       <Dialog
-        title={header}
+        title="Add Story"
         actions={actions}
         modal={false}
         open={this.props.open}
         onRequestClose={this.handleClose}
         autoScrollBodyContent={true}
       >
+         <StoryPointPicker title="Points" key='0' valueHandler={this.pointsHandler}/>
+         <StoryPointPicker title="Priority" key='1' valueHandler={this.pointsHandler}
+         range={[1,2,3,4,5,6,7,8,9,10]}/>
+        <br />
         Add a name
         <br />
         <TextField ref="story_name" hintText="Story Name"
