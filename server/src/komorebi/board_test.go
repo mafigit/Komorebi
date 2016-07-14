@@ -138,10 +138,10 @@ func TestBoardWs(t *testing.T) {
 	c.Save()
 	cols := GetColumnsByBoardId(board.Id)
 
-	s := NewStory("Story 1", "description", "Do this and that", 5,
+	s := NewStory("Story 1", "description", "Do this and that", 5, 4,
 		cols[0].Id)
 	s.Save()
-	s = NewStory("Story 2", "description 2", "Do this and that", 3,
+	s = NewStory("Story 2", "description 2", "Do this and that", 3, 4,
 		cols[1].Id)
 	s.Save()
 	res1 := GetBoardWsByName(board.Name)

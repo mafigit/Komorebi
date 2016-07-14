@@ -5,14 +5,14 @@ import (
 )
 
 func TestNewStory(t *testing.T) {
-	s := NewStory("haensel", "gretel", "requirements", 5, 1)
+	s := NewStory("haensel", "gretel", "requirements", 5, 4, 1)
 	if s.Name != "haensel" {
 		t.Error("Should have instanciate a story:", s.Name)
 	}
 }
 
 func TestStoryCreate(t *testing.T) {
-	s := NewStory("haensel", "gretel", "requirements", 5, 1)
+	s := NewStory("haensel", "gretel", "requirements", 5, 4, 1)
 	if !s.Save() {
 		t.Error("Should have created the story")
 	}
@@ -25,7 +25,7 @@ func TestStoryCreate(t *testing.T) {
 func TestStoryValidation(t *testing.T) {
 	success, msg := true, ""
 	s := NewStory("About a boy", "A meaningful description",
-		"Do this and that", 5, 1)
+		"Do this and that", 5, 4, 1)
 	success, msg = s.Validate()
 	if success == false {
 		t.Error("Should be valid")
@@ -46,6 +46,17 @@ func TestStoryValidation(t *testing.T) {
 	success, msg = s.Validate()
 	if success == true || msg != "ColumnId not set.\n" {
 		t.Error("Should be invalid by missing column id")
+	}
+	s.ColumnId = 5
+	s.Priority = 0
+	success, msg = s.Validate()
+	if success == true || msg != "Priority out of range.\n" {
+		t.Error("Should be invalid by priority")
+	}
+	s.Points = 11
+	success, msg = s.Validate()
+	if success == true || msg != "Priority out of range.\n" {
+		t.Error("Should be invalid by priority")
 	}
 }
 
