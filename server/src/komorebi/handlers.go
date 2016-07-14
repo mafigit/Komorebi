@@ -73,16 +73,9 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stories)
 }
 
-func BoardCreate(w http.ResponseWriter, r *http.Request) {
-	var board Board
+func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
+	success, msg := m.Validate()
 
-	if err := json.NewDecoder(r.Body).Decode(&board); err != nil {
-		w.WriteHeader(400)
-		return
-	}
-
-	board = NewBoard(board.Name)
-	success, msg := board.Validate()
 	response := Response{
 		Success: success,
 		Message: msg,
@@ -93,13 +86,25 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if board.Save() {
+	if m.Save() {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(response)
 	} else {
 		w.WriteHeader(400)
 		return
 	}
+}
+
+func BoardCreate(w http.ResponseWriter, r *http.Request) {
+	var board Board
+
+	if err := json.NewDecoder(r.Body).Decode(&board); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	board = NewBoard(board.Name)
+	modelCreate(board, w, r)
 }
 
 func BoardUpdate(w http.ResponseWriter, r *http.Request) {
@@ -189,24 +194,7 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	column = NewColumn(column.Name, column.Position, column.BoardId)
-	success, msg := column.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if column.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(column, w, r)
 }
 
 func UserCreate(w http.ResponseWriter, r *http.Request) {
@@ -218,24 +206,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user = NewUser(user.Name, user.ImagePath)
-	success, msg := user.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if user.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(user, w, r)
 }
 
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
@@ -318,24 +289,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
 		story.ColumnId)
-	success, msg := story.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if story.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(story, w, r)
 }
 
 func StoryUpdate(w http.ResponseWriter, r *http.Request) {
@@ -448,24 +402,7 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
-	success, msg := task.Validate()
-	response := Response{
-		Success: success,
-		Message: msg,
-	}
-	if response.Success == false {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if task.Save() {
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelCreate(task, w, r)
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {

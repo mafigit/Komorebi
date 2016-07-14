@@ -16,6 +16,8 @@ type Db struct {
 type Model interface {
 	GetId() int
 	TableName() string
+	Save() bool
+	Validate() (bool, string)
 }
 
 type Models interface {
