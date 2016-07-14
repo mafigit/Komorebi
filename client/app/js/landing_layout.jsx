@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
@@ -63,8 +64,11 @@ class LandingLayout extends Layout  {
     return <div>
       <AppBar
         title={this.props.title}
-        iconClassNameRight="muidocs-icon-navigation-expand-more"
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
+        iconElementRight={<FlatButton label="木漏れ日"
+          href={"https://github.com/mafigit/Komorebi"}
+          labelStyle={{fontSize: "30px", color: Colors.light_red,
+          fontWeight: "bold"}}/>}
         style={{backgroundColor: Colors.dark_gray}}
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
