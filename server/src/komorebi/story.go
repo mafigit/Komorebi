@@ -2,7 +2,6 @@ package komorebi
 
 import (
 	"log"
-	"time"
 )
 
 type Story struct {
@@ -21,8 +20,7 @@ func NewStory(name string, desc string, requirements string, points int,
 
 	return Story{
 		DbModel: DbModel{
-			CreatedAt: time.Now().UnixNano(),
-			Name:      name,
+			Name: name,
 		},
 		Requirements: requirements,
 		Priority:     priority,

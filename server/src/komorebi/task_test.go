@@ -54,6 +54,7 @@ func TestTaskDelete(t *testing.T) {
 		"A description",
 		1,
 		1,
+		1,
 	)
 	ta.Save()
 

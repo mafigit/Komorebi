@@ -5,7 +5,7 @@ curl  localhost:8080/
 GET /boards
 curl  localhost:8080/boards
 => json response with all boards
-=> [{"Id":1,"Name":"gz","CreatedAt":1468312137512189809}]
+=> [{"Id":1,"Name":"gz","updated_at":1468312137512189809}]
 
 GET /gz
 curl localhost:8080/gz
@@ -16,7 +16,7 @@ curl localhost:8080/gz
 GET /gz as json
 curl  -H "Accept: application/json" localhost:8080/gz
 => json response with board gz
-=> {"id":1,"name":"here","created_at":1468312137512189809,"Columns":[]}
+=> {"id":1,"name":"here","updated_at":1468312137512189809,"Columns":[]}
 
 POST /boards as json
 curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boards
@@ -57,12 +57,12 @@ curl  -X DELETE localhost:8080/columns/4
 GET /gz/stories
 curl  localhost:8080/gz/stories
 => Get all stories of board gz
-=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","created_at":1468338234914643720,"column_id":1,"priority":4}]
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"column_id":1,"priority":4}]
 
 GET /columns/{:column_id}/stories
 curl   localhost:8080/columns/1/stories
 => get stories from column 1
-=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and thattttt","created_at":0,"column_id":1,"priority":3}]
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and thattttt","updated_at":0,"column_id":1,"priority":3}]
 
 POST /stories as json
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1,"priority":3 }' localhost:8080/stories
@@ -84,7 +84,7 @@ curl  -X DELETE localhost:8080/stories/4
 GET /stories/{:story_id}/tasks
 curl   localhost:8080/stories/1/tasks
 => get tasks from story 1
-=> [{"id":1,"name":"foo","created_at":1468491910868041418,"updated_at":0,"Desc":"desc","story_id":1,"column_id":1,"priority":4}]
+=> [{"id":1,"name":"foo","updated_at":0,"Desc":"desc","story_id":1,"column_id":1,"priority":4}]
 
 POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2,"priority":4}' localhost:8080/tasks
@@ -107,7 +107,7 @@ curl  -X DELETE localhost:8080/tasks/4
 GET /users
 curl   localhost:8080/users
 => get all users
-=> [{"id":1,"name":"Franz","created_at":1468499686546899447,"updated_at":0,"image_path":"/public/images/franz.jpg"}]
+=> [{"id":1,"name":"Franz","updated_at":0,"image_path":"/public/images/franz.jpg"}]
 
 POST /users
 curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg"}' localhost:8080/users

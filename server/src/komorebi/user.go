@@ -2,7 +2,6 @@ package komorebi
 
 import (
 	"log"
-	"time"
 )
 
 type User struct {
@@ -16,8 +15,7 @@ func NewUser(name string, image_path string) User {
 	return User{
 		ImagePath: image_path,
 		DbModel: DbModel{
-			Name:      name,
-			CreatedAt: time.Now().UnixNano(),
+			Name: name,
 		},
 	}
 }
