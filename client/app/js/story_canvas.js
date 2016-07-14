@@ -18,9 +18,35 @@ class StoryGroup extends Konva.Group {
         return true;
       }
     });
+
+    let story_column_height = story_column.getHeight();
+    let stories_on_column_count = stories_on_column.length;
+    let story_height_with_margin = 150 + 30;
+    let story_count_per_col =
+      Math.round(story_column_height / story_height_with_margin);
+
+    let story_x_pos = 10 + story_column.position().x;
+    let story_y_pos = 30 + (stories_on_column.length * 140);
+
+
+    if (stories_on_column_count > story_count_per_col) {
+      story_x_pos = 10 + story_column.position().x + 250;
+      story_y_pos = 30 + ((stories_on_column.length - 1 - story_count_per_col) * 140);
+    }
+
+    if (stories_on_column_count > story_count_per_col * 2) {
+      let move_left_fak = stories_on_column_count / story_count_per_col - 3;
+      let move_left = 0;
+      if (stories_on_column_count > story_count_per_col * 2 + 1) {
+        move_left = Math.round(move_left_fak*5);
+      }
+      story_x_pos = 10 + story_column.position().x + 250 - move_left;
+      story_y_pos = 30 + story_count_per_col * 140 + move_left;
+    }
+
     super({
-       x: 50 + story_column.position().x,
-       y: 30 + (stories_on_column.length * 140),
+       x: story_x_pos,
+       y: story_y_pos,
        width: 250,
        height: 150,
        draggable: true,
