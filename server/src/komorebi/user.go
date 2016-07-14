@@ -6,41 +6,28 @@ import (
 )
 
 type User struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
+	DbModel
 	ImagePath string `json:"image_path"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
 }
 
 type Users []User
 
 func NewUser(name string, image_path string) User {
 	return User{
-		Name:      name,
 		ImagePath: image_path,
-		CreatedAt: time.Now().UnixNano(),
+		DbModel: DbModel{
+			Name:      name,
+			CreatedAt: time.Now().UnixNano(),
+		},
 	}
-}
-
-func (u User) GetId() int {
-	return u.Id
-}
-
-func (u User) GetCreatedAt() int64 {
-	return u.CreatedAt
-}
-
-func (u User) TableName() string {
-	return "users"
-}
-
-func (u User) SetUpdatedAt() {
-	u.UpdatedAt = time.Now().UnixNano()
 }
 
 func (u User) Save() bool {
 	return dbMapper.Save(&u)
+}
+
+func (u User) TableName() string {
+	return "users"
 }
 
 func (u User) Validate() (bool, string) {

@@ -6,37 +6,24 @@ import (
 )
 
 type Task struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	Desc      string `json:"Desc"`
-	StoryId   int    `json:"story_id"`
-	ColumnId  int    `json:"column_id"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
+	DbModel
+	Desc     string `json:"Desc"`
+	StoryId  int    `json:"story_id"`
+	ColumnId int    `json:"column_id"`
 }
 
 type Tasks []Task
 
 func NewTask(name string, desc string, story_id int, column_id int) Task {
 	return Task{
-		Name:      name,
-		Desc:      desc,
-		StoryId:   story_id,
-		ColumnId:  column_id,
-		CreatedAt: time.Now().UnixNano(),
+		DbModel: DbModel{
+			Name:      name,
+			CreatedAt: time.Now().UnixNano(),
+		},
+		Desc:     desc,
+		ColumnId: column_id,
+		StoryId:  story_id,
 	}
-}
-
-func (t Task) GetId() int {
-	return t.Id
-}
-
-func (t Task) GetCreatedAt() int64 {
-	return t.CreatedAt
-}
-
-func (t Task) SetUpdatedAt() {
-	t.UpdatedAt = time.Now().UnixNano()
 }
 
 func (t Task) TableName() string {

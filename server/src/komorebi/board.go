@@ -7,25 +7,16 @@ import (
 )
 
 type Board struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
+	DbModel
 }
 
 type BoardColumnView struct {
-	Id        int    `json:"id"`
-	Name      string `json:"name"`
-	CreatedAt int64  `json:"created_at"`
-	UpdatedAt int64  `json:"updated_at"`
-	Columns   `json:"columns"`
+	DbModel
+	Columns `json:"columns"`
 }
 
 type BoardWs struct {
-	Id        int
-	Name      string
-	CreatedAt int64
-	UpdatedAt int64
+	DbModel
 	ColumnsWs
 }
 
@@ -34,8 +25,10 @@ type BoardColumnViews []BoardColumnView
 
 func NewBoard(name string) Board {
 	return Board{
-		CreatedAt: time.Now().UnixNano(),
-		Name:      name,
+		DbModel: DbModel{
+			CreatedAt: time.Now().UnixNano(),
+			Name:      name,
+		},
 	}
 }
 
@@ -59,17 +52,6 @@ func (b Board) Validate() (bool, string) {
 		message += "Name not uniq.\n"
 	}
 	return success, message
-}
-
-func (b Board) GetId() int {
-	return b.Id
-}
-
-func (b Board) GetCreatedAt() int64 {
-	return b.CreatedAt
-}
-func (b Board) SetUpdatedAt() {
-	b.UpdatedAt = time.Now().UnixNano()
 }
 
 func (b Board) TableName() string {

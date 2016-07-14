@@ -6,6 +6,7 @@ import (
 	"gopkg.in/gorp.v1"
 	"log"
 	"os"
+	"time"
 )
 
 type Db struct {
@@ -22,8 +23,27 @@ type Model interface {
 	GetCreatedAt() int64
 }
 
+type DbModel struct {
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
+}
+
 type Models interface {
 	TableName() string
+}
+
+func (m DbModel) GetId() int {
+	return m.Id
+}
+
+func (m DbModel) GetCreatedAt() int64 {
+	return m.CreatedAt
+}
+
+func (m DbModel) SetUpdatedAt() {
+	m.UpdatedAt = time.Now().UnixNano()
 }
 
 var dbMapper Db

@@ -24,13 +24,8 @@ func TestStoryCreate(t *testing.T) {
 
 func TestStoryValidation(t *testing.T) {
 	success, msg := true, ""
-	s := Story{
-		Name:         "About a boy",
-		Desc:         "A meaningful description",
-		Points:       5,
-		Requirements: "Do this and that",
-		ColumnId:     1,
-	}
+	s := NewStory("About a boy", "A meaningful description",
+		"Do this and that", 5, 1)
 	success, msg = s.Validate()
 	if success == false {
 		t.Error("Should be valid")
