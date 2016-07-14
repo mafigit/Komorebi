@@ -8,21 +8,28 @@ defmodule Krcli.Board do
       IO.puts "Board is called: " <> board.name
     end
 
-    def board_columns(cols) do
-      with map_fn = fn(x) -> :io.format(" ~-15s|", [x.name]) end,
-        {:ok, scols} <- Krcli.Column.sort({:ok, cols}),
-        do: Enum.map(scols, map_fn)
-      IO.puts("")
-    end
-
     def board_inline(board) do
       :io.format("~3B : ~-15s\n", [board["id"], board["name"]]) 
     end
+
+    def stories_for(stories) do
+      Enum.each(stories,
+        fn(x) -> :io.format("~-10s (~3B)", [x.name || "", x.id])
+      end)
+      IO.puts("")
+    end
+
+    def stories_by_column(stories, board) do
+      Enum.each(board.columns, fn(col) ->
+        :io.format("~-15s:", [col.name])
+        |> Util.lift_pr(fn() -> stories_for(stories[col.id]) end)
+      end)
+    end
+
   end
 
   def parse(input) do
-    with {:ok, json} <- input,
-      {:ok, brd} <- JSX.decode(json),    
+    with {:ok, json} <- input, {:ok, brd} <- JSX.decode(json),    
     do: {:ok, from_hash(brd)}
   end
 
@@ -48,10 +55,18 @@ defmodule Krcli.Board do
     with_item(board, &(Krcli.Column.create(nname, &1.id)))
   end
 
+  def stories_per_column(board) do
+    Enum.reduce(board.columns, %{}, 
+      fn(col, acc) ->
+        Map.put_new(acc, col.id, Krcli.Story.by_column(col) |> Util.unwrap)
+      end)
+    |> Print.stories_by_column(board)
+  end
+
   defp show_board(input) do
     with {:ok, board} <- input,
       :ok <- Print.board(board),
-      :ok <- Print.board_columns(board.columns),
+      :ok <- stories_per_column(board),
     do: Util.wrap([])
   end
 
