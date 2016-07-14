@@ -15,7 +15,8 @@ class Board extends React.Component {
       "desc": story.desc,
       "requirements": story.requirements,
       "points": story.points,
-      "column_id": parseInt(column_id)
+      "column_id": parseInt(column_id),
+      "priority": 1
     }
     Ajax.postJson('/stories/' + story.id, data).then(response => {
       var response_obj = JSON.parse(response.responseText);
@@ -25,6 +26,22 @@ class Board extends React.Component {
     });
   }
 
+  updateTask = (task, column_id) => {
+    let data = {
+      "id": parseInt(task.id),
+      "name": task.name,
+      "desc": task.desc,
+      "column_id": parseInt(column_id),
+      "priority": 1,
+      "story_id": task.story_id
+    }
+    Ajax.postJson('/tasks/' + task.id, data).then(response => {
+      var response_obj = JSON.parse(response.responseText);
+      if (response_obj.success) {
+       } else {
+       }
+    });
+  }
   componentDidMount() {
     this.props.getBoard((board) => {
       this.props.boardLoadedHandler(board)
@@ -33,8 +50,9 @@ class Board extends React.Component {
 
   componentDidUpdate() {
     this.board_canvas =
-      new BoardCanvas('board', this.props.columns, this.props.stories,
-        {story: this.updateStory, reload: this.props.boardReloadHandler});
+      new BoardCanvas('board', this.props.columns, this.props.stories, this.props.tasks,
+        {story: this.updateStory, task: this.updateTask,
+          reload: this.props.boardReloadHandler});
   }
 
   render() {

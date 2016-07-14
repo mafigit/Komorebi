@@ -2,9 +2,10 @@
 import Konva from 'konva';
 import ColumnCanvas from './column_canvas';
 import StoryCanvas from './story_canvas';
+import TaskCanvas from './task_canvas';
 
 class BoardCanvas {
-  constructor(container, columns, stories, handler) {
+  constructor(container, columns, stories, tasks, handler) {
     let scale_factor = (window.innerWidth - 20)/window.screen.availWidth;
 
     this.container = container;
@@ -21,6 +22,7 @@ class BoardCanvas {
     this.layer.draw();
     this.columns = columns;
     this.stories = stories;
+    this.tasks = tasks;
     this.createColumns();
     var tempLayer = new Konva.Layer();
     this.stage.add(tempLayer);
@@ -43,7 +45,7 @@ class BoardCanvas {
         } else {
           column_id = drop_element.my_attrs.column_id;
         }
-        this.handler.story(_target.my_attrs, column_id);
+        this.handler[_target.my_type](_target.my_attrs, column_id);
         this.handler.reload();
       }
     });
@@ -70,6 +72,16 @@ class BoardCanvas {
     this.stories.forEach((story) => {
       var story_canvas = new StoryCanvas(story, this.stage);
       this.layer.add(story_canvas.KonvaElement);
+      var story_tasks = this.tasks.reduce((acc, task) => {
+        if (task.story_id == story.id) {
+          acc = task.tasks;
+        }
+        return acc;
+      }, []);
+      story_tasks.forEach((task) => {
+        var task_canvas = new TaskCanvas(task, this.stage);
+        this.layer.add(task_canvas.KonvaElement);
+      });
     });
     this.layer.draw();
   }

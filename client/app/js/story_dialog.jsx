@@ -26,7 +26,8 @@ export default class StoryDialog extends React.Component {
       desc: "",
       points: 0,
       requirements: "",
-      column_id: ""
+      column_id: "",
+      priority: 1
     }
   }
 
