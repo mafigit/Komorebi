@@ -18,6 +18,7 @@ type Model interface {
 	TableName() string
 	Save() bool
 	Validate() (bool, string)
+	GetCreatedAt() int64
 }
 
 type Models interface {

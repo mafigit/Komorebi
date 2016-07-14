@@ -70,6 +70,10 @@ func (s Story) GetId() int {
 	return s.Id
 }
 
+func (s Story) GetCreatedAt() int64 {
+	return s.CreatedAt
+}
+
 func (s Story) TableName() string {
 	return "users"
 }

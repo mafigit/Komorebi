@@ -30,6 +30,10 @@ func (t Task) GetId() int {
 	return t.Id
 }
 
+func (t Task) GetCreatedAt() int64 {
+	return t.CreatedAt
+}
+
 func (t Task) TableName() string {
 	return "tasks"
 }

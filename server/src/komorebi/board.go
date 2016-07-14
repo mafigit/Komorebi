@@ -62,6 +62,10 @@ func (b Board) GetId() int {
 	return b.Id
 }
 
+func (b Board) GetCreatedAt() int64 {
+	return b.CreatedAt
+}
+
 func (b Board) TableName() string {
 	return "boards"
 }
