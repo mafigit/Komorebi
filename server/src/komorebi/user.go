@@ -30,6 +30,22 @@ func (u User) TableName() string {
 	return "users"
 }
 
+func (u Users) TableName() string {
+	return "users"
+}
+
+func (u User) Destroy() bool {
+	if u.Id == 0 {
+		return true
+	}
+
+	if _, errDelete := dbMapper.Connection.Delete(&u); errDelete != nil {
+		log.Println("delete of user failed.", errDelete)
+		return false
+	}
+	return true
+}
+
 func (u User) Validate() (bool, string) {
 	success, message := true, ""
 

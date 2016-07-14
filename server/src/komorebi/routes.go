@@ -49,12 +49,6 @@ var routes = Routes{
 		GetStories,
 	},
 	Route{
-		"BoardShow",
-		"GET",
-		"/{board_name}",
-		BoardShow,
-	},
-	Route{
 		"BoardCreate",
 		"POST",
 		"/boards",
@@ -109,10 +103,34 @@ var routes = Routes{
 		StoryUpdate,
 	},
 	Route{
+		"StoryDelete",
+		"DELETE",
+		"/stories/{story_id}",
+		StoryDelete,
+	},
+	Route{
+		"UsersGet",
+		"GET",
+		"/users",
+		UsersGet,
+	},
+	Route{
 		"UserCreate",
 		"POST",
 		"/users",
 		UserCreate,
+	},
+	Route{
+		"UserUpdate",
+		"POST",
+		"/users/{user_id}",
+		UserUpdate,
+	},
+	Route{
+		"UserDelete",
+		"DELETE",
+		"/users/{user_id}",
+		UserDelete,
 	},
 	Route{
 		"HandleWS",
@@ -127,6 +145,12 @@ var routes = Routes{
 		TaskCreate,
 	},
 	Route{
+		"TaskUpdate",
+		"POST",
+		"/tasks/{task_id}",
+		TaskUpdate,
+	},
+	Route{
 		"TaskDelete",
 		"DELETE",
 		"/tasks/{task_id}",
@@ -137,5 +161,11 @@ var routes = Routes{
 		"GET",
 		"/stories/{story_id}/tasks",
 		TasksGet,
+	},
+	Route{
+		"BoardShow",
+		"GET",
+		"/{board_name}",
+		BoardShow,
 	},
 }
