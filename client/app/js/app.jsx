@@ -18,7 +18,8 @@ class App extends React.Component {
       title: "LOADING...",
       board_id: null,
       columns: [],
-      stories: []
+      stories: [],
+      tasks: []
     }
   }
 
@@ -29,15 +30,17 @@ class App extends React.Component {
   }
 
   boardLoadedHandler = (board) => {
-    this.getStories((stories) => {
-      this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});
+    this.getStories((stories, tasks) => {
+    this.setState({board_id: board.id, title: board.name,
+      columns: board.columns, stories: stories, tasks: tasks});
     })
   }
 
   boardReloadHandler = () => {
     this.getBoard((board) => {
-      this.getStories((stories) => {
-        this.setState({board_id: board.id, title: board.name, columns: board.columns, stories: stories});
+      this.getStories((stories, tasks) => {
+        this.setState({board_id: board.id, title: board.name,
+          columns: board.columns, stories: stories, tasks: tasks});
       })
     });
   }
@@ -47,8 +50,29 @@ class App extends React.Component {
       var stories = [];
       if(response.status == 200) {
         stories = JSON.parse(response.responseText);
+        this.getTasks(stories, callback);
       }
-      callback(stories);
+    });
+  }
+
+  getTasks = (stories, callback) => {
+    var ajax_count = stories.length;
+    var tasks = [];
+    if (ajax_count == 0) {
+      callback(stories, tasks);
+    }
+    stories.forEach(function(story) {
+      Ajax.get(`/stories/${story.id}/tasks`,
+        {"Accept": "application/json"}).then(response => {
+        if(response.status == 200) {
+          let fetched_tasks = JSON.parse(response.responseText);
+          tasks.push({story_id: story.id, tasks: fetched_tasks});
+          ajax_count--;
+          if (ajax_count == 0) {
+            callback(stories, tasks);
+          }
+        }
+      });
     });
   }
 
@@ -72,6 +96,7 @@ class App extends React.Component {
           <Board boardReloadHandler={this.boardReloadHandler}
             getBoard={this.getBoard} columns={this.state.columns}
             stories={this.state.stories}
+            tasks={this.state.tasks}
             boardLoadedHandler={this.boardLoadedHandler}
           />
         </BoardLayout>

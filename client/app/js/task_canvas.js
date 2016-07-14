@@ -3,13 +3,13 @@ import Konva from 'konva';
 import Colors from './color';
 import CardCanvas from './card_canvas';
 
-class StoryCanvas extends CardCanvas {
-  constructor(story, stage) {
+class TaskCanvas extends CardCanvas {
+  constructor(task, stage) {
     var layout = function() {
       var card_rect = new Konva.Rect({
         width: this.card_width,
         height: this.card_height,
-        fill: Colors.green,
+        fill: Colors.light_green,
         shadowColor: 'black',
         shadowOffsetX: 8,
         shadowOffsetY: 8,
@@ -20,7 +20,7 @@ class StoryCanvas extends CardCanvas {
       this.KonvaElement.add(card_rect);
 
       var title = new Konva.Text({
-        width: this.card_width - 20,
+        width: this.card_width,
         height: this.card_height - 105,
         fill: '#FFFFFF',
         fontSize: 12,
@@ -31,17 +31,6 @@ class StoryCanvas extends CardCanvas {
       var new_x_title = card_rect.getWidth()/2 - title.getWidth()/2;
       title.position({x: new_x_title, y: 5});
       this.KonvaElement.add(title);
-
-      var points = new Konva.Text({
-        x: card_rect.getWidth() - this.card_margin,
-        y: 5,
-        fill: Colors.dark_gray,
-        fontSize: 16,
-        fontFamily: 'Helvetica',
-        fontStyle: 'bold',
-        text: this.card.points
-      });
-      this.KonvaElement.add(points);
 
       var desc = new Konva.Text({
         x: 5,
@@ -55,7 +44,7 @@ class StoryCanvas extends CardCanvas {
       });
       this.KonvaElement.add(desc);
     };
-    super(story, stage, layout, "story");
+    super(task, stage, layout, "task");
   }
 }
-export default StoryCanvas;
+export default TaskCanvas;
