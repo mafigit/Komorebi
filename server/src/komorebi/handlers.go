@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -377,6 +378,11 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	board_struct := GetBoardWsByName(board_name)
+
+	if board_struct.Name == "" {
+		return
+	}
+
 	con := &Connection{
 		Ws:          ws,
 		BoardStruct: &board_struct,
@@ -389,7 +395,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	connections[board_name] = append(connections[board_name], con)
-	fmt.Println("connections: ", connections)
+	log.Println("connections: ", connections)
 	err = ws.WriteMessage(websocket.TextMessage, []byte("Connection established"))
 	if err != nil {
 		fmt.Println("error on write:", err)
@@ -398,7 +404,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateWebsockets(board_name string, msg string) {
-	fmt.Println("Update Websockets for", board_name)
+	log.Println("Update Websockets for board", board_name)
 	current_struct := GetBoardWsByName(board_name)
 
 	for i := range connections[board_name] {

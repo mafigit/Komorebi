@@ -13,7 +13,18 @@ type Story struct {
 	ColumnId     int    `json:"column_id"`
 }
 
+type StoryWs struct {
+	DbModel
+	Desc         string
+	Points       int
+	Priority     int
+	Requirements string
+	ColumnId     int
+	Tasks
+}
+
 type Stories []Story
+type StoriesWs []StoryWs
 
 func NewStory(name string, desc string, requirements string, points int,
 	priority int, columnId int) Story {
