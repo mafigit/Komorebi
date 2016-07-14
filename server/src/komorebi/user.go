@@ -26,6 +26,10 @@ func (u User) GetId() int {
 	return u.Id
 }
 
+func (u User) GetCreatedAt() int64 {
+	return u.CreatedAt
+}
+
 func (u User) TableName() string {
 	return "users"
 }

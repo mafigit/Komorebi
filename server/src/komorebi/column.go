@@ -38,6 +38,10 @@ func (c Column) GetId() int {
 	return c.Id
 }
 
+func (c Column) GetCreatedAt() int64 {
+	return c.CreatedAt
+}
+
 func (c Column) TableName() string {
 	return "columns"
 }
