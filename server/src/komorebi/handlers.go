@@ -345,6 +345,15 @@ func UpdateWebsockets(board_name string, msg string) {
 	}
 }
 
+func TasksGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	story_id := vars["story_id"]
+	id, _ := strconv.Atoi(story_id)
+
+	tasks := GetTasksByStoryId(id)
+	json.NewEncoder(w).Encode(tasks)
+}
+
 func TaskCreate(w http.ResponseWriter, r *http.Request) {
 	var task Task
 
@@ -355,6 +364,36 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 
 	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
 	modelCreate(task, w, r)
+}
+
+func TaskDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	task_id := vars["task_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	id, _ := strconv.Atoi(task_id)
+	var task Task
+	GetById(&task, id)
+
+	if task.Id == 0 && task.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Task does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if task.Destroy() {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {

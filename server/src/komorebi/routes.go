@@ -126,4 +126,16 @@ var routes = Routes{
 		"/tasks",
 		TaskCreate,
 	},
+	Route{
+		"TaskDelete",
+		"DELETE",
+		"/tasks/{task_id}",
+		TaskDelete,
+	},
+	Route{
+		"TasksGet",
+		"GET",
+		"/stories/{story_id}/tasks",
+		TasksGet,
+	},
 }

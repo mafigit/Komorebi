@@ -70,7 +70,17 @@ curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "sto
 => create a task
 => {"success":true,"message":""}
 
+DELETE /tasks/{:id}
+curl  -X DELETE localhost:8080/tasks/4
+=> delete task with id 4, json response
+=> {"success":true,"message":""}
+
 GET /columns/{:column_id}/stories
 curl   localhost:8080/columns/1/stories
 => get stories from column 1
 => [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and thattttt","created_at":0,"column_id":1}]
+
+GET /stories/{:story_id}/tasks
+curl   localhost:8080/stories/1/tasks
+=> get tasks from story 1
+=> [{"id":1,"name":"foo","created_at":1468491910868041418,"updated_at":0,"Desc":"desc","story_id":1,"column_id":1}]
