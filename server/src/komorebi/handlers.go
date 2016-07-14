@@ -201,6 +201,12 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	modelCreate(column, w, r)
 }
 
+func UsersGet(w http.ResponseWriter, r *http.Request) {
+	var users Users
+	GetAll(&users)
+	json.NewEncoder(w).Encode(users)
+}
+
 func UserCreate(w http.ResponseWriter, r *http.Request) {
 	var user User
 
@@ -211,6 +217,52 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 
 	user = NewUser(user.Name, user.ImagePath)
 	modelCreate(user, w, r)
+}
+
+func UserUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_user User
+	vars := mux.Vars(r)
+	user_id := vars["user_id"]
+
+	if err := json.NewDecoder(r.Body).Decode(&update_user); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	id, _ := strconv.Atoi(user_id)
+	var old_user User
+	GetById(&old_user, id)
+	modelUpdate(old_user, update_user, id, w, r)
+}
+
+func UserDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	user_id := vars["user_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	id, _ := strconv.Atoi(user_id)
+	var user User
+	GetById(&user, id)
+
+	if user.Id == 0 && user.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "User does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if user.Destroy() {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
 }
 
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
@@ -283,6 +335,36 @@ func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(story_id)
 	old_story := GetStoryById(id)
 	modelUpdate(old_story, update_story, id, w, r)
+}
+
+func StoryDelete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	story_id := vars["story_id"]
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	id, _ := strconv.Atoi(story_id)
+	var story Story
+	GetById(&story, id)
+
+	if story.Id == 0 && story.CreatedAt == 0 {
+		response.Success = false
+		response.Message = "Story does not exist"
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if story.Destroy() {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(400)
+		return
+	}
 }
 
 func delete_ws_from_connections(ws *websocket.Conn, board_name string) {
@@ -364,6 +446,22 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 
 	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
 	modelCreate(task, w, r)
+}
+
+func TaskUpdate(w http.ResponseWriter, r *http.Request) {
+	var update_task Task
+	vars := mux.Vars(r)
+	task_id := vars["task_id"]
+
+	if err := json.NewDecoder(r.Body).Decode(&update_task); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	id, _ := strconv.Atoi(task_id)
+	var old_task Task
+	GetById(&old_task, id)
+	modelUpdate(old_task, update_task, id, w, r)
 }
 
 func TaskDelete(w http.ResponseWriter, r *http.Request) {
