@@ -22,6 +22,7 @@ type Model interface {
 	Save() bool
 	Validate() (bool, string)
 	GetCreatedAt() int64
+	Destroy() bool
 }
 
 type DbModel struct {

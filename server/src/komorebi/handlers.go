@@ -162,31 +162,11 @@ func StoriesGetByColumn(w http.ResponseWriter, r *http.Request) {
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_id := vars["board_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	id, _ := strconv.Atoi(board_id)
 	var board Board
 	GetById(&board, id)
-
-	if board.Id == 0 && board.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "Board does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if board.Destroy() {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelDelete(board, w, r)
 }
 
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
@@ -238,31 +218,11 @@ func UserUpdate(w http.ResponseWriter, r *http.Request) {
 func UserDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	user_id := vars["user_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	id, _ := strconv.Atoi(user_id)
 	var user User
 	GetById(&user, id)
-
-	if user.Id == 0 && user.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "User does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if user.Destroy() {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelDelete(user, w, r)
 }
 
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
@@ -285,23 +245,28 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	column_id := vars["column_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	id, _ := strconv.Atoi(column_id)
 	var column Column
 	GetById(&column, id)
 
-	if column.Id == 0 && column.CreatedAt == 0 {
+	modelDelete(column, w, r)
+}
+
+func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
+	response := Response{
+		Success: true,
+		Message: "",
+	}
+
+	if m.GetId() == 0 && m.GetCreatedAt() == 0 {
 		response.Success = false
-		response.Message = "Column does not exist"
+		response.Message = "Model does not exist"
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
-	if column.Destroy() {
+	if m.Destroy() {
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 	} else {
@@ -340,31 +305,11 @@ func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 func StoryDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	story_id := vars["story_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	id, _ := strconv.Atoi(story_id)
 	var story Story
 	GetById(&story, id)
-
-	if story.Id == 0 && story.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "Story does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if story.Destroy() {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelDelete(story, w, r)
 }
 
 func delete_ws_from_connections(ws *websocket.Conn, board_name string) {
@@ -468,31 +413,11 @@ func TaskUpdate(w http.ResponseWriter, r *http.Request) {
 func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	task_id := vars["task_id"]
-	response := Response{
-		Success: true,
-		Message: "",
-	}
 
 	id, _ := strconv.Atoi(task_id)
 	var task Task
 	GetById(&task, id)
-
-	if task.Id == 0 && task.CreatedAt == 0 {
-		response.Success = false
-		response.Message = "Task does not exist"
-
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
-	if task.Destroy() {
-		w.WriteHeader(200)
-		json.NewEncoder(w).Encode(response)
-	} else {
-		w.WriteHeader(400)
-		return
-	}
+	modelDelete(task, w, r)
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
