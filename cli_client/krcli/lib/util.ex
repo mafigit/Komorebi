@@ -31,7 +31,7 @@ defmodule Util do
   def comply_fn(data, fun) do
     case data do
       {:ok, okv} -> fun.(okv) |> good
-      {:error, msg} -> raise msg
+      {:error, msg} -> raise inspect(msg)
       unexpected -> raise inspect(unexpected)
     end
   end
@@ -54,5 +54,15 @@ defmodule Util do
       :ok -> fun.()
       unexpected -> unexpected
     end
+  end
+
+  def collect_till(data, from, to) do
+    Enum.reduce(data, {0,[]},
+      fn(x, {state, acc}) -> cond do
+        x == from and state == 0 -> {1, []}
+        x == to and state == 1 -> {2, acc}
+        state == 1 -> {1, [x | acc]}
+        true -> {state, acc}
+      end end)
   end
 end

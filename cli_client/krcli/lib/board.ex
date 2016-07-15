@@ -14,7 +14,7 @@ defmodule Krcli.Board do
 
     def stories_for(stories) do
       Enum.each(stories,
-        fn(x) -> :io.format("~-10s (~3B)", [x.name || "", x.id])
+        fn(x) -> :io.format("~-10s (~3B) ", [x.name || "", x.id])
       end)
       IO.puts("")
     end
@@ -39,6 +39,14 @@ defmodule Krcli.Board do
     do: %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}
   end
 
+  def with_column(board, item, fun) do
+    with {:ok, board} <- fetch(board.name),
+      val = Enum.find(board.columns, :error, Util.ln_cmp(item, &(&1.name))),
+    do:
+      if val == :error, do: {:error, "could not find " <> type_name},
+      else: fun.(val)
+  end
+
   def create_board(data) do
     with {:ok, json} <- data,
       {:ok, result} <- SbServer.post_json("/boards", json),
@@ -53,6 +61,10 @@ defmodule Krcli.Board do
 
   def create_column(nname, board) do
     with_item(board, &(Krcli.Column.create(nname, &1.id)))
+  end
+
+  def create_story(column, board) do
+    with_item(board, &(Krcli.Story.create_with_column(column, &1)))
   end
 
   def stories_per_column(board) do

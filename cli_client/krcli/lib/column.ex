@@ -27,10 +27,6 @@ defmodule Krcli.Column do
   end
 
   def destroy(item, board) do
-    with {:ok, board} <- Krcli.Board.fetch(board.name),
-      val = Enum.find(board.columns, :error, Util.ln_cmp(item, &(&1.name))),
-    do:
-      if val == :error, do: {:error, "could not find " <> type_name},
-      else: destroy_item(val)
+    Krcli.Board.with_column(board, item, &destroy_item/1)
   end
 end

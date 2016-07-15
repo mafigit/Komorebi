@@ -1,5 +1,11 @@
 defmodule KrOpts do
   def dispatch(args) do
+    if File.exists?("/tmp/krcli.story"),
+      do: Krcli.Story.create_from_file() |> Util.comply_good,
+    else: dispatch_from_args(args)
+  end
+
+  def dispatch_from_args(args) do
     case args do
       ["board", board, "show"] -> Krcli.Board.display(board)
       ["boards"] -> Krcli.Board.list
@@ -9,6 +15,8 @@ defmodule KrOpts do
         Krcli.Board.create_column(column, board)
       ["board", board, "column", column, "destroy"] ->
         Krcli.Board.destroy_column(column, board)
+      ["board", board, "column", column, "story", "new"] ->
+        Krcli.Board.create_story(column, board)
       _ -> error(:no_opt)
     end
   end
