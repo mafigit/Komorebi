@@ -59,6 +59,12 @@ curl  -X DELETE localhost:8080/columns/4
 
 ### Stories
 
+GET /stories/{:story_id}
+curl  localhost:8080/stories/5
+=> get story 5
+=> {"id":5,"name":"asdf","updated_at":1468575129729239946,"desc":"","points":4,"priority":1,"requirements":"","column_id":4}
+
+
 GET /gz/stories
 curl  localhost:8080/gz/stories
 => Get all stories of board gz
