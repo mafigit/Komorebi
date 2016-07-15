@@ -103,6 +103,12 @@ var routes = Routes{
 		StoryCreate,
 	},
 	Route{
+		"StoryGet",
+		"GET",
+		"/stories/{story_id}",
+		StoryGet,
+	},
+	Route{
 		"StoryUpdate",
 		"POST",
 		"/stories/{story_id}",

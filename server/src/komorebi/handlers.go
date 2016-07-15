@@ -301,6 +301,22 @@ func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func StoryGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	story_id := vars["story_id"]
+
+	id, _ := strconv.Atoi(story_id)
+	var story Story
+	GetById(&story, id)
+
+	if story.Id == 0 {
+		w.WriteHeader(400)
+		return
+	}
+
+	json.NewEncoder(w).Encode(story)
+}
+
 func StoryCreate(w http.ResponseWriter, r *http.Request) {
 	var story Story
 
