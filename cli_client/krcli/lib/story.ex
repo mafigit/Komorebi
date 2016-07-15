@@ -5,7 +5,6 @@ defmodule Krcli.Story do
   def create_from_file do
     with {:ok, data} <- File.read("/tmp/krcli.story"),
       lines = String.split(data, ["\n"]),
-      #["Board", board_id] <- String.split(Enum.at(lines,0), ":"),
       ["Column", column_id] <- String.split(Enum.at(lines, 1), ":"),
       ["Name", nname] <- String.split(Enum.at(lines, 2), ":"),
       ["Points", points] <- String.split(Enum.at(lines, 3), ":"),
@@ -17,8 +16,6 @@ defmodule Krcli.Story do
       {nprio, _} <- Integer.parse(prio),
       ndesc = Enum.join(description, "\n"),
       nreq = Enum.join(requirements, "\n"),
-      # :ok <- IO.puts(inspect(%{name: nname, desc: ndesc,
-      #   points: npoints, requirements: nreq, column_id: ncolumn})),
       {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
         points: npoints, requirements: nreq, column_id: ncolumn,
         priority: nprio}),
@@ -69,8 +66,7 @@ defmodule Krcli.Story do
 
   def by_column(col) do
     SbServer.get_json("/columns/" <> Integer.to_string(col.id) <> "/stories")
-    |> Util.unwrap
-    |> JSX.decode
+    |> Util.unwrap_fn(&JSX.decode/1)
     |> parse_batch
   end
 
@@ -90,7 +86,7 @@ defmodule Krcli.Story do
   end
 
   def show(story_id) do
-    with_item(story_id, &(show_story(&1)))
+    with_item(story_id, &show_story/1)
   end
   
 end
