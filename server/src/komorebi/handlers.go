@@ -179,6 +179,22 @@ func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	modelDelete(board, w, r)
 }
 
+func ColumnGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	column_id := vars["column_id"]
+
+	id, _ := strconv.Atoi(column_id)
+	var column Column
+	GetById(&column, id)
+
+	if column.Id == 0 {
+		w.WriteHeader(400)
+		return
+	}
+
+	json.NewEncoder(w).Encode(column)
+}
+
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	var column Column
 
