@@ -11,6 +11,10 @@ defmodule Util do
     end
   end
 
+  def unwrap_fn(item, fun) do
+    unwrap(item) |> fun.()
+  end
+
   def good(_), do: {:ok, []}
   def good(), do: {:ok, []}
 
@@ -64,5 +68,9 @@ defmodule Util do
         state == 1 -> {1, [x | acc]}
         true -> {state, acc}
       end end)
+  end
+
+  def split_indent_wrap(str, ind) do
+    String.split(str, "\n") |> Enum.map(&(ind <> &1)) |> Enum.join("\n")
   end
 end

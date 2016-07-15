@@ -1,6 +1,6 @@
 defmodule Krcli do
   use Application
-
+  
   # See http://elixir-lang.org/docs/stable/elixir/Application.html
   # for more information on OTP Applications
   def start(_type, _args) do
@@ -18,7 +18,7 @@ defmodule Krcli do
   end
 
   def main(args) do
-    IO.puts "Running Komoebi CLI client."
+    IO.puts "Running Komorebi CLI client."
     KrOpts.dispatch(args)
   end
 end

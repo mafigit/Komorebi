@@ -42,7 +42,7 @@ defmodule FN do
         |> Util.comply!(type_name <> " successfully destroyed.")
       end
 
-      defoverridable [from_hash: 1]
+      defoverridable [from_hash: 1, by_name: 1]
     end
   end
 

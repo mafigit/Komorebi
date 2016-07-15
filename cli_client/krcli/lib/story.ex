@@ -1,5 +1,6 @@
 defmodule Krcli.Story do
-  defstruct [:id, :name, :desc, :points, :requirements, :column_id]
+  defstruct [:id, :name, :desc, :points, :requirements, :column_id, :priority]
+  use FN, url: "/stories", name: "Story"
 
   def create_from_file do
     with {:ok, data} <- File.read("/tmp/krcli.story"),
@@ -14,8 +15,8 @@ defmodule Krcli.Story do
       {ncolumn, _} <- Integer.parse(column_id),
       {npoints, _} <- Integer.parse(points),
       {nprio, _} <- Integer.parse(prio),
-      ndesc <- Enum.join(description, "\n"),
-      nreq <- Enum.join(requirements, "\n"),
+      ndesc = Enum.join(description, "\n"),
+      nreq = Enum.join(requirements, "\n"),
       # :ok <- IO.puts(inspect(%{name: nname, desc: ndesc,
       #   points: npoints, requirements: nreq, column_id: ncolumn})),
       {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
@@ -30,6 +31,12 @@ defmodule Krcli.Story do
 
   def create_with_column(column, board) do
     Krcli.Board.with_column(board, column, &(create(&1, board)))
+  end
+
+  def by_name(item) do
+    SbServer.get_json("/stories/" <> item)
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse/1)
   end
 
   def create(column, board) do
@@ -51,7 +58,8 @@ defmodule Krcli.Story do
   def parse(item) do
     %Krcli.Story{id: item["id"], desc: item["desc"],
       points: item["points"], requirements: item["requirements"],
-      column_id: item["column_id"], name: item["name"]} |> Util.wrap
+      column_id: item["column_id"], name: item["name"],
+      priority: item["priority"]} |> Util.wrap
   end
 
   def parse_batch(items) do
@@ -65,4 +73,24 @@ defmodule Krcli.Story do
     |> JSX.decode
     |> parse_batch
   end
+
+  def show_story(story) do
+    with story_id = Integer.to_string(story.id),
+    pad_desc = Util.split_indent_wrap(story.desc, "  "),
+    pad_req = Util.split_indent_wrap(story.requirements, "  "),
+    points = Integer.to_string(story.points),
+    prio = Integer.to_string(story.priority),
+    column_name = Krcli.Column.by_id(Integer.to_string(story.column_id)).name,
+    do:
+      IO.puts("Story: " <> story.name <> " ( story:" <> story_id <>
+        ", Column: " <> column_name <> " )\n" <>
+      "Points: "<> points <> "\nPriority: " <> prio <>
+      "\nDescription:\n" <> pad_desc <> "\nRequirements:\n" <> pad_req <>
+      "\n")
+  end
+
+  def show(story_id) do
+    with_item(story_id, &(show_story(&1)))
+  end
+  
 end

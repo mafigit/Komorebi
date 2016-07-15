@@ -20,6 +20,12 @@ defmodule Krcli.Column do
       do: Util.success?(result)
   end
 
+  def by_id(column) do
+    SbServer.get_json("/columns/" <> column)
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse/1)
+  end
+
   def create(nname, board) do
     JSX.encode(%{name: nname, board_id: board})
     |> create_column
