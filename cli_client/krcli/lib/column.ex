@@ -11,9 +11,15 @@ defmodule Krcli.Column do
   def sort(input) do
     with {:ok, columns} <- input,
       sort_col = fn (a,b) -> a.position < b.position end,
-      do: Util.wrap(Enum.sort(columns, sort_col))
+    do: Util.wrap(Enum.sort(columns, sort_col))
   end
 
+  def by_id(column) do
+    SbServer.get_json("/columns/" <> column)
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse/1)
+  end
+  
   def create_column(data) do
     with {:ok, json} <- data,
       {:ok, result} <- SbServer.post_json("/columns", json),
