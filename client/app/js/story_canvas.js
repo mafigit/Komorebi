@@ -4,7 +4,7 @@ import Colors from './color';
 import CardCanvas from './card_canvas';
 
 class StoryCanvas extends CardCanvas {
-  constructor(story, stage) {
+  constructor(story, stage, open_story_view_handler) {
     var layout = function() {
       var card_rect = new Konva.Rect({
         width: this.card_width,
@@ -75,12 +75,29 @@ class StoryCanvas extends CardCanvas {
         y: card_rect.getHeight() - this.card_margin,
         data: view_svg_path,
         fill: 'white',
+        name: "open_story_view",
+        click_function: function() {open_story_view_handler.call(this, story.id)},
         scale: {
           x : 1,
-          y : 1
+          y : 1,
         }
       });
+      var icon_rect = new Konva.Rect({
+        width: 30,
+        height: 30,
+        click_function: function() {open_story_view_handler.call(this, story.id)},
+        x: card_rect.getWidth() - this.card_margin,
+        y: card_rect.getHeight() - this.card_margin,
+        name: "open_story_view"
+      });
+      this.KonvaElement.add(icon_rect);
       this.KonvaElement.add(view_path);
+      this.KonvaElement.on("click", (event) => {
+        let click_function = event.target.attrs.click_function;
+        if (click_function) {
+          click_function();
+        }
+      });
     };
     super(story, stage, layout, "story");
   }

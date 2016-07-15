@@ -87,7 +87,8 @@ class BoardCanvas {
         var task_canvas = new TaskCanvas(task, this.stage);
         this.layer.add(task_canvas.KonvaElement);
       });
-      var story_canvas = new StoryCanvas(story, this.stage);
+      var story_canvas = new StoryCanvas(story, this.stage,
+        this.handler.open_story_view);
       this.layer.add(story_canvas.KonvaElement);
     });
     this.layer.draw();

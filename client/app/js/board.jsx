@@ -2,10 +2,15 @@
 import React from 'react';
 import BoardCanvas from './board_canvas';
 import Ajax from 'basic-ajax';
+import StoryDialog from './story_dialog';
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      story_view_open: false,
+      story_id: null
+    }
   }
 
   updateStory = (story, column_id) => {
@@ -42,6 +47,15 @@ class Board extends React.Component {
        }
     });
   }
+
+  openStoryView = (story_id) => {
+    this.setState({story_view_open: true, story_id: story_id});
+  }
+
+  closeStoryView = () => {
+    this.setState({story_view_open: false});
+  }
+
   componentDidMount() {
     this.props.getBoard((board) => {
       this.props.boardLoadedHandler(board)
@@ -50,13 +64,18 @@ class Board extends React.Component {
 
   componentDidUpdate() {
     this.board_canvas =
-      new BoardCanvas('board', this.props.columns, this.props.stories, this.props.tasks,
-        {story: this.updateStory, task: this.updateTask,
-          reload: this.props.boardReloadHandler});
+      new BoardCanvas('board', this.props.columns, this.props.stories,
+        this.props.tasks, {story: this.updateStory, task: this.updateTask,
+        reload: this.props.boardReloadHandler, open_story_view: this.openStoryView});
   }
 
   render() {
-    return <div id='board'></div>;
+    return <div>
+      <StoryDialog columns={this.props.columns} story_id={this.state.story_id}
+        board_id={1} open={this.state.story_view_open}
+        handleClose={this.closeStoryView} action="show"/>
+      <div id='board'></div>
+    </div>
   }
 }
 
