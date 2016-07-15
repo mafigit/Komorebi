@@ -7,6 +7,13 @@ import TaskCanvas from './task_canvas';
 class BoardCanvas {
   constructor(container, columns, stories, tasks, handler) {
     let scale_factor = (window.innerWidth - 20)/window.screen.availWidth;
+    let card_sorter = function(a, b) {
+      if (a.priority < b.priority)
+        return -1;
+      if (a.priority > b.priority)
+        return 1;
+      return 0;
+    };
 
     this.container = container;
     this.handler = handler;
@@ -21,8 +28,8 @@ class BoardCanvas {
     this.stage.add(this.layer);
     this.layer.draw();
     this.columns = columns;
-    this.stories = stories;
-    this.tasks = tasks;
+    this.stories = stories.sort(card_sorter);
+    this.tasks = tasks.sort(card_sorter);
     this.createColumns();
     var tempLayer = new Konva.Layer();
     this.stage.add(tempLayer);

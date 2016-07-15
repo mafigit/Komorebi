@@ -70,6 +70,10 @@ export default class StoryDialog extends React.Component {
     this.form_values.points = value;
   }
 
+  priorityHandler = (value) => {
+    this.form_values.priority = value;
+  }
+
   render() {
     const header = [
     ];
@@ -92,7 +96,7 @@ export default class StoryDialog extends React.Component {
         autoScrollBodyContent={true}
       >
          <StoryPointPicker title="Points" key='0' valueHandler={this.pointsHandler}/>
-         <StoryPointPicker title="Priority" key='1' valueHandler={this.pointsHandler}
+         <StoryPointPicker title="Priority" key='1' valueHandler={this.priorityHandler}
          range={[1,2,3,4,5,6,7,8,9,10]}/>
         <br />
         Add a name
