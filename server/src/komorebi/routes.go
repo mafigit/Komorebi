@@ -67,6 +67,12 @@ var routes = Routes{
 		BoardDelete,
 	},
 	Route{
+		"ColumnGet",
+		"GET",
+		"/columns/{column_id}",
+		ColumnGet,
+	},
+	Route{
 		"ColumnUpdate",
 		"POST",
 		"/columns/{column_id}",

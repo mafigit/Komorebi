@@ -36,6 +36,11 @@ curl  -X DELETE localhost:8080/boards/4
 
 ### Columns
 
+GET /columns/{:column_id}
+curl  localhost:8080/columns/4
+=> get column 4
+=> {"id":4,"name":"WIP","updated_at":1468529902681615473,"board_id":1,"position":2}
+
 POST /columns
 curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns
 => create columns for board boardId, json response
