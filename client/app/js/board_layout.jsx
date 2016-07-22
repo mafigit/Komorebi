@@ -89,7 +89,7 @@ class BoardLayout extends Layout  {
         handleClose={this.handleColumnAddClose}/>
       <StoryDialog columns={this.props.columns}
         board_id={this.props.board_id} open={this.state.story_open}
-        handleClose={this.handleStoryAddClose}/>
+        handleClose={this.handleStoryAddClose} action="edit"/>
       <TaskDialog tasks={this.props.tasks} columns={this.props.columns}
         board_id={this.props.board_id} open={this.state.task_open}
         stories={this.props.stories}
