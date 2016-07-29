@@ -19,7 +19,7 @@ class App extends React.Component {
       board_id: null,
       columns: [],
       stories: [],
-      tasks: []
+      tasks: [],
     }
   }
 
@@ -43,6 +43,9 @@ class App extends React.Component {
           columns: board.columns, stories: stories, tasks: tasks});
       })
     });
+  }
+
+  setFilterHandler = () => {
   }
 
   getStories = (callback) => {
