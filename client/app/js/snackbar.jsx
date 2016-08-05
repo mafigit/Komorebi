@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 import Snackbar from 'material-ui/Snackbar';
 import React from 'react';
+import BoardActions from './actions/BoardActions';
 
 class MySnackbar extends React.Component {
 
@@ -25,11 +26,7 @@ class MySnackbar extends React.Component {
     this.setState({
       open: false,
     });
-    this.boardReloadHandler();
-  };
-
-  boardReloadHandler = () => {
-    this.props.boardReloadHandler();
+    BoardActions.fetchAll();
   };
 
   update_websocket = (board_name) => {

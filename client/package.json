@@ -15,6 +15,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "babelify": "^7.3.0",
     "basic-ajax": "^2.0.2",
+    "flux": "^2.1.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-react": "^3.1.0",

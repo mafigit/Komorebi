@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import BoardStore from './store/BoardStore';
 
 export default class StorySelect extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export default class StorySelect extends React.Component {
     }
   }
   menuItems = () => {
-    var stories = this.props.stories.slice();
+    var stories = BoardStore.getStories().slice();
     if (this.props.allow_empty) {
       stories.unshift({id: -1, name: "all"});
     }

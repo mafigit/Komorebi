@@ -6,6 +6,8 @@ import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
+import BoardStore from './store/BoardStore';
+import BoardActions from './actions/BoardActions';
 
 export default class ColumnDialog extends React.Component {
   constructor(props) {
@@ -18,19 +20,14 @@ export default class ColumnDialog extends React.Component {
     var column_name =
       ReactDOM.findDOMNode(this.refs.column_name).querySelectorAll("input")[0].value;
     Ajax.postJson('/columns', {"name": column_name,
-      "board_id": this.props.board_id }).then(response => {
+      "board_id": BoardStore.getBoardId()}).then(response => {
       var response_obj = JSON.parse(response.responseText);
       if (response_obj.success) {
-        this.handleClose(true);
+        BoardActions.closeColumnDialog(true);
       } else {
         this.setState({column_name_error: response_obj.message});
       }
     });
-  }
-
-  handleClose = (reload_board) => {
-    this.setState({column_name_error: ""});
-    this.props.handleClose(reload_board);
   }
 
   render() {
@@ -49,7 +46,7 @@ export default class ColumnDialog extends React.Component {
         actions={actions}
         modal={false}
         open={this.props.open}
-        onRequestClose={this.handleClose}
+        onRequestClose={BoardActions.closeColumnDialog}
       >
         Add a name for the new Column
         <br />
