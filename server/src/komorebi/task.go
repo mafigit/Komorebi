@@ -32,7 +32,12 @@ func (t Task) TableName() string {
 }
 
 func (t Task) Save() bool {
-	return dbMapper.Save(&t)
+	if !dbMapper.Save(&t) {
+		return false
+	}
+	board := GetBoardByColumnId(t.ColumnId)
+	UpdateWebsockets(board.Name, "Task updated")
+	return true
 }
 
 func (t Task) Destroy() bool {

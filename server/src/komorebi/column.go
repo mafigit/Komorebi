@@ -12,7 +12,7 @@ type Column struct {
 
 type ColumnWs struct {
 	DbModel
-	Stories
+	StoriesWs
 	Position int
 	BoardId  int
 }
