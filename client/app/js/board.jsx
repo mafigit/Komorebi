@@ -57,23 +57,18 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
-    this.props.getBoard((board) => {
-      this.props.boardLoadedHandler(board)
-    });
   }
 
   componentDidUpdate() {
     this.board_canvas =
-      new BoardCanvas('board', this.props.columns, this.props.stories,
-        this.props.tasks, {story: this.updateStory, task: this.updateTask,
-        reload: this.props.boardReloadHandler, open_story_view: this.openStoryView});
+      new BoardCanvas('board', {story: this.updateStory, task: this.updateTask,
+        open_story_view: this.openStoryView});
   }
 
   render() {
     return <div>
-      <StoryDialog columns={this.props.columns} story_id={this.state.story_id}
-        board_id={1} open={this.state.story_view_open}
-        handleClose={this.closeStoryView} action="show"/>
+      <StoryDialog story_id={this.state.story_id}
+        open={this.state.story_view_open} action="show"/>
       <div id='board'></div>
     </div>
   }
