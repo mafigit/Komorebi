@@ -155,8 +155,8 @@ func TestBoardWs(t *testing.T) {
 	if res1.ColumnsWs[0].Name != "WIP" {
 		t.Error("First Column name should be 'WIP'. Is:", res1.ColumnsWs[0].Name)
 	}
-	s = res1.ColumnsWs[0].Stories[0]
-	if s.Name != "Story 1" {
+	s_ws := res1.ColumnsWs[0].StoriesWs[0]
+	if s_ws.Name != "Story 1" {
 		t.Error("First story of column 'WIP' should be 'Story 1'")
 	}
 	stories := GetStoriesByBoradName(board.Name)
