@@ -94,16 +94,17 @@ func TestBoardDatabase(t *testing.T) {
 		t.Error("Did not destroy the board")
 	}
 
-	boardView := GetBoardColumnViewByName(b.Name)
-	if boardView.Name != "update" {
-		t.Error("Should retrive a BoardColumnView:", boardView.Name)
+	var board Board
+	GetByName(&board, b.Name)
+	if board.Name != "update" {
+		t.Error("Should retrive a Board:", board.Name)
 	}
-	if len(boardView.Columns) <= 0 {
-		t.Error("Could not find any boardViews columns")
+	if len(GetColumnsByBoardId(board.Id)) <= 0 {
+		t.Error("Could not find any board columns")
 	}
-	bcv1 := boardView.Columns[0]
+	bcv1 := GetColumnsByBoardId(board.Id)[0]
 	if bcv1.Name != "WIP" {
-		t.Error("Should retrive columns with BoardColumnView")
+		t.Error("Should retrive columns with Board")
 	}
 }
 
@@ -127,10 +128,11 @@ func TestBoardValidation(t *testing.T) {
 	}
 }
 
-func TestBoardWs(t *testing.T) {
+func TestBoardNested(t *testing.T) {
 	b := NewBoard("testValidationFoobar")
 	b.Save()
-	board := GetBoardColumnViewByName(b.Name)
+	var board Board
+	GetByName(&board, b.Name)
 
 	c := NewColumn("WIP", 0, board.Id)
 	c.Save()
@@ -144,25 +146,25 @@ func TestBoardWs(t *testing.T) {
 	s = NewStory("Story 2", "description 2", "Do this and that", 3, 4,
 		cols[1].Id)
 	s.Save()
-	res1 := GetBoardWsByName(board.Name)
-	res2 := GetBoardWsByName(board.Name)
+	res1 := GetBoardNestedByName(board.Name)
+	res2 := GetBoardNestedByName(board.Name)
 	if !reflect.DeepEqual(res1, res2) {
 		t.Error("should be equal")
 	}
 	if res1.Name != "testValidationFoobar" {
 		t.Error("Board name should be 'testValidationFoobar'")
 	}
-	if res1.ColumnsWs[0].Name != "WIP" {
-		t.Error("First Column name should be 'WIP'. Is:", res1.ColumnsWs[0].Name)
+	if res1.ColumnsNested[0].Name != "WIP" {
+		t.Error("First Column name should be 'WIP'. Is:", res1.ColumnsNested[0].Name)
 	}
-	s_ws := res1.ColumnsWs[0].StoriesWs[0]
+	s_ws := res1.ColumnsNested[0].StoriesNested[0]
 	if s_ws.Name != "Story 1" {
 		t.Error("First story of column 'WIP' should be 'Story 1'")
 	}
 	stories := GetStoriesByBoradName(board.Name)
 	stories[0].Name = "fooo"
 	stories[0].Save()
-	res2 = GetBoardWsByName(board.Name)
+	res2 = GetBoardNestedByName(board.Name)
 
 	if reflect.DeepEqual(res1, res2) {
 		t.Error("should not be equal res1: ", res1)

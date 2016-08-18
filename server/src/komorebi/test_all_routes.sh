@@ -70,7 +70,7 @@ test_equal "{\"success\":true,\"message\":\"\"}" $resp
 
 echo "Get board foo"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"columns\":\[\]}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"columns\":\[*\]}" $resp
 
 
 
@@ -90,7 +90,7 @@ test_equal "{\"success\":true,\"message\":\"\"}" $resp
 
 echo "Get board with columns"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"columns\":\[{\"id\":1,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":0}\]}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"columns\":\[{\"id\":1,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"stories\":\[*\],\"position\":0,\"board_id\":1}\]}" $resp
 
 echo "Update board WIP with new name BACKLOG"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"BACKLOG", "position":0, "id":1}' localhost:8080/columns/1 2>/dev/null`

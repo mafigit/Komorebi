@@ -10,14 +10,14 @@ type Column struct {
 	Position int `json:"position"`
 }
 
-type ColumnWs struct {
+type ColumnNested struct {
 	DbModel
-	StoriesWs
-	Position int
-	BoardId  int
+	StoriesNested `json:"stories"`
+	Position      int `json:"position"`
+	BoardId       int `json:"board_id"`
 }
 
-type ColumnsWs []ColumnWs
+type ColumnsNested []ColumnNested
 type Columns []Column
 
 func NewColumn(name string, position int, boardId int) Column {
@@ -97,14 +97,15 @@ func (c Column) Validate() (bool, string) {
 		message += "Name not present.\n"
 	}
 
-	board := GetBoardColumnViewById(c.BoardId)
+	var board Board
+	GetById(&board, c.BoardId)
 	if board.Id == 0 {
 		log.Println("Column validation failed. BoardId does not exist:", c.BoardId)
 		success = false
 		message += "Board does not exist.\n"
 	}
 
-	for _, column := range board.Columns {
+	for _, column := range GetColumnsByBoardId(board.Id) {
 		if column.Name == c.Name {
 			log.Println("Column validation failed. Name not uniq")
 			success = false

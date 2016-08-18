@@ -13,18 +13,18 @@ type Story struct {
 	ColumnId     int    `json:"column_id"`
 }
 
-type StoryWs struct {
+type StoryNested struct {
 	DbModel
-	Desc         string
-	Points       int
-	Priority     int
-	Requirements string
-	ColumnId     int
-	Tasks
+	Desc         string `json:"desc"`
+	Points       int    `json:"points"`
+	Priority     int    `json:"priority"`
+	Requirements string `json:"requirements"`
+	ColumnId     int    `json:"column_id"`
+	Tasks        `json:"tasks"`
 }
 
 type Stories []Story
-type StoriesWs []StoryWs
+type StoriesNested []StoryNested
 
 func NewStory(name string, desc string, requirements string, points int,
 	priority int, columnId int) Story {
