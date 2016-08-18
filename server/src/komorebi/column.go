@@ -115,6 +115,33 @@ func (c Column) Validate() (bool, string) {
 	return success, message
 }
 
+func GetNestedColumnByColumnId(id int) ColumnNested {
+	var column ColumnNested
+
+	err := dbMapper.Connection.SelectOne(&column,
+		"select * from columns where Id=?", id)
+
+	if err != nil {
+		log.Println("could not find column", err)
+		return column
+	}
+	_, err = dbMapper.Connection.Select(&column.StoriesNested,
+		"select * from stories where ColumnId=?", column.Id)
+
+	if err != nil {
+		log.Println("could not find stories", err)
+		return column
+	}
+
+	var tasks Tasks
+	for story_index, st := range column.StoriesNested {
+		_, err = dbMapper.Connection.Select(&tasks,
+			"select * from tasks where StoryId=?", st.Id)
+		column.StoriesNested[story_index].Tasks = tasks
+	}
+	return column
+}
+
 func GetColumnsByBoardId(board_id int) Columns {
 	var cols Columns
 	_, err := dbMapper.Connection.Select(&cols,

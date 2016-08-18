@@ -98,7 +98,7 @@ test_equal "{\"success\":true,\"message\":\"\"}" $resp
 
 echo "Get column BACKLOG"
 resp=`curl  localhost:8080/columns/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":0}" $resp
+test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"stories\":\[\],\"position\":0,\"board_id\":1}" $resp
 
 
 

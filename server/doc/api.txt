@@ -38,8 +38,8 @@ curl  -X DELETE localhost:8080/boards/4
 
 GET /columns/{:column_id}
 curl  localhost:8080/columns/4
-=> get column 4
-=> {"id":4,"name":"WIP","updated_at":1468529902681615473,"board_id":1,"position":2}
+=> get column 4, with stories and tasks
+=> {"id":1,"name":"BACKLOG","updated_at":1471542822809004346,"stories":[{"id":1,"name":"do_that","updated_at":1471542822970324464,"desc":"","points":5,"priority":3,"requirements":"Do_this!","column_id":1,"tasks":[{"id":1,"name":"bar","updated_at":1471542823058177709,"desc":"desc","story_id":1,"priority":4,"column_id":1}]}],"position":0,"board_id":1}
 
 POST /columns
 curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns

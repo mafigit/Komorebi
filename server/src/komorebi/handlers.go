@@ -192,8 +192,8 @@ func ColumnGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-
-	json.NewEncoder(w).Encode(column)
+	nested_column := GetNestedColumnByColumnId(column.Id)
+	json.NewEncoder(w).Encode(nested_column)
 }
 
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
