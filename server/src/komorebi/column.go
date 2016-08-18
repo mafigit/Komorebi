@@ -106,7 +106,7 @@ func (c Column) Validate() (bool, string) {
 	}
 
 	for _, column := range GetColumnsByBoardId(board.Id) {
-		if column.Name == c.Name {
+		if column.Name == c.Name && column.Id != c.Id {
 			log.Println("Column validation failed. Name not uniq")
 			success = false
 			message += "Name not uniq.\n"

@@ -39,7 +39,7 @@ func (b Board) Validate() (bool, string) {
 	}
 	var board Board
 	GetByName(&board, b.Name)
-	if board.Id != 0 {
+	if board.Id != 0 && board.Id != b.Id {
 		log.Println("Board validation failed. Name not uniq")
 		success = false
 		message += "Name not uniq.\n"
