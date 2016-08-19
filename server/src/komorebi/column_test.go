@@ -23,11 +23,12 @@ func TestNewColumn(t *testing.T) {
 func TestColumnValidation(t *testing.T) {
 	b := NewBoard("testColumnValidation")
 	b.Save()
-	board := GetBoardColumnViewByName("testColumnValidation")
+	var board Board
+	GetByName(&board, "testColumnValidation")
 
 	c := NewColumn("WIP", 0, board.Id)
-	if success, _ := c.Validate(); success == false {
-		t.Error("Column should be valid with name: ", c.Name)
+	if success, msg := c.Validate(); success == false {
+		t.Error("Column should be valid with name: ", c.Name, msg)
 	}
 	c.Save()
 
@@ -50,7 +51,8 @@ func TestColumnValidation(t *testing.T) {
 func TestColumnReorder(t *testing.T) {
 	b := NewBoard("testColumnReorder")
 	b.Save()
-	board := GetBoardColumnViewByName("testColumnReorder")
+	var board Board
+	GetByName(&board, "testColumnReorder")
 
 	c := NewColumn("Backlog", 0, board.Id)
 	c.Save()

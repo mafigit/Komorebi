@@ -5,7 +5,7 @@ curl  localhost:8080/
 GET /boards
 curl  localhost:8080/boards
 => json response with all boards
-=> [{"Id":1,"Name":"gz","updated_at":1468312137512189809}]
+=> [{"id":1,"name":"gz","updated_at":1468312137512189809}]
 
 GET /gz
 curl localhost:8080/gz
@@ -15,8 +15,8 @@ curl localhost:8080/gz
 
 GET /gz as json
 curl  -H "Accept: application/json" localhost:8080/gz
-=> json response with board gz
-=> {"id":1,"name":"here","updated_at":1468312137512189809,"Columns":[]}
+=> json response with board gz with columns, stories and tasks
+=> {"id":1,"name":"foo","updated_at":1471541456481743347,"columns":[{"id":3,"name":"WIP","updated_at":1471541504413505006,"stories":[{"id":1,"name":"do_that","updated_at":1471541541313618700,"desc":"","points":5,"priority":1,"requirements":"Do_this!","column_id":3,"tasks":[{"id":3,"name":"asdfasdf","updated_at":1471541536411708346,"desc":"","story_id":1,"priority":1,"column_id":3}]}],"position":1,"board_id":1}]}
 
 POST /boards as json
 curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boards
@@ -38,8 +38,8 @@ curl  -X DELETE localhost:8080/boards/4
 
 GET /columns/{:column_id}
 curl  localhost:8080/columns/4
-=> get column 4
-=> {"id":4,"name":"WIP","updated_at":1468529902681615473,"board_id":1,"position":2}
+=> get column 4, with stories and tasks
+=> {"id":1,"name":"BACKLOG","updated_at":1471542822809004346,"stories":[{"id":1,"name":"do_that","updated_at":1471542822970324464,"desc":"","points":5,"priority":3,"requirements":"Do_this!","column_id":1,"tasks":[{"id":1,"name":"bar","updated_at":1471542823058177709,"desc":"desc","story_id":1,"priority":4,"column_id":1}]}],"position":0,"board_id":1}
 
 POST /columns
 curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns
@@ -95,7 +95,7 @@ curl  -X DELETE localhost:8080/stories/4
 GET /stories/{:story_id}/tasks
 curl   localhost:8080/stories/1/tasks
 => get tasks from story 1
-=> [{"id":1,"name":"foo","updated_at":0,"Desc":"desc","story_id":1,"column_id":1,"priority":4}]
+=> [{"id":1,"name":"foo","updated_at":0,"desc":"desc","story_id":1,"column_id":1,"priority":4}]
 
 POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2,"priority":4}' localhost:8080/tasks

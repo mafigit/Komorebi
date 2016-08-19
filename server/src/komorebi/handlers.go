@@ -25,7 +25,7 @@ var upgrader = websocket.Upgrader{
 
 type Connection struct {
 	Ws          *websocket.Conn
-	BoardStruct *BoardWs
+	BoardStruct *BoardNested
 }
 
 var connections = make(map[string][]*Connection, 0)
@@ -51,7 +51,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
 	content_type := r.Header.Get("Accept")
-	board_column := GetBoardColumnViewByName(board_name)
+	board_column := GetBoardNestedByName(board_name)
 
 	if board_column.Id == 0 {
 		OwnNotFound(w, r)
@@ -192,8 +192,8 @@ func ColumnGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-
-	json.NewEncoder(w).Encode(column)
+	nested_column := GetNestedColumnByColumnId(column.Id)
+	json.NewEncoder(w).Encode(nested_column)
 }
 
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
@@ -377,7 +377,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board_struct := GetBoardWsByName(board_name)
+	board_struct := GetBoardNestedByName(board_name)
 
 	if board_struct.Name == "" {
 		return
@@ -405,7 +405,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 
 func UpdateWebsockets(board_name string, msg string) {
 	log.Println("Update Websockets for board", board_name)
-	current_struct := GetBoardWsByName(board_name)
+	current_struct := GetBoardNestedByName(board_name)
 
 	for i := range connections[board_name] {
 
