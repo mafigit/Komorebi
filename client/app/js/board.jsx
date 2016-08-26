@@ -2,15 +2,31 @@
 import React from 'react';
 import BoardCanvas from './board_canvas';
 import Ajax from 'basic-ajax';
-import StoryDialog from './story_dialog';
+import StoryShowDialog from './story_show_dialog';
+import BoardStore from './store/BoardStore';
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      story_view_open: false,
-      story_id: null
+      story_view_open: BoardStore.getStoryShowDialogOpen(),
+      story_id: BoardStore.getStoryShowId()
     }
+  }
+
+  _onChange = () => {
+    this.setState({
+      story_view_open: BoardStore.getStoryShowDialogOpen(),
+      story_id: BoardStore.getStoryShowId()
+    });
+  }
+
+  componentWillUnmount = () => {
+    BoardStore.removeChangeListener(this._onChange);
+  }
+
+  componentDidMount = () => {
+    BoardStore.addChangeListener(this._onChange);
   }
 
   updateStory = (story, column_id) => {
@@ -48,27 +64,15 @@ class Board extends React.Component {
     });
   }
 
-  openStoryView = (story_id) => {
-    this.setState({story_view_open: true, story_id: story_id});
-  }
-
-  closeStoryView = () => {
-    this.setState({story_view_open: false});
-  }
-
-  componentDidMount() {
-  }
-
   componentDidUpdate() {
     this.board_canvas =
-      new BoardCanvas('board', {story: this.updateStory, task: this.updateTask,
-        open_story_view: this.openStoryView});
+      new BoardCanvas('board', {story: this.updateStory, task: this.updateTask });
   }
 
   render() {
     return <div>
-      <StoryDialog story_id={this.state.story_id}
-        open={this.state.story_view_open} action="show"/>
+      <StoryShowDialog story_id={this.state.story_id}
+        open={this.state.story_view_open} />
       <div id='board'></div>
     </div>
   }

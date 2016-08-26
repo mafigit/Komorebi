@@ -32,14 +32,25 @@ var BoardActions = {
       reload: reload
     });
   },
-  showStoryDialog: () =>  {
+  openStoryShowDialog: (story_id) =>  {
     AppDispatcher.dispatch({
-      actionType: "SHOW_STORY_DIALOG"
+      actionType: "OPEN_STORY_SHOW_DIALOG",
+      story_id: story_id
     });
   },
-  closeStoryDialog: (reload) =>  {
+  closeStoryShowDialog: (reload) =>  {
     AppDispatcher.dispatch({
-      actionType: "CLOSE_STORY_DIALOG",
+      actionType: "CLOSE_STORY_SHOW_DIALOG",
+    });
+  },
+  openStoryEditDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_STORY_EDIT_DIALOG"
+    });
+  },
+  closeStoryEditDialog: (reload) =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_STORY_EDIT_DIALOG",
       reload: reload
     });
   },

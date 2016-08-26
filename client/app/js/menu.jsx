@@ -17,7 +17,7 @@ class MyMenu extends React.Component {
       },
       {
         name: "Add Story",
-        action: BoardActions.showStoryDialog
+        action: BoardActions.openStoryEditDialog
       },
       {
         name: "Add Column",

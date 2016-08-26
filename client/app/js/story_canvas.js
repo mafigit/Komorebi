@@ -2,9 +2,10 @@
 import Konva from 'konva';
 import Colors from './color';
 import CardCanvas from './card_canvas';
+import BoardActions from './actions/BoardActions';
 
 class StoryCanvas extends CardCanvas {
-  constructor(story, stage, open_story_view_handler) {
+  constructor(story, stage) {
     var layout = function() {
       var card_rect = new Konva.Rect({
         width: this.card_width,
@@ -76,7 +77,7 @@ class StoryCanvas extends CardCanvas {
         data: view_svg_path,
         fill: 'white',
         name: "open_story_view",
-        click_function: function() {open_story_view_handler.call(this, story.id)},
+        click_function: function() {BoardActions.openStoryShowDialog(story.id);},
         scale: {
           x : 1,
           y : 1,
@@ -85,7 +86,7 @@ class StoryCanvas extends CardCanvas {
       var icon_rect = new Konva.Rect({
         width: 30,
         height: 30,
-        click_function: function() {open_story_view_handler.call(this, story.id)},
+        click_function: function() {BoardActions.openStoryShowDialog(story.id);},
         x: card_rect.getWidth() - this.card_margin,
         y: card_rect.getHeight() - this.card_margin,
         name: "open_story_view"
