@@ -7,11 +7,10 @@ import Layout from './layout';
 import MenuItem from 'material-ui/MenuItem';
 import StorySelect from './story_select';
 import ColumnDialog from './column_dialog';
-import StoryDialog from './story_dialog';
+import StoryEditDialog from './story_edit_dialog';
 import TaskDialog from './task_dialog';
 import Colors from './color';
 import BoardStore from './store/BoardStore';
-import BoardActions from './actions/BoardActions';
 
 class BoardLayout extends Layout  {
   constructor(props) {
@@ -26,7 +25,7 @@ class BoardLayout extends Layout  {
     return {
       menu_open: BoardStore.getMenuOpen(),
       column_open: BoardStore.getColumnDialogOpen(),
-      story_open: BoardStore.getStoryDialogOpen(),
+      story_edit_open: BoardStore.getStoryEditDialogOpen(),
       task_open: BoardStore.getTaskDialogOpen()
     };
   }
@@ -72,7 +71,7 @@ class BoardLayout extends Layout  {
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu} />
       <ColumnDialog open={this.state.column_open} />
-      <StoryDialog open={this.state.story_open} action="edit" />
+      <StoryEditDialog open={this.state.story_edit_open} />
       <TaskDialog open={this.state.task_open} />
       {this.props.children}
      </div>

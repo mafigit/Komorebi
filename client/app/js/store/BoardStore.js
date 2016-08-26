@@ -12,8 +12,11 @@ var tasks = [];
 
 var menu_open = false;
 var column_dialog_open = false;
-var story_dialog_open = false;
+var story_edit_dialog_open = false;
+var story_show_dialog_open = false;
 var task_dialog_open = false;
+
+var story_show_id = null;
 
 var CHANGE_EVENT = 'change';
 
@@ -39,7 +42,7 @@ var BoardStore = assign({}, EventEmitter.prototype, {
         acc.push(task);
       }
       return acc;
-    }, [])
+    }, []);
   },
   getMenuOpen: () => {
     return menu_open;
@@ -47,14 +50,20 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getColumnDialogOpen: () => {
     return column_dialog_open;
   },
-  getStoryDialogOpen: () => {
-    return story_dialog_open;
+  getStoryEditDialogOpen: () => {
+    return story_edit_dialog_open;
   },
   getTaskDialogOpen: () => {
     return task_dialog_open;
   },
   getFirstColumn: () => {
     return columns.find((column) => { return column.position === 0; });
+  },
+  getStoryShowDialogOpen: () => {
+    return story_show_dialog_open;
+  },
+  getStoryShowId: () => {
+    return story_show_id;
   },
   emitChange: function() {
     this.emit(CHANGE_EVENT);
@@ -136,12 +145,21 @@ AppDispatcher.register(function(action) {
       fetchTasks().
         then(() => {BoardStore.emitChange();});
       break;
-    case "SHOW_STORY_DIALOG":
-      story_dialog_open = true;
+    case "OPEN_STORY_SHOW_DIALOG":
+      story_show_dialog_open = true;
+      story_show_id = action.story_id;
       BoardStore.emitChange();
       break;
-    case "CLOSE_STORY_DIALOG":
-      story_dialog_open = false;
+    case "CLOSE_STORY_SHOW_DIALOG":
+      story_show_dialog_open = false;
+      BoardStore.emitChange();
+      break;
+    case "OPEN_STORY_EDIT_DIALOG":
+      story_edit_dialog_open = true;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_STORY_EDIT_DIALOG":
+      story_edit_dialog_open = false;
       if (action.reload) {
         fetchAll().then(() => {BoardStore.emitChange();});
       } else {
