@@ -167,7 +167,7 @@ func TestTaskCreateHandler(t *testing.T) {
 	s := NewStory("testStory", "desc", "req", 0, 4, column.Id)
 	s.Save()
 
-	stories := GetStoriesByBoradName(board.Name)
+	stories := GetStoriesByBoardName(board.Name)
 	var story Story
 	for _, st := range stories {
 		if st.Name == "testStory" {

@@ -161,7 +161,7 @@ func TestBoardNested(t *testing.T) {
 	if s_ws.Name != "Story 1" {
 		t.Error("First story of column 'WIP' should be 'Story 1'")
 	}
-	stories := GetStoriesByBoradName(board.Name)
+	stories := GetStoriesByBoardName(board.Name)
 	stories[0].Name = "fooo"
 	stories[0].Save()
 	res2 = GetBoardNestedByName(board.Name)
