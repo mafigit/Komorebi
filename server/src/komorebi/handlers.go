@@ -69,7 +69,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 func GetStories(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
-	stories := GetStoriesByBoradName(board_name)
+	stories := GetStoriesByBoardName(board_name)
 	json.NewEncoder(w).Encode(stories)
 }
 

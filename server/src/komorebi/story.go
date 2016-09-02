@@ -41,7 +41,7 @@ func NewStory(name string, desc string, requirements string, points int,
 	}
 }
 
-func GetStoriesByBoradName(board_name string) Stories {
+func GetStoriesByBoardName(board_name string) Stories {
 	var stories Stories
 
 	_, err := dbMapper.Connection.
