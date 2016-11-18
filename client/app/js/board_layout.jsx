@@ -12,7 +12,7 @@ import TaskDialog from './task_dialog';
 import Colors from './color';
 import BoardStore from './store/BoardStore';
 
-class BoardLayout extends Layout  {
+export default class BoardLayout extends Layout  {
   constructor(props) {
     super(props);
     this.state = this.getDialogState();
@@ -77,5 +77,3 @@ class BoardLayout extends Layout  {
      </div>
   }
 }
-
-export default BoardLayout;

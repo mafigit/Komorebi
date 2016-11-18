@@ -85,7 +85,7 @@ class CardGroup extends Konva.Group {
   }
 }
 
-class CardCanvas {
+export default class CardCanvas {
   constructor(card, stage, layout, type) {
     this.card = card;
     this.stage = stage;
@@ -97,4 +97,3 @@ class CardCanvas {
     layout.call(this);
   }
 }
-export default CardCanvas;

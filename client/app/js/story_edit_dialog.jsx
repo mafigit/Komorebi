@@ -122,4 +122,3 @@ export default class StoryEditDialog extends React.Component {
     return this.editForm();
   }
 }
-export default StoryEditDialog;

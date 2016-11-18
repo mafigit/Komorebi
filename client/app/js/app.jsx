@@ -40,7 +40,9 @@ class App extends React.Component {
 
   componentDidMount = () => {
     BoardStore.addChangeListener(this._onChange);
-    BoardActions.fetchAll();
+    if(!this.props.landing) {
+      BoardActions.fetchAll();
+    }
   }
 
   setFilterHandler = () => {

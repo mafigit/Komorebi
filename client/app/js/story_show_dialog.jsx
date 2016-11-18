@@ -84,4 +84,3 @@ export default class StoryShowDialog extends React.Component {
     return this.showForm();
   }
 }
-export default StoryShowDialog;

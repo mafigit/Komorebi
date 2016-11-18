@@ -57,4 +57,3 @@ export default class ColumnDialog extends React.Component {
     );
   }
 }
-export default ColumnDialog;

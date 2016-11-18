@@ -5,7 +5,7 @@ import Ajax from 'basic-ajax';
 import StoryShowDialog from './story_show_dialog';
 import BoardStore from './store/BoardStore';
 
-class Board extends React.Component {
+export default class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -77,5 +77,3 @@ class Board extends React.Component {
     </div>
   }
 }
-
-export default Board;
