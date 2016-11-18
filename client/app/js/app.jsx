@@ -59,7 +59,9 @@ class App extends React.Component {
         <BoardLayout
           stories={this.state.stories}
           title={this.state.board_title} board_id={this.state.board_id} columns={this.state.columns}>
-          <Board />
+          <Board stories={this.state.stories} columns={this.state.columns}
+            tasks={this.state.tasks}
+          />
           <MySnackbar boardName={this.state.title} />
         </BoardLayout>
       </MuiThemeProvider>

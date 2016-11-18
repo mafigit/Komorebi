@@ -4,6 +4,9 @@ import BoardCanvas from './board_canvas';
 import Ajax from 'basic-ajax';
 import StoryShowDialog from './story_show_dialog';
 import BoardStore from './store/BoardStore';
+import StoryCard from './story_card';
+import TaskCard from './task_card';
+import Column from './column';
 
 export default class Board extends React.Component {
   constructor(props) {
@@ -65,15 +68,27 @@ export default class Board extends React.Component {
   }
 
   componentDidUpdate() {
-    this.board_canvas =
-      new BoardCanvas('board', {story: this.updateStory, task: this.updateTask });
+    //  this.board_canvas =
+    //    new BoardCanvas('board', {story: this.updateStory, task: this.updateTask });
   }
 
   render() {
+    var story_cards = this.props.stories.map((story, key) => {
+      return <StoryCard key={key} name={story.name} />
+    });
+    var columns = this.props.columns.map((column, key) => {
+      return <Column key={key} name={column.name} />
+    });
+    var task_cards = this.props.tasks.map((task, key) => {
+      return <TaskCard key={key} name={task.name} />
+    });
+
     return <div>
       <StoryShowDialog story_id={this.state.story_id}
         open={this.state.story_view_open} />
-      <div id='board'></div>
+      {columns}
+      {story_cards}
+      {task_cards}
     </div>
   }
 }
