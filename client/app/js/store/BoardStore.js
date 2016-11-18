@@ -86,7 +86,9 @@ var fetchBoard = () => {
       board_id = board.id;
       board_title = board.name;
       // should get columns over action and ajax
-      columns = board.columns;
+      columns = board.columns.sort((a, b) => {
+        a.position - b.position;
+      });
     }
   });
 };

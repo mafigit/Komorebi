@@ -1,17 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Col, Panel } from 'react-bootstrap';
 
-export default class TaskCard extends React.Component {
+export default class Column extends React.Component {
   constructor(props) {
     super(props);
     this.state={};
   }
 
   render() {
-    return <div className="task_card">
+    const title = (
       <h3>{this.props.name}</h3>
-      <div className="content">
-      </div>
-    </div>
+    )
+    return <Col lg={2} xs={12} md={12} >
+      <Panel header={title}>
+        {this.props.children}
+      </Panel>
+    </Col>
   }
 }

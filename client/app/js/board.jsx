@@ -7,6 +7,7 @@ import BoardStore from './store/BoardStore';
 import StoryCard from './story_card';
 import TaskCard from './task_card';
 import Column from './column';
+import { Grid, Row } from 'react-bootstrap';
 
 export default class Board extends React.Component {
   constructor(props) {
@@ -72,23 +73,31 @@ export default class Board extends React.Component {
     //    new BoardCanvas('board', {story: this.updateStory, task: this.updateTask });
   }
 
+  getStoriesForColumn = (column_id) => {
+    return this.props.stories.filter((story) => {
+      return story.column_id == column_id;
+    });
+  }
+
   render() {
-    var story_cards = this.props.stories.map((story, key) => {
-      return <StoryCard key={key} name={story.name} />
-    });
-    var columns = this.props.columns.map((column, key) => {
-      return <Column key={key} name={column.name} />
-    });
-    var task_cards = this.props.tasks.map((task, key) => {
-      return <TaskCard key={key} name={task.name} />
+    var columns = this.props.columns.map((col, key) => {
+      var story_cards = this.getStoriesForColumn(col.id).map((story, key) => {
+        return <StoryCard key={key} name={story.name} />
+      });
+      return <Column key={key} name={col.name} >
+       {story_cards}
+      </Column>
     });
 
-    return <div>
+    return <div className="board">
       <StoryShowDialog story_id={this.state.story_id}
         open={this.state.story_view_open} />
-      {columns}
-      {story_cards}
-      {task_cards}
+      <Grid fluid={true}>
+        <Row className="show-grid">
+          {columns}
+        </Row>
+      </Grid>
+
     </div>
   }
 }
