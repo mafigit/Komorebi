@@ -14,7 +14,7 @@ class ColumnGroup extends Konva.Group {
   }
 }
 
-class ColumnCanvas {
+export default class ColumnCanvas {
   constructor(width, height, column) {
     this.KonvaElement = new ColumnGroup(width, height, column);
     var column_background = new Konva.Rect({
@@ -44,4 +44,3 @@ class ColumnCanvas {
     this.KonvaElement.add(text);
   }
 }
-export default ColumnCanvas;

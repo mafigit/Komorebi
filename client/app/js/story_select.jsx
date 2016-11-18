@@ -33,5 +33,3 @@ export default class StorySelect extends React.Component {
     </SelectField>
   }
 }
-
-export default StorySelect;

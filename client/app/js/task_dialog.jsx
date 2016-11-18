@@ -112,4 +112,3 @@ export default class TaskDialog extends React.Component {
     );
   }
 }
-export default TaskDialog;

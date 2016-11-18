@@ -59,4 +59,3 @@ export default class BoardDialog extends React.Component {
     );
   }
 }
-export default BoardDialog;

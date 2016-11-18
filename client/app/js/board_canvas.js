@@ -6,7 +6,7 @@ import TaskCanvas from './task_canvas';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 
-class BoardCanvas {
+export default class BoardCanvas {
   constructor(container, handler) {
     let scale_factor = (window.innerWidth - 20)/window.screen.availWidth;
     let card_sorter = function(a, b) {
@@ -90,4 +90,3 @@ class BoardCanvas {
     this.layer.draw();
   }
 }
-export default BoardCanvas;
