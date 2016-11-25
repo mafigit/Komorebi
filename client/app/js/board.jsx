@@ -4,24 +4,26 @@ import BoardCanvas from './board_canvas';
 import Ajax from 'basic-ajax';
 import StoryShowDialog from './story_show_dialog';
 import BoardStore from './store/BoardStore';
-import StoryCard from './story_card';
 import TaskCard from './task_card';
 import Column from './column';
 import { Grid, Row } from 'react-bootstrap';
+import Sidebar from './sidebar';
 
 export default class Board extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       story_view_open: BoardStore.getStoryShowDialogOpen(),
-      story_id: BoardStore.getStoryShowId()
+      story_id: BoardStore.getStoryShowId(),
+      columns: BoardStore.getColumns()
     }
   }
 
   _onChange = () => {
     this.setState({
       story_view_open: BoardStore.getStoryShowDialogOpen(),
-      story_id: BoardStore.getStoryShowId()
+      story_id: BoardStore.getStoryShowId(),
+      columns: BoardStore.getColumns()
     });
   }
 
@@ -68,25 +70,9 @@ export default class Board extends React.Component {
     });
   }
 
-  componentDidUpdate() {
-    //  this.board_canvas =
-    //    new BoardCanvas('board', {story: this.updateStory, task: this.updateTask });
-  }
-
-  getStoriesForColumn = (column_id) => {
-    return this.props.stories.filter((story) => {
-      return story.column_id == column_id;
-    });
-  }
-
   render() {
-    var columns = this.props.columns.map((col, key) => {
-      var story_cards = this.getStoriesForColumn(col.id).map((story, key) => {
-        return <StoryCard key={key} name={story.name} />
-      });
-      return <Column key={key} name={col.name} >
-       {story_cards}
-      </Column>
+    var columns = this.state.columns.map((col, key) => {
+      return <Column key={key} name={col.name} />
     });
 
     return <div className="board">
@@ -94,6 +80,7 @@ export default class Board extends React.Component {
         open={this.state.story_view_open} />
       <Grid fluid={true}>
         <Row className="show-grid">
+          <Sidebar/>
           {columns}
         </Row>
       </Grid>

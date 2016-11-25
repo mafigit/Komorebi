@@ -106,6 +106,9 @@ var fetchTasks = () => {
   tasks = [];
   return new Promise((resolve, reject) => {
     let count = stories.length;
+    if (count == 0) {
+      resolve();
+    }
     stories.forEach(function(story) {
       Ajax.get(`/stories/${story.id}/tasks`,
         {"Accept": "application/json"}).then(response => {

@@ -1,3 +1,13 @@
+#body with Roboto font
 body {
   font-family: 'Roboto';
+}
+.column {
+  margin-top: 10px;
+  min-height: 90%;
+}
+
+.sidebar {
+  margin-left: -16px;
+  margin-top: 10px;
 }

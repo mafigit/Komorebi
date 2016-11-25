@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ListGroupItem } from 'react-bootstrap';
 
 export default class StoryCard extends React.Component {
   constructor(props) {
@@ -8,10 +9,8 @@ export default class StoryCard extends React.Component {
   }
 
   render() {
-    return <div className="story_card">
-      <h3>{this.props.name}</h3>
-      <div className="content">
-      </div>
-    </div>
+    return <ListGroupItem className="story_card" href="#">
+      {this.props.name}
+    </ListGroupItem>
   }
 }
