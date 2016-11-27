@@ -8,9 +8,10 @@ export default class Column extends React.Component {
   }
 
   render() {
-    return <div className="column">
+    return <div className="task">
       <h3>{this.props.name}</h3>
       <div className="content">
+        {this.props.desc}
       </div>
     </div>
   }

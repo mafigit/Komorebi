@@ -64,6 +64,12 @@ var BoardActions = {
       actionType: "CLOSE_COLUMN_DIALOG",
       reload: reload
     });
+  },
+  showTasksForStoryId: (story_id) =>  {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_TASKS_FOR_STORY_ID",
+      story_id: story_id
+    });
   }
 };
 module.exports = BoardActions;
