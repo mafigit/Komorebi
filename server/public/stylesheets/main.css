@@ -14,3 +14,7 @@ body {
 .task {
   margin-top: 5px;
 }
+
+.task-text {
+  word-wrap: break-word;
+}

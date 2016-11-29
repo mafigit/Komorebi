@@ -11,7 +11,7 @@ export default class Column extends React.Component {
   render () {
     return <Card className="task">
       <CardTitle title={this.props.name} subtitle="Story tag" />
-      <CardText>
+      <CardText className="task-text">
        {this.props.desc}
       </CardText>
     </Card>
