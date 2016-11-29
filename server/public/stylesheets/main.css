@@ -4,10 +4,13 @@ body {
 }
 .column {
   margin-top: 10px;
-  min-height: 90%;
 }
 
 .sidebar {
   margin-left: -16px;
   margin-top: 10px;
+}
+
+.task {
+  margin-top: 5px;
 }

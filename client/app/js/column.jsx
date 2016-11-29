@@ -12,7 +12,7 @@ export default class Column extends React.Component {
     const title = (
       <h3>{this.props.name}</h3>
     )
-    return <Col lg={2} xs={12} md={12} >
+    return <Col lg={3} xs={12} md={12} >
       <Panel className="column" header={title}>
         {this.props.children}
       </Panel>

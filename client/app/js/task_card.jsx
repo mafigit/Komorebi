@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Card, CardTitle, CardText} from 'material-ui/Card';
 
 export default class Column extends React.Component {
   constructor(props) {
@@ -7,12 +8,12 @@ export default class Column extends React.Component {
     this.state={};
   }
 
-  render() {
-    return <div className="task">
-      <h3>{this.props.name}</h3>
-      <div className="content">
-        {this.props.desc}
-      </div>
-    </div>
+  render () {
+    return <Card className="task">
+      <CardTitle title={this.props.name} subtitle="Story tag" />
+      <CardText>
+       {this.props.desc}
+      </CardText>
+    </Card>
   }
 }
