@@ -5,7 +5,6 @@ import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 import Layout from './layout';
 import MenuItem from 'material-ui/MenuItem';
-import StorySelect from './story_select';
 import ColumnDialog from './column_dialog';
 import StoryEditDialog from './story_edit_dialog';
 import TaskDialog from './task_dialog';
@@ -57,8 +56,6 @@ export default class BoardLayout extends Layout  {
         title={this.props.title}
         iconElementRight={
           <div>
-          <StorySelect onChange={this.handleFilter} stories={this.props.stories}
-            story_id={0} allow_empty={true} style={{color: "white"}} />
           <FlatButton label="木漏れ日"
             href={"https://github.com/mafigit/Komorebi"}
             style={{verticalAlign: "baseline"}}
