@@ -81,7 +81,10 @@ export default class Board extends React.Component {
     var columns = this.state.columns.map((col, key) => {
       var tasks_for_column = tasks_for_columns.reduce((acc, task, key) => {
         if (task.column_id == col.id) {
-          acc.push(<TaskCard key={key} name={task.name} desc={task.desc} />);
+          acc.push(<TaskCard key={key} column_id={task.column_id}
+            task_id={task.id} name={task.name} desc={task.desc}
+            task_name={task.name} task_story_id={task.story_id}
+            task_priority={task.priority} />);
         }
         return acc;
       }, []);
