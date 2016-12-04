@@ -45,5 +45,8 @@
         }
       ]
     ]
+  },
+  "devDependencies": {
+    "gulp-livereload": "^3.8.1"
   }
 }
