@@ -9,6 +9,8 @@ var board_title = "";
 var columns = [];
 var stories = [];
 var tasks = [];
+var tasks_to_display = {};
+var selected_stories = [];
 
 var menu_open = false;
 var column_dialog_open = false;
@@ -35,6 +37,13 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getTasks: function() {
     return tasks;
+  },
+  getTasksToDisplay: function() {
+    tasks_to_display = selected_stories.reduce((acc, story_id) => {
+      acc[story_id] = BoardStore.getTaskByStoryId(story_id);
+      return acc;
+    }, {});
+    return tasks_to_display;
   },
   getTaskByStoryId: function(story_id) {
     return tasks.reduce((acc, task) => {
@@ -86,7 +95,9 @@ var fetchBoard = () => {
       board_id = board.id;
       board_title = board.name;
       // should get columns over action and ajax
-      columns = board.columns;
+      columns = board.columns.sort((a, b) => {
+        a.position - b.position;
+      });
     }
   });
 };
@@ -104,6 +115,9 @@ var fetchTasks = () => {
   tasks = [];
   return new Promise((resolve, reject) => {
     let count = stories.length;
+    if (count == 0) {
+      resolve();
+    }
     stories.forEach(function(story) {
       Ajax.get(`/stories/${story.id}/tasks`,
         {"Accept": "application/json"}).then(response => {
@@ -190,6 +204,11 @@ AppDispatcher.register(function(action) {
         BoardStore.emitChange();
       }
       break;
+    case "SHOW_TASKS_FOR_STORY_ID":
+      //XXX has to be a merge into existing array
+      selected_stories = [];
+      selected_stories.push(action.story_id);
+      BoardStore.emitChange();
     default:
       // no op
   }

@@ -1,3 +1,20 @@
+#body with Roboto font
 body {
   font-family: 'Roboto';
+}
+.column {
+  margin-top: 10px;
+}
+
+.sidebar {
+  margin-left: -16px;
+  margin-top: 10px;
+}
+
+.task {
+  margin-top: 5px;
+}
+
+.task-text {
+  word-wrap: break-word;
 }

@@ -56,9 +56,8 @@ class App extends React.Component {
       </MuiThemeProvider>
     } else {
       return <MuiThemeProvider>
-        <BoardLayout
-          stories={this.state.stories}
-          title={this.state.board_title} board_id={this.state.board_id} columns={this.state.columns}>
+        <BoardLayout stories={this.state.stories} title={this.state.board_title}
+          board_id={this.state.board_id} >
           <Board />
           <MySnackbar boardName={this.state.title} />
         </BoardLayout>
