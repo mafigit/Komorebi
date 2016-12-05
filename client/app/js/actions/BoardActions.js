@@ -70,6 +70,12 @@ var BoardActions = {
       actionType: "SHOW_TASKS_FOR_STORY_ID",
       story_id: story_id
     });
+  },
+  updateTask: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_TASK",
+      data: data
+    });
   }
 };
 module.exports = BoardActions;

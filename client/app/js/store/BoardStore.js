@@ -32,6 +32,11 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getColumns: function() {
     return columns;
   },
+  getColumnsInOrder: function() {
+    return columns.sort((a, b) => {
+      return a.position - b.position;
+    });
+  },
   getStories: function() {
     return stories;
   },
@@ -209,6 +214,16 @@ AppDispatcher.register(function(action) {
       selected_stories = [];
       selected_stories.push(action.story_id);
       BoardStore.emitChange();
+      break;
+    case "UPDATE_TASK":
+      Ajax.postJson('/tasks/' + action.data.id, action.data).then(response => {
+        var response_obj = JSON.parse(response.responseText);
+        if (response_obj.success) {
+          BoardStore.emitChange();
+        } else {
+        }
+      });
+      break;
     default:
       // no op
   }
