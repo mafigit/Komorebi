@@ -15,6 +15,7 @@ var selected_stories = [];
 var menu_open = false;
 var column_dialog_open = false;
 var story_edit_dialog_open = false;
+var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
 var task_dialog_open = false;
 
@@ -66,6 +67,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getStoryEditDialogOpen: () => {
     return story_edit_dialog_open;
+  },
+  getStoryFromIssueEditDialogOpen: () => {
+    return story_from_issue_edit_dialog_open;
   },
   getTaskDialogOpen: () => {
     return task_dialog_open;
@@ -177,8 +181,20 @@ AppDispatcher.register(function(action) {
       story_edit_dialog_open = true;
       BoardStore.emitChange();
       break;
+    case "OPEN_STORY_FROM_ISSUE_EDIT_DIALOG":
+      story_from_issue_edit_dialog_open = true;
+      BoardStore.emitChange();
+      break;
     case "CLOSE_STORY_EDIT_DIALOG":
       story_edit_dialog_open = false;
+      if (action.reload) {
+        fetchAll().then(() => {BoardStore.emitChange();});
+      } else {
+        BoardStore.emitChange();
+      }
+      break;
+    case "CLOSE_STORY_FROM_ISSUE_EDIT_DIALOG":
+      story_from_issue_edit_dialog_open = false;
       if (action.reload) {
         fetchAll().then(() => {BoardStore.emitChange();});
       } else {

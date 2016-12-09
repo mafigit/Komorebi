@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"github.com/go-resty/resty"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -466,6 +467,57 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	GetById(&task, id)
 	modelDelete(task, w, r)
+}
+
+func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	issue := vars["issue"]
+	column_id, _ := strconv.Atoi(vars["column_id"])
+
+	ret, story := getStoryFromIssue(issue, column_id)
+
+	if ret == true {
+		modelCreate(story, w, r)
+		return
+	} else {
+		w.WriteHeader(200)
+		response := Response{
+			Success: false,
+			Message: "Could not get Story from features.genua.de",
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+}
+
+func getStoryFromIssue(issue string, column_id int) (bool, Story) {
+    var story Story
+	uri := "http://features.genua.de/issues/"
+	uri += issue
+	uri += ".json"
+
+	resp, err := resty.R().Get(uri)
+
+	if err != nil || resp.StatusCode() != 200 {
+		return false, story
+	}
+
+	type IssueStruct struct {
+		Issue struct {
+			Subject     string `json:"subject"`
+			Description string `json:"description"`
+		}
+	}
+	resp_json := &IssueStruct{}
+
+	err = json.Unmarshal([]byte(resp.String()), &resp_json)
+	if err != nil {
+		return false, story
+	}
+
+	story = NewStory(resp_json.Issue.Subject,
+		resp_json.Issue.Description, "", 3, 5, column_id)
+	return true, story
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {

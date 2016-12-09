@@ -180,4 +180,10 @@ var routes = Routes{
 		"/{board_name}",
 		BoardShow,
 	},
+	Route{
+		"GetFeatureAndCreateStory",
+		"GET",
+		"/create_story_by_issue/{column_id}/{issue}",
+		GetFeatureAndCreateStory,
+	},
 }
