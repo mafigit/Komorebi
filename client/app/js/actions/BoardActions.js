@@ -48,9 +48,20 @@ var BoardActions = {
       actionType: "OPEN_STORY_EDIT_DIALOG"
     });
   },
+  openStoryFromIssueEditDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_STORY_FROM_ISSUE_EDIT_DIALOG"
+    });
+  },
   closeStoryEditDialog: (reload) =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_STORY_EDIT_DIALOG",
+      reload: reload
+    });
+  },
+  closeStoryFromIssueEditDialog: (reload) =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_STORY_FROM_ISSUE_EDIT_DIALOG",
       reload: reload
     });
   },

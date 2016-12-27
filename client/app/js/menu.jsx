@@ -20,6 +20,10 @@ class MyMenu extends React.Component {
         action: BoardActions.openStoryEditDialog
       },
       {
+        name: "Add Story from Issue ID",
+        action: BoardActions.openStoryFromIssueEditDialog
+      },
+      {
         name: "Add Column",
         action: BoardActions.showColumnDialog
       }
