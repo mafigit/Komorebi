@@ -41,6 +41,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getStories: function() {
     return stories;
   },
+  getSelectedStories: function() {
+    return selected_stories;
+  },
   getTasks: function() {
     return tasks;
   },
