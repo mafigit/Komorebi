@@ -153,6 +153,16 @@ var fetchAll = () => {
   });
 };
 
+var updateTask = (data) => {
+  return Ajax.postJson('/tasks/' + data.id, data).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      resolve();
+    } else {
+    }
+  });
+};
+
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
@@ -235,13 +245,7 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "UPDATE_TASK":
-      Ajax.postJson('/tasks/' + action.data.id, action.data).then(response => {
-        var response_obj = JSON.parse(response.responseText);
-        if (response_obj.success) {
-          BoardStore.emitChange();
-        } else {
-        }
-      });
+      updateTask(action.data).then(() => {BoardStore.emitChange();});
       break;
     default:
       // no op
