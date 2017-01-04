@@ -7,9 +7,8 @@ import Board from './board';
 import LandingLayout from './landing_layout';
 import BoardLayout from './board_layout';
 import MySnackbar from './snackbar';
-import Ajax from  'basic-ajax';
-import BoardStore from './store/BoardStore'
-import BoardActions from './actions/BoardActions'
+import BoardStore from './store/BoardStore';
+import BoardActions from './actions/BoardActions';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -27,8 +26,8 @@ class App extends React.Component {
       columns: BoardStore.getColumns(),
       stories: BoardStore.getStories(),
       tasks: BoardStore.getTasks()
-    }
-  }
+    };
+  };
 
   _onChange = () => {
     this.setState(this.getBoardState());
@@ -53,7 +52,7 @@ class App extends React.Component {
       return <MuiThemeProvider>
         <LandingLayout title="Boards">
         </LandingLayout>
-      </MuiThemeProvider>
+      </MuiThemeProvider>;
     } else {
       return <MuiThemeProvider>
         <BoardLayout stories={this.state.stories} title={this.state.board_title}
@@ -61,7 +60,7 @@ class App extends React.Component {
           <Board />
           <MySnackbar boardName={this.state.title} />
         </BoardLayout>
-      </MuiThemeProvider>
+      </MuiThemeProvider>;
     }
   }
 }

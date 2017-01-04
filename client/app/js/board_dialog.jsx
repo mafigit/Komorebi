@@ -1,8 +1,6 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
@@ -12,7 +10,7 @@ export default class BoardDialog extends React.Component {
     super(props);
     this.state = {
       board_name_error: ""
-    }
+    };
   }
   handleFormSubmit = () => {
     var board_name =

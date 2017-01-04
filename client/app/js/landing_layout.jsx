@@ -1,5 +1,4 @@
 /*jshint esversion: 6 */
-import React from 'react';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
@@ -8,6 +7,7 @@ import BoardDialog from './board_dialog';
 import {List, ListItem} from 'material-ui/List';
 import Ajax from  'basic-ajax';
 import Colors from './color';
+import React from 'react';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -22,7 +22,7 @@ class LandingLayout extends Layout  {
         name: "Add Board",
         handler: this.handleBoardAdd
       }
-    ]
+    ];
   }
 
   getBoards = () => {
@@ -51,7 +51,7 @@ class LandingLayout extends Layout  {
     this.setState({board_open: true, menu_open: false, menu_achor: achor_element});
   }
 
-  handleBoardAddClose = (submit) => {
+  handleBoardAddClose = () => {
     this.setState({board_open: false, menu_open: false});
     this.getBoards();
   }
@@ -68,7 +68,7 @@ class LandingLayout extends Layout  {
         iconElementRight={<FlatButton label="木漏れ日"
           href={"https://github.com/mafigit/Komorebi"}
           labelStyle={{fontSize: "30px", color: Colors.light_red,
-          fontWeight: "bold"}}/>}
+            fontWeight: "bold"}}/>}
         style={{backgroundColor: Colors.dark_gray}}
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
@@ -78,13 +78,13 @@ class LandingLayout extends Layout  {
       <List>
         {this.state.list_items.map((list_item, key) => {
           return <ListItem
-            onClick={event => {this.handleListClick(event, list_item.name)}}
+            onClick={event => {this.handleListClick(event, list_item.name);}}
             key={key} primaryText={list_item.name}
-          />
+          />;
         })}
       </List>
       {this.props.children}
-     </div>
+     </div>;
   }
 }
 

@@ -1,13 +1,9 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
-import StoryPointPicker from './story_point_picker';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 
@@ -16,7 +12,7 @@ export default class StoryFromIssueEditDialog extends React.Component {
     super(props);
     this.state = {
       issue_error: "",
-    }
+    };
     this.setDefaultFormValues();
   }
 
@@ -24,7 +20,7 @@ export default class StoryFromIssueEditDialog extends React.Component {
     this.form_values = {
       issue: "",
       column_id: "",
-    }
+    };
   }
 
   getInputValue = (ref, type) => {
@@ -44,7 +40,7 @@ export default class StoryFromIssueEditDialog extends React.Component {
           issue_error: response_obj.message,
         });
       }
-   });
+    });
   }
 
   editForm = () => {
@@ -74,7 +70,7 @@ export default class StoryFromIssueEditDialog extends React.Component {
         <br />
         <br />
       </Dialog>
-    )
+    );
   }
 
   render() {

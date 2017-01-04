@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {Card, CardTitle, CardActions, CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
 import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
@@ -19,7 +18,7 @@ const styles = {
     height: 20,
     padding: 0
   }
-}
+};
 
 export default class Column extends React.Component {
   constructor(props) {
@@ -27,14 +26,14 @@ export default class Column extends React.Component {
     this.state={};
   }
 
-  onPrevButton = (event) => {
+  onPrevButton = () => {
     var next_column_id = this.getNewColumnId(-1);
     if (next_column_id != this.props.column_id) {
       this.updateTask(next_column_id);
     }
   }
 
-  onNextButton = (event) => {
+  onNextButton = () => {
     var next_column_id = this.getNewColumnId(1);
     if (next_column_id != this.props.column_id) {
       this.updateTask(next_column_id);
@@ -100,6 +99,6 @@ export default class Column extends React.Component {
           </Row>
         </Grid>
       </CardActions>
-    </Card>
+    </Card>;
   }
 }

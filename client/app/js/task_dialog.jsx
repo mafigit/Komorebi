@@ -1,13 +1,9 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
-import MenuItem from 'material-ui/MenuItem';
-import StoryPointPicker from './story_point_picker';
 import StorySelect from './story_select';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
@@ -19,7 +15,7 @@ export default class TaskDialog extends React.Component {
       task_name_error: "",
       task_desc_error: "",
       last_sel_story_id: null
-    }
+    };
     this.setDefaultFormValues();
   }
 
@@ -30,7 +26,7 @@ export default class TaskDialog extends React.Component {
       story_id: null,
       column_id: null,
       priority: 1
-    }
+    };
   }
 
   getInputValue = (ref, type) => {
@@ -53,7 +49,7 @@ export default class TaskDialog extends React.Component {
           task_desc_error: response_obj.message,
         });
       }
-   });
+    });
   }
 
   handleStoryIdChange = (event, index, value) => {

@@ -1,16 +1,9 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
-import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
-import ReactDOM from 'react-dom';
-import StoryPointPicker from './story_point_picker';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ReactMarkdown from 'react-markdown';
 import BoardActions from './actions/BoardActions';
-import BoardStore from './store/BoardStore';
 
 export default class StoryShowDialog extends React.Component {
   constructor(props) {
@@ -23,17 +16,16 @@ export default class StoryShowDialog extends React.Component {
         requirements: "",
         points: ""
       }
-    }
+    };
   }
 
   componentDidUpdate = () => {
     if ((this.props.story_id !== null) &&
       (this.props.story_id !== this.state.story_view_values.story_id)) {
 
-      Ajax.get(`/stories/${this.props.story_id}`,
-        {"Accept": "application/json"}).then(response => {
-
-        if(response.status == 200) {
+      let url = `/stories/${this.props.story_id}`;
+      Ajax.get(url, {"Accept": "application/json"}).then(response => {
+        if (response.status == 200) {
           let fetched_story = JSON.parse(response.responseText);
           this.setState({
             story_view_values: {
