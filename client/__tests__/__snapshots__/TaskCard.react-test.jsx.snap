@@ -1,4 +1,4 @@
-exports[`test Should update position of button after clicking on next button 1`] = `
+exports[`test Should update position of task after clicking on next button 1`] = `
 <Card
   className="task"
   expandable={false}

@@ -15,7 +15,7 @@ beforeEach(function() {
   BoardStore.__Rewire__('columns', [column1, column2]);
 });
 
-it('Should update position of button after clicking on next button', () => {
+it('Should update position of task after clicking on next button', () => {
   var column_id = 1;
   const wrapper = shallow(
       <TaskCard
