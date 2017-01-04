@@ -4,7 +4,7 @@
   "description": "komorebi",
   "main": "app.js",
   "scripts": {
-    "test": "bundle exec rspec -f d test/*"
+    "test": "jest"
   },
   "author": "Maximilian Fischer",
   "license": "MIT",
@@ -47,6 +47,11 @@
     ]
   },
   "devDependencies": {
-    "gulp-livereload": "^3.8.1"
+    "babel-jest": "^18.0.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "gulp-livereload": "^3.8.1",
+    "jest": "^18.1.0",
+    "react-test-renderer": "^15.4.1"
   }
 }
