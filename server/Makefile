@@ -1,5 +1,6 @@
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
+GOPATH := $(shell git rev-parse --show-toplevel)/server
 
 BINARY=bin/komorebi
 
@@ -11,14 +12,14 @@ LDFLAGS=-ldflags "-X src/main/core.Version=${VERSION} -X src/main/core.BuildTime
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCES)
-	    go build ${LDFLAGS} -o ${BINARY} src/main/main.go
+	    GOPATH=${GOPATH} go build ${LDFLAGS} -o ${BINARY} src/main/main.go
 
 .PHONY: install
 install:
-	go install ${LDFLAGS} ./...
+	GOPATH=${GOPATH} go install ${LDFLAGS} ./...
 
 test:
-	go test komorebi
+	GOPATH=${GOPATH} go test komorebi
 
 .PHONY: clean
 clean:

@@ -7,9 +7,19 @@ import Column from './column';
 import { Grid, Row } from 'react-bootstrap';
 import Sidebar from './sidebar';
 
+/**
+ * board commponent
+ */
 export default class Board extends React.Component {
+  /**
+   * constructor
+   * @param {object} props
+  */
   constructor(props) {
     super(props);
+    /**
+     * @type {object}
+     */
     this.state = this.getState();
   }
 
