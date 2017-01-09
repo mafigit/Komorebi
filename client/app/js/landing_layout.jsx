@@ -20,7 +20,7 @@ class LandingLayout extends Layout  {
     this.menu_items = [
       {
         name: "Add Board",
-        handler: this.handleBoardAdd
+        action: this.handleBoardAdd
       }
     ];
   }
