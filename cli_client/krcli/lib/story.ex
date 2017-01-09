@@ -59,6 +59,18 @@ defmodule Krcli.Story do
       priority: item["priority"]} |> Util.wrap
   end
 
+  def unparse(story) do
+    %{
+      column_id: story.column_id,
+      name: story.name,
+      desc: story.desc,
+      points: story.points,
+      requirements: story.requirements,
+      priority: story.priority,
+      id: story.id
+    }
+  end
+
   def parse_batch(items) do
     with {:ok, story_json} <- items,
     do: Enum.map(story_json, &(parse(&1) |>   Util.unwrap)) |> Util.wrap
@@ -89,4 +101,14 @@ defmodule Krcli.Story do
     with_item(story_id, &show_story/1)
   end
   
+  def move_story(board, column, story) do
+    Krcli.Board.with_column(board, column, fn(col) ->
+      SbServer.post_json("/stories/" <> Integer.to_string(story.id),
+        unparse(%{story | column_id: col.id}) |> JSX.encode |> Util.unwrap )
+        |> Util.comply!("Story successfully updated!") end)
+  end
+
+  def move(board, column, story_id) do
+    move_story(%{name: board}, column, by_name(story_id) |> Util.unwrap)
+  end
 end

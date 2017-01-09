@@ -34,6 +34,8 @@ defmodule KrOpts do
         Krcli.Board.create_story(column, board)
       ["story", story_id, "destroy"] -> Krcli.Story.destroy(story_id)
       ["story", story_id, "show"] -> Krcli.Story.show(story_id)
+      ["story", story_id, "move", board, column] -> Krcli.Story.move(board, column, story_id)
+
       _ -> error(:no_opt)
     end
   end
