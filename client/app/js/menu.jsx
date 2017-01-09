@@ -9,7 +9,7 @@ class MyMenu extends React.Component {
 
   constructor(props) {
     super(props);
-    this.menu_items = [
+    var menu_items = [
       {
         name: "Add Task",
         action: BoardActions.showTaskDialog
@@ -27,6 +27,7 @@ class MyMenu extends React.Component {
         action: BoardActions.showColumnDialog
       }
     ];
+    this.menu_items = this.props.items || menu_items
   }
 
   render() {
