@@ -73,4 +73,8 @@ defmodule Util do
   def split_indent_wrap(str, ind) do
     String.split(str, "\n") |> Enum.map(&(ind <> &1)) |> Enum.join("\n")
   end
+
+  def no_args(_, fun, arg) do
+    fun.(arg)
+  end
 end

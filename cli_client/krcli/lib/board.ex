@@ -12,20 +12,30 @@ defmodule Krcli.Board do
       :io.format("~3B : ~-15s\n", [board["id"], board["name"]]) 
     end
 
-    def stories_for(stories) do
-      Enum.each(stories,
-        fn(x) -> :io.format("~-10s (~3B) ", [x.name || "", x.id])
-      end)
-      IO.puts("")
+    def print_story_at(stories, colid, cnt) do
+      if x=Enum.at(stories[colid], cnt) do
+        :io.format(" ~-15s (~3B) ", [x.name || "", x.id])
+      else
+        :io.format("~23s", [""])
+      end
+    end
+
+    def max_depth_in_stories(stories) do
+      Enum.reduce(stories, 0, fn(val, acc) ->
+        if (length(elem(val, 1)) > acc), do: length(elem(val, 1)) , else: acc end)
+    end
+
+    def story_line_by_column(cnt, board, stories) do
+      Enum.each(board.columns, 
+        fn(col) -> print_story_at(stories, col.id, cnt) end) |> Util.no_args(&IO.puts/1, "")
     end
 
     def stories_by_column(stories, board) do
-      Enum.each(board.columns, fn(col) ->
-        :io.format("~-15s:", [col.name])
-        |> Util.lift_pr(fn() -> stories_for(stories[col.id]) end)
-      end)
+      :io.format("~-24s" <> String.duplicate("~-23s", length(board.columns)-1) <> "\n",
+        Enum.map(board.columns, fn(x) -> x.name end))
+      Enum.map(0..max_depth_in_stories(stories),
+        fn(cnt) -> story_line_by_column(cnt, board, stories) end) |> Util.good
     end
-
   end
 
   def parse(input) do
@@ -67,12 +77,15 @@ defmodule Krcli.Board do
     with_item(board, &(Krcli.Story.create_with_column(column, &1)))
   end
 
-  def stories_per_column(board) do
+  def stories_for_board(board) do
     Enum.reduce(board.columns, %{}, 
       fn(col, acc) ->
         Map.put_new(acc, col.id, Krcli.Story.by_column(col) |> Util.unwrap)
       end)
-    |> Print.stories_by_column(board)
+  end
+
+  def stories_per_column(board) do
+    stories_for_board(board) |> Print.stories_by_column(board)
   end
 
   defp show_board(input) do
