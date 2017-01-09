@@ -55,7 +55,7 @@ func (u User) Validate() (bool, string) {
 
 	var otherUser User
 	GetByName(&otherUser, u.Name)
-	if otherUser.Id != 0 {
+	if otherUser.Id != 0 && otherUser.Id != u.Id {
 		log.Println("User validation failed. Name not uniq")
 		success = false
 		message += "Name not uniq.\n"

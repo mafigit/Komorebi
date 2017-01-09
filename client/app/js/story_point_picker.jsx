@@ -53,4 +53,3 @@ export default class StoryPointPicker extends React.Component {
     </div>
   }
 }
-export default StoryPointPicker;

@@ -4,62 +4,39 @@ import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 import Layout from './layout';
+import MenuItem from 'material-ui/MenuItem';
 import ColumnDialog from './column_dialog';
-import StoryDialog from './story_dialog';
+import StoryEditDialog from './story_edit_dialog';
+import StoryFromIssueEditDialog from './story_from_issue_edit_dialog';
 import TaskDialog from './task_dialog';
 import Colors from './color';
+import BoardStore from './store/BoardStore';
 
-class BoardLayout extends Layout  {
+export default class BoardLayout extends Layout  {
   constructor(props) {
     super(props);
-    this.state = {menu_open: false, column_open: false, story_open: false, task_open: false};
-    this.menu_items = [
-      {
-        name: "Add Task",
-        handler: this.handleTaskAdd
-      },
-      {
-        name: "Add Story",
-        handler: this.handleStorydAdd
-      },
-      {
-        name: "Add Column",
-        handler: this.handleColumnAdd
-      }
-    ]
+    this.state = this.getDialogState();
+  }
+  _onChange = () => {
+    this.setState(this.getDialogState());
   }
 
-  handleStorydAdd = () => {
-    this.setState({menu_open: false, column_open: false, story_open: true, task_open: false});
+  getDialogState = () => {
+    return {
+      menu_open: BoardStore.getMenuOpen(),
+      column_open: BoardStore.getColumnDialogOpen(),
+      story_edit_open: BoardStore.getStoryEditDialogOpen(),
+      story_from_issue_edit_open: BoardStore.getStoryFromIssueEditDialogOpen(),
+      task_open: BoardStore.getTaskDialogOpen()
+    };
   }
 
-  handleColumnAdd = () => {
-    this.setState({menu_open: false, column_open: true, story_open: false, task_open: false});
+  componentWillUnmount = () => {
+    BoardStore.removeChangeListener(this._onChange);
   }
 
-  handleTaskAdd = () => {
-    this.setState({menu_open: false, column_open: false, story_open: false, task_open: true});
-  }
-
-  handleTaskAddClose = (reload) => {
-    if(reload) {
-      this.props.boardReloadHandler();
-    }
-    this.setState({menu_open: false, column_open: false, story_open: false, task_open: false});
-  }
-
-  handleStoryAddClose = (reload) => {
-    if(reload) {
-      this.props.boardReloadHandler();
-    }
-    this.setState({menu_open: false, column_open: false, story_open: false, task_open: false});
-  }
-
-  handleColumnAddClose = (reload) => {
-    if(reload) {
-      this.props.boardReloadHandler();
-    }
-    this.setState({menu_open: false, column_open: false, story_open: false, task_open: false});
+  componentDidMount = () => {
+    BoardStore.addChangeListener(this._onChange);
   }
 
   handleTouchTapMenuBtn = (event) => {
@@ -72,31 +49,31 @@ class BoardLayout extends Layout  {
     this.setState({menu_open: false, menu_achor: achor_element});
   }
 
+  handleFilter = (event, index, value) => {
+  }
+
   render() {
     return <div>
       <AppBar
         title={this.props.title}
-        iconElementRight={<FlatButton label="木漏れ日"
-          href={"https://github.com/mafigit/Komorebi"}
-          labelStyle={{fontSize: "30px", color: Colors.light_red,
-            fontWeight: "bold"}}/>}
+        iconElementRight={
+          <div>
+          <FlatButton label="木漏れ日"
+            href={"https://github.com/mafigit/Komorebi"}
+            style={{verticalAlign: "baseline"}}
+            labelStyle={{fontSize: "30px", color: Colors.light_red,
+              fontWeight: "bold"}}/>
+          </div>
+        }
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
-        style={{backgroundColor: Colors.dark_gray}}
-      />
+        style={{backgroundColor: Colors.dark_gray}} />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
-        touchAwayHandler={this.handleTouchTapCloseMenu} items={this.menu_items}/>
-      <ColumnDialog board_id={this.props.board_id} open={this.state.column_open}
-        handleClose={this.handleColumnAddClose}/>
-      <StoryDialog columns={this.props.columns}
-        board_id={this.props.board_id} open={this.state.story_open}
-        handleClose={this.handleStoryAddClose}/>
-      <TaskDialog tasks={this.props.tasks} columns={this.props.columns}
-        board_id={this.props.board_id} open={this.state.task_open}
-        stories={this.props.stories}
-        handleClose={this.handleTaskAddClose}/>
+        touchAwayHandler={this.handleTouchTapCloseMenu} />
+      <ColumnDialog open={this.state.column_open} />
+      <StoryEditDialog open={this.state.story_edit_open} />
+      <StoryFromIssueEditDialog open={this.state.story_from_issue_edit_open} />
+      <TaskDialog open={this.state.task_open} />
       {this.props.children}
      </div>
   }
 }
-
-export default BoardLayout;

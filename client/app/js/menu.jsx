@@ -4,11 +4,30 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import BoardActions from './actions/BoardActions'
 
 class MyMenu extends React.Component {
 
   constructor(props) {
     super(props);
+     this.menu_items = [
+      {
+        name: "Add Task",
+        action: BoardActions.showTaskDialog
+      },
+      {
+        name: "Add Story",
+        action: BoardActions.openStoryEditDialog
+      },
+      {
+        name: "Add Story from Issue ID",
+        action: BoardActions.openStoryFromIssueEditDialog
+      },
+      {
+        name: "Add Column",
+        action: BoardActions.showColumnDialog
+      }
+    ]
   }
 
   render() {
@@ -22,9 +41,9 @@ class MyMenu extends React.Component {
           onRequestClose={this.props.touchAwayHandler}
         >
           <Menu>
-            {this.props.items.map((item, key) => {
+            {this.menu_items.map((item, key) => {
               return <MenuItem key={key} primaryText={item.name}
-                onTouchTap={item.handler} />
+                onTouchTap={item.action} />
             })}
           </Menu>
         </Popover>

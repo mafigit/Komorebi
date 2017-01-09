@@ -13,7 +13,18 @@ type Story struct {
 	ColumnId     int    `json:"column_id"`
 }
 
+type StoryNested struct {
+	DbModel
+	Desc         string `json:"desc"`
+	Points       int    `json:"points"`
+	Priority     int    `json:"priority"`
+	Requirements string `json:"requirements"`
+	ColumnId     int    `json:"column_id"`
+	Tasks        `json:"tasks"`
+}
+
 type Stories []Story
+type StoriesNested []StoryNested
 
 func NewStory(name string, desc string, requirements string, points int,
 	priority int, columnId int) Story {
@@ -30,7 +41,7 @@ func NewStory(name string, desc string, requirements string, points int,
 	}
 }
 
-func GetStoriesByBoradName(board_name string) Stories {
+func GetStoriesByBoardName(board_name string) Stories {
 	var stories Stories
 
 	_, err := dbMapper.Connection.

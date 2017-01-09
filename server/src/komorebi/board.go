@@ -9,18 +9,12 @@ type Board struct {
 	DbModel
 }
 
-type BoardColumnView struct {
+type BoardNested struct {
 	DbModel
-	Columns `json:"columns"`
-}
-
-type BoardWs struct {
-	DbModel
-	ColumnsWs
+	ColumnsNested `json:"columns"`
 }
 
 type Boards []Board
-type BoardColumnViews []BoardColumnView
 
 func NewBoard(name string) Board {
 	return Board{
@@ -43,8 +37,9 @@ func (b Board) Validate() (bool, string) {
 		success = false
 		message += "Name not valid.\n"
 	}
-	board := GetBoardColumnViewByName(b.Name)
-	if board.Id != 0 {
+	var board Board
+	GetByName(&board, b.Name)
+	if board.Id != 0 && board.Id != b.Id {
 		log.Println("Board validation failed. Name not uniq")
 		success = false
 		message += "Name not uniq.\n"
@@ -79,38 +74,29 @@ func (b Board) Destroy() bool {
 	return true
 }
 
-func GetBoardWsByName(name string) BoardWs {
-	var board BoardWs
+func GetBoardNestedByName(name string) BoardNested {
+	var board BoardNested
 	err := dbMapper.Connection.
 		SelectOne(&board, "select * from boards where Name=?", name)
 	if err != nil {
 		log.Println("could not find board with name", name)
 		return board
 	}
-	_, err = dbMapper.Connection.Select(&board.ColumnsWs,
+	_, err = dbMapper.Connection.Select(&board.ColumnsNested,
 		"select * from columns where boardId=? order by Position", board.Id)
 
-	var stories Stories
-	for col_index, col := range board.ColumnsWs {
-		_, err = dbMapper.Connection.Select(&stories,
+	for col_index, col := range board.ColumnsNested {
+
+		_, err = dbMapper.Connection.Select(&board.ColumnsNested[col_index].StoriesNested,
 			"select * from stories where ColumnId=?", col.Id)
-		board.ColumnsWs[col_index].Stories = stories
-	}
-	return board
-}
 
-func GetBoardColumnViewByName(name string) BoardColumnView {
-	var board BoardColumnView
-	err := dbMapper.Connection.
-		SelectOne(&board, "select * from boards where Name=?", name)
-	if err != nil {
-		log.Println("could not find board by name", err)
-		return board
+		var tasks Tasks
+		for story_index, st := range board.ColumnsNested[col_index].StoriesNested {
+			_, err = dbMapper.Connection.Select(&tasks,
+				"select * from tasks where StoryId=?", st.Id)
+			board.ColumnsNested[col_index].StoriesNested[story_index].Tasks = tasks
+		}
 	}
-	var columns Columns
-	_, err = dbMapper.Connection.Select(&columns,
-		"select * from columns where boardId=? order by Position", board.Id)
-	board.Columns = columns
 	return board
 }
 
@@ -124,20 +110,5 @@ func GetBoardByColumnId(c_id int) Board {
 	if err != nil {
 		log.Println("could not find board")
 	}
-	return board
-}
-
-func GetBoardColumnViewById(id int) BoardColumnView {
-	var board BoardColumnView
-	err := dbMapper.Connection.
-		SelectOne(&board, "select * from boards where Id=?", id)
-	if err != nil {
-		log.Println("could not find board with id", id)
-		return board
-	}
-	var columns Columns
-	_, err = dbMapper.Connection.Select(&columns,
-		"select * from columns where boardId=?", board.Id)
-	board.Columns = columns
 	return board
 }

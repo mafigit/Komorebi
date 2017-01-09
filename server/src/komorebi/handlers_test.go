@@ -85,7 +85,7 @@ func TestBoardCreateHandler(t *testing.T) {
 func TestColumnCreateHandler(t *testing.T) {
 	b := NewBoard("test123")
 	b.Save()
-	board := GetBoardWsByName("test123")
+	board := GetBoardNestedByName("test123")
 	data := fmt.Sprintf("{\"name\":\"testColumnCreate\",\"board_id\":%d}", board.Id)
 
 	req, _ := http.NewRequest("POST", "/columns",
@@ -120,11 +120,12 @@ func TestColumnCreateHandler(t *testing.T) {
 func TestStoryCreateHandler(t *testing.T) {
 	b := NewBoard("testStoryCreate")
 	b.Save()
-	board := GetBoardColumnViewByName("testStoryCreate")
+	var board Board
+	GetByName(&board, "testStoryCreate")
 	c := NewColumn("testColumn", 0, board.Id)
 	c.Save()
 	var column Column
-	columns := GetBoardColumnViewByName(board.Name).Columns
+	columns := GetColumnsByBoardId(board.Id)
 	for _, col := range columns {
 		if col.Name == "testColumn" {
 			column = col
@@ -152,11 +153,12 @@ func TestStoryCreateHandler(t *testing.T) {
 func TestTaskCreateHandler(t *testing.T) {
 	b := NewBoard("testTaskCreate")
 	b.Save()
-	board := GetBoardColumnViewByName("testTaskCreate")
+	var board Board
+	GetByName(&board, "testTaskCreate")
 	c := NewColumn("testColumn", 0, board.Id)
 	c.Save()
 	var column Column
-	columns := GetBoardColumnViewByName(board.Name).Columns
+	columns := GetColumnsByBoardId(board.Id)
 	for _, col := range columns {
 		if col.Name == "testColumn" {
 			column = col
@@ -165,7 +167,7 @@ func TestTaskCreateHandler(t *testing.T) {
 	s := NewStory("testStory", "desc", "req", 0, 4, column.Id)
 	s.Save()
 
-	stories := GetStoriesByBoradName(board.Name)
+	stories := GetStoriesByBoardName(board.Name)
 	var story Story
 	for _, st := range stories {
 		if st.Name == "testStory" {

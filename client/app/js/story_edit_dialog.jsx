@@ -7,9 +7,11 @@ import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
 import StoryPointPicker from './story_point_picker';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import BoardActions from './actions/BoardActions';
+import BoardStore from './store/BoardStore';
 
-
-export default class StoryDialog extends React.Component {
+export default class StoryEditDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,12 +42,12 @@ export default class StoryDialog extends React.Component {
     this.form_values.name = this.getInputValue(this.refs.story_name, "input");
     this.form_values.desc = this.getInputValue(this.refs.story_desc, "textarea");
     this.form_values.requirements = this.getInputValue(this.refs.story_req, "textarea");
-    this.form_values.column_id = this.props.columns[0].id;
+    this.form_values.column_id = BoardStore.getFirstColumn().id;
 
     Ajax.postJson('/stories', this.form_values).then(response => {
       var response_obj = JSON.parse(response.responseText);
       if (response_obj.success) {
-        this.handleClose(true);
+        BoardActions.closeStoryEditDialog(true);
       } else {
         this.setState({
           story_name_error: response_obj.message,
@@ -56,16 +58,6 @@ export default class StoryDialog extends React.Component {
    });
   }
 
-  handleClose = (reload) => {
-    this.setDefaultFormValues();
-    this.setState({
-      story_name_error: "",
-      story_desc_error: "",
-      story_req_error: ""
-    });
-    this.props.handleClose(reload);
-  }
-
   pointsHandler = (value) => {
     this.form_values.points = value;
   }
@@ -74,9 +66,7 @@ export default class StoryDialog extends React.Component {
     this.form_values.priority = value;
   }
 
-  render() {
-    const header = [
-    ];
+  editForm = () => {
     const actions = [
       <FlatButton
         label="Ok"
@@ -92,7 +82,7 @@ export default class StoryDialog extends React.Component {
         actions={actions}
         modal={false}
         open={this.props.open}
-        onRequestClose={this.handleClose}
+        onRequestClose={BoardActions.closeStoryEditDialog.bind(this, true)}
         autoScrollBodyContent={true}
       >
          <StoryPointPicker title="Points" key='0' valueHandler={this.pointsHandler}/>
@@ -125,7 +115,10 @@ export default class StoryDialog extends React.Component {
         />
         <br />
       </Dialog>
-    );
+    )
+  }
+
+  render() {
+    return this.editForm();
   }
 }
-export default StoryDialog;

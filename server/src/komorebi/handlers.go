@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
+	"github.com/go-resty/resty"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -24,7 +26,7 @@ var upgrader = websocket.Upgrader{
 
 type Connection struct {
 	Ws          *websocket.Conn
-	BoardStruct *BoardWs
+	BoardStruct *BoardNested
 }
 
 var connections = make(map[string][]*Connection, 0)
@@ -50,7 +52,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
 	content_type := r.Header.Get("Accept")
-	board_column := GetBoardColumnViewByName(board_name)
+	board_column := GetBoardNestedByName(board_name)
 
 	if board_column.Id == 0 {
 		OwnNotFound(w, r)
@@ -68,7 +70,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 func GetStories(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
-	stories := GetStoriesByBoradName(board_name)
+	stories := GetStoriesByBoardName(board_name)
 	json.NewEncoder(w).Encode(stories)
 }
 
@@ -191,8 +193,8 @@ func ColumnGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-
-	json.NewEncoder(w).Encode(column)
+	nested_column := GetNestedColumnByColumnId(column.Id)
+	json.NewEncoder(w).Encode(nested_column)
 }
 
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
@@ -376,7 +378,12 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board_struct := GetBoardWsByName(board_name)
+	board_struct := GetBoardNestedByName(board_name)
+
+	if board_struct.Name == "" {
+		return
+	}
+
 	con := &Connection{
 		Ws:          ws,
 		BoardStruct: &board_struct,
@@ -389,7 +396,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	connections[board_name] = append(connections[board_name], con)
-	fmt.Println("connections: ", connections)
+	log.Println("connections: ", connections)
 	err = ws.WriteMessage(websocket.TextMessage, []byte("Connection established"))
 	if err != nil {
 		fmt.Println("error on write:", err)
@@ -398,8 +405,8 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateWebsockets(board_name string, msg string) {
-	fmt.Println("Update Websockets for", board_name)
-	current_struct := GetBoardWsByName(board_name)
+	log.Println("Update Websockets for board", board_name)
+	current_struct := GetBoardNestedByName(board_name)
 
 	for i := range connections[board_name] {
 
@@ -460,6 +467,57 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	GetById(&task, id)
 	modelDelete(task, w, r)
+}
+
+func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	issue := vars["issue"]
+	column_id, _ := strconv.Atoi(vars["column_id"])
+
+	ret, story := getStoryFromIssue(issue, column_id)
+
+	if ret == true {
+		modelCreate(story, w, r)
+		return
+	} else {
+		w.WriteHeader(200)
+		response := Response{
+			Success: false,
+			Message: "Could not get Story from features.genua.de",
+		}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+}
+
+func getStoryFromIssue(issue string, column_id int) (bool, Story) {
+    var story Story
+	uri := "http://features.genua.de/issues/"
+	uri += issue
+	uri += ".json"
+
+	resp, err := resty.R().Get(uri)
+
+	if err != nil || resp.StatusCode() != 200 {
+		return false, story
+	}
+
+	type IssueStruct struct {
+		Issue struct {
+			Subject     string `json:"subject"`
+			Description string `json:"description"`
+		}
+	}
+	resp_json := &IssueStruct{}
+
+	err = json.Unmarshal([]byte(resp.String()), &resp_json)
+	if err != nil {
+		return false, story
+	}
+
+	story = NewStory(resp_json.Issue.Subject,
+		resp_json.Issue.Description, "", 3, 5, column_id)
+	return true, story
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
