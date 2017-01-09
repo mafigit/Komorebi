@@ -1,26 +1,38 @@
 exports[`test Click on Story to showTasksForStoryId 1`] = `
-<a
-  className="story_card list-group-item"
+<ListGroupItem
+  bsClass="list-group-item"
+  className="story_card"
   href="#"
+  listItem={false}
   onClick={[Function]}>
   test
-</a>
+  <OpenIcon
+    story_id="1" />
+</ListGroupItem>
 `;
 
 exports[`test Click on Story to showTasksForStoryId 2`] = `
-<a
-  className="story_card list-group-item"
+<ListGroupItem
+  bsClass="list-group-item"
+  className="story_card"
   href="#"
+  listItem={false}
   onClick={[Function]}>
   test2
-</a>
+  <OpenIcon
+    story_id="2" />
+</ListGroupItem>
 `;
 
 exports[`test Render Html with Name 1`] = `
-<a
-  className="story_card list-group-item"
+<ListGroupItem
+  bsClass="list-group-item"
+  className="story_card"
   href="#"
+  listItem={false}
   onClick={[Function]}>
   test
-</a>
+  <OpenIcon
+    story_id="1" />
+</ListGroupItem>
 `;
