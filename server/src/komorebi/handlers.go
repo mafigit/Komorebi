@@ -3,14 +3,13 @@ package komorebi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-resty/resty"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/go-resty/resty"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -491,7 +490,7 @@ func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 }
 
 func getStoryFromIssue(issue string, column_id int) (bool, Story) {
-    var story Story
+	var story Story
 	uri := "http://features.genua.de/issues/"
 	uri += issue
 	uri += ".json"
@@ -540,11 +539,6 @@ func getPublicDir() string {
 	if len(os.Args) >= 2 {
 		return os.Args[1]
 	} else {
-		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-		if err != nil {
-			return ""
-		} else {
-			return dir
-		}
+		return "public/"
 	}
 }
