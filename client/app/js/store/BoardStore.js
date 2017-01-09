@@ -125,14 +125,14 @@ var fetchStories = () => {
 
 var fetchTasks = () => {
   tasks = [];
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let count = stories.length;
     if (count == 0) {
       resolve();
     }
     stories.forEach(function(story) {
-      Ajax.get(`/stories/${story.id}/tasks`,
-        {"Accept": "application/json"}).then(response => {
+      var url = `/stories/${story.id}/tasks`;
+      Ajax.get(url, {"Accept": "application/json"}).then(response => {
         if(response.status == 200) {
           let fetched_tasks = JSON.parse(response.responseText);
           Array.prototype.push.apply(tasks, fetched_tasks);
@@ -147,20 +147,14 @@ var fetchTasks = () => {
 };
 
 var fetchAll = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     fetchBoard();
     fetchStories().then(fetchTasks).then(resolve);
   });
 };
 
 var updateTask = (data) => {
-  return Ajax.postJson('/tasks/' + data.id, data).then(response => {
-    var response_obj = JSON.parse(response.responseText);
-    if (response_obj.success) {
-      resolve();
-    } else {
-    }
-  });
+  return Ajax.postJson('/tasks/' + data.id, data);
 };
 
 AppDispatcher.register(function(action) {

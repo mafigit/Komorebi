@@ -1,8 +1,6 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
@@ -14,13 +12,13 @@ export default class ColumnDialog extends React.Component {
     super(props);
     this.state = {
       column_name_error: ""
-    }
+    };
   }
   handleFormSubmit = () => {
     var column_name =
       ReactDOM.findDOMNode(this.refs.column_name).querySelectorAll("input")[0].value;
-    Ajax.postJson('/columns', {"name": column_name,
-      "board_id": BoardStore.getBoardId()}).then(response => {
+    var data = {"name": column_name, "board_id": BoardStore.getBoardId()};
+    Ajax.postJson('/columns', data).then(response => {
       var response_obj = JSON.parse(response.responseText);
       if (response_obj.success) {
         BoardActions.closeColumnDialog(true);

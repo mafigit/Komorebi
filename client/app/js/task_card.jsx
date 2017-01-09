@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {Card, CardTitle, CardActions, CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
 import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
@@ -8,7 +7,6 @@ import NextIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import { Grid, Row, Col } from 'react-bootstrap';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 const styles = {
   small_icon: {
@@ -20,7 +18,7 @@ const styles = {
     height: 20,
     padding: 0
   }
-}
+};
 
 /**
  * task card commponent
@@ -48,7 +46,7 @@ export default class Column extends React.Component {
    * handle click prev button event
    * @param {SytheticEvent} event
    */
-  onPrevButton = (event) => {
+  onPrevButton = () => {
     var next_column_id = this.getNewColumnId(-1);
     if (next_column_id != this.props.column_id) {
       this.updateTask(next_column_id);
@@ -59,7 +57,7 @@ export default class Column extends React.Component {
    * handle click next button event
    * @param {SytheticEvent} event
    */
-  onNextButton = (event) => {
+  onNextButton = () => {
     var next_column_id = this.getNewColumnId(1);
     if (next_column_id != this.props.column_id) {
       this.updateTask(next_column_id);
@@ -139,6 +137,6 @@ export default class Column extends React.Component {
           </Row>
         </Grid>
       </CardActions>
-    </Card>
+    </Card>;
   }
 }

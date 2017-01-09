@@ -1,16 +1,15 @@
 /*jshint esversion: 6 */
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import BoardActions from './actions/BoardActions'
+import BoardActions from './actions/BoardActions';
 
 class MyMenu extends React.Component {
 
   constructor(props) {
     super(props);
-     this.menu_items = [
+    this.menu_items = [
       {
         name: "Add Task",
         action: BoardActions.showTaskDialog
@@ -27,7 +26,7 @@ class MyMenu extends React.Component {
         name: "Add Column",
         action: BoardActions.showColumnDialog
       }
-    ]
+    ];
   }
 
   render() {
@@ -42,8 +41,11 @@ class MyMenu extends React.Component {
         >
           <Menu>
             {this.menu_items.map((item, key) => {
-              return <MenuItem key={key} primaryText={item.name}
-                onTouchTap={item.action} />
+              return <MenuItem
+                key={key}
+                primaryText={item.name}
+                onTouchTap={item.action}
+              />;
             })}
           </Menu>
         </Popover>

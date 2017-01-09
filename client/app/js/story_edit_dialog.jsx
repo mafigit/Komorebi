@@ -1,13 +1,10 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
 import StoryPointPicker from './story_point_picker';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 
@@ -18,7 +15,7 @@ export default class StoryEditDialog extends React.Component {
       story_name_error: "",
       story_desc_error: "",
       story_req_error: ""
-    }
+    };
     this.setDefaultFormValues();
   }
 
@@ -29,9 +26,8 @@ export default class StoryEditDialog extends React.Component {
       points: 0,
       priority: 1,
       requirements: "",
-      column_id: "",
-      priority: 1
-    }
+      column_id: ""
+    };
   }
 
   getInputValue = (ref, type) => {
@@ -55,7 +51,7 @@ export default class StoryEditDialog extends React.Component {
           story_req_error: response_obj.message
         });
       }
-   });
+    });
   }
 
   pointsHandler = (value) => {
@@ -115,7 +111,7 @@ export default class StoryEditDialog extends React.Component {
         />
         <br />
       </Dialog>
-    )
+    );
   }
 
   render() {

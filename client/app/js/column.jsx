@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Col, Panel } from 'react-bootstrap';
 
 export default class Column extends React.Component {
@@ -11,11 +10,11 @@ export default class Column extends React.Component {
   render() {
     const title = (
       <h3>{this.props.name}</h3>
-    )
+    );
     return <Col lg={3} xs={12} md={12} >
       <Panel className="column" header={title}>
         {this.props.children}
       </Panel>
-    </Col>
+    </Col>;
   }
 }

@@ -38,7 +38,7 @@ var BoardActions = {
       story_id: story_id
     });
   },
-  closeStoryShowDialog: (reload) =>  {
+  closeStoryShowDialog: () =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_STORY_SHOW_DIALOG",
     });

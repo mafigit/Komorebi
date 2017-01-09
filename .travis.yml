@@ -7,4 +7,5 @@ before_install:
 script:
   - cd client
   - npm install
+  - npm run-script lint
   - npm test

@@ -1,7 +1,6 @@
 /*jshint esversion: 6 */
 import React from 'react';
 import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 
 class Layout extends React.Component {
@@ -29,7 +28,7 @@ class Layout extends React.Component {
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu}/>
       {this.props.children}
-     </div>
+     </div>;
   }
 }
 
