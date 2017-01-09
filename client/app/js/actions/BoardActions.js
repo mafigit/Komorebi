@@ -102,6 +102,12 @@ var BoardActions = {
     AppDispatcher.dispatch({
       actionType: "CLOSE_BOARD_DIALOG"
     });
+  },
+  addBoard: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_BOARD",
+      data: data
+    });
   }
 };
 module.exports = BoardActions;

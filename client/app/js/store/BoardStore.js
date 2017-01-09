@@ -3,6 +3,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import EventEmitter from 'events';
 import assign from 'object-assign';
 import Ajax from  'basic-ajax';
+import ErrorActions from '../actions/ErrorActions';
 
 var board_id = null;
 var board_title = "";
@@ -171,6 +172,20 @@ var updateTask = (data) => {
   return Ajax.postJson('/tasks/' + data.id, data);
 };
 
+var addBoard = (board_name) => {
+  return Ajax.postJson('/boards', {"name": board_name}).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      ErrorActions.removeBoardErrors();
+      board_dialog_open = false;
+      fetchBoards().then(() => {BoardStore.emitChange();});
+
+    } else {
+      ErrorActions.addBoardErrors({board_name: response_obj.message});
+    }
+  });
+};
+
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
@@ -265,6 +280,9 @@ AppDispatcher.register(function(action) {
       break;
     case "FETCH_BOARDS":
       fetchBoards().then(() => {BoardStore.emitChange();});
+      break;
+    case "ADD_BOARD":
+      addBoard(action.data.name);
       break;
     default:
       break;

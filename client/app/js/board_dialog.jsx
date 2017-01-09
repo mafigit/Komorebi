@@ -2,31 +2,42 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
+import BoardActions from './actions/BoardActions';
+import ErrorStore from './store/ErrorStore';
 
 export default class BoardDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      board_name_error: ""
+    this.state = this.getState();
+  }
+
+  getState = () => {
+    return {
+      error: ErrorStore.getBoardErrors()
     };
   }
+
+  _onError = () => {
+    this.setState(this.getState());
+  }
+
+  componentWillUnmount = () => {
+    ErrorStore.removeChangeListener(this._onError);
+  }
+
+  componentDidMount = () => {
+    ErrorStore.addChangeListener(this._onError);
+  }
+
   handleFormSubmit = () => {
     var board_name =
       ReactDOM.findDOMNode(this.refs.board_name).querySelectorAll("input")[0].value;
-    Ajax.postJson('/boards', {"name": board_name}).then(response => {
-      var response_obj = JSON.parse(response.responseText);
-      if (response_obj.success) {
-        this.handleClose();
-      } else {
-        this.setState({board_name_error: response_obj.message});
-      }
-    });
+    BoardActions.addBoard({"name": board_name});
   }
 
   handleClose = () => {
-    this.setState({board_name_error: ""});
+    this.setState({error: ""});
     this.props.handleClose();
   }
 
@@ -51,7 +62,7 @@ export default class BoardDialog extends React.Component {
         Add a name for the new Board
         <br />
         <TextField ref="board_name" hintText="Board Name"
-          errorText={this.state.board_name_error} />
+          errorText={this.state.error.board_name} />
         <br />
       </Dialog>
     );
