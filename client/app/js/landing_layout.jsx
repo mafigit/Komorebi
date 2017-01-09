@@ -5,35 +5,38 @@ import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
 import {List, ListItem} from 'material-ui/List';
-import Ajax from  'basic-ajax';
 import Colors from './color';
 import React from 'react';
+import BoardStore from './store/BoardStore';
+import BoardActions from './actions/BoardActions';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+
 
 class LandingLayout extends Layout  {
   constructor(props) {
     super(props);
-    this.state = {
-      list_items: [],
-      menu_open: false,
-      board_open: false
-    };
-    this.menu_items = [
-      {
-        name: "Add Board",
-        handler: this.handleBoardAdd
-      }
-    ];
+    this.state = this.getState();
   }
 
-  getBoards = () => {
-    Ajax.getJson('/boards').then(response => {
-      var boards = JSON.parse(response.response);
-      this.setState({list_items: boards.reverse()});
-    });
+  getState = () => {
+    return {
+      list_items: BoardStore.getBoards(),
+      menu_open: false,
+      board_open: BoardStore.getBoardDialogOpen()
+    };
+  }
+
+  _onChange = () => {
+    this.setState(this.getState());
+  };
+
+  componentWillUnmount = () => {
+    BoardStore.removeChangeListener(this._onChange);
   }
 
   componentDidMount = () => {
-    this.getBoards();
+    BoardStore.addChangeListener(this._onChange);
+    BoardActions.fetchBoards();
   }
 
   handleTouchTapMenuBtn = (event) => {
@@ -46,18 +49,13 @@ class LandingLayout extends Layout  {
     this.setState({menu_open: false, menu_achor: achor_element});
   }
 
-  handleBoardAdd = () => {
-    var achor_element = this.state.menu_achor;
-    this.setState({board_open: true, menu_open: false, menu_achor: achor_element});
-  }
-
-  handleBoardAddClose = () => {
-    this.setState({board_open: false, menu_open: false});
-    this.getBoards();
-  }
-
   handleListClick = (event, name) => {
     window.location.pathname = `/${name}`;
+  }
+
+  handleBoardDialogClose = () => {
+    BoardActions.closeBoardDialog();
+    BoardActions.fetchBoards();
   }
 
   render() {
@@ -73,8 +71,10 @@ class LandingLayout extends Layout  {
       />
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu}
-        handleBoardAdd={this.handleBoardAdd} items={this.menu_items}/>
-      <BoardDialog open={this.state.board_open} handleClose={this.handleBoardAddClose}/>
+        landing={true}/>
+  <BoardDialog open={this.state.board_open}
+    handleClose={this.handleBoardDialogClose}
+  />
       <List>
         {this.state.list_items.map((list_item, key) => {
           return <ListItem
@@ -86,6 +86,17 @@ class LandingLayout extends Layout  {
       {this.props.children}
      </div>;
   }
-}
 
+  // This is needed for testing the a component without the whole app context
+  static childContextTypes = {
+    muiTheme: React.PropTypes.object
+  }
+
+  getChildContext() {
+    return {
+      muiTheme: getMuiTheme()
+    };
+  }
+
+}
 export default LandingLayout;

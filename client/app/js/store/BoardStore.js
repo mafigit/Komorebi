@@ -11,6 +11,7 @@ var stories = [];
 var tasks = [];
 var tasks_to_display = {};
 var selected_stories = [];
+var boards = [];
 
 var menu_open = false;
 var column_dialog_open = false;
@@ -18,6 +19,7 @@ var story_edit_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
 var task_dialog_open = false;
+var board_dialog_open = false;
 
 var story_show_id = null;
 
@@ -37,6 +39,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     return columns.sort((a, b) => {
       return a.position - b.position;
     });
+  },
+  getBoards: function() {
+    return boards;
   },
   getStories: function() {
     return stories;
@@ -86,6 +91,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getStoryShowId: () => {
     return story_show_id;
   },
+  getBoardDialogOpen: () => {
+    return board_dialog_open;
+  },
   emitChange: function() {
     this.emit(CHANGE_EVENT);
   },
@@ -111,6 +119,12 @@ var fetchBoard = () => {
         a.position - b.position;
       });
     }
+  });
+};
+
+var fetchBoards = () => {
+  return Ajax.getJson('/boards').then(response => {
+    boards = JSON.parse(response.response);
   });
 };
 
@@ -241,8 +255,19 @@ AppDispatcher.register(function(action) {
     case "UPDATE_TASK":
       updateTask(action.data).then(() => {BoardStore.emitChange();});
       break;
+    case "OPEN_BOARD_DIALOG":
+      board_dialog_open = true;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_BOARD_DIALOG":
+      board_dialog_open = false;
+      BoardStore.emitChange();
+      break;
+    case "FETCH_BOARDS":
+      fetchBoards().then(() => {BoardStore.emitChange();});
+      break;
     default:
-      // no op
+      break;
   }
 });
 module.exports = BoardStore;

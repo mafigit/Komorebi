@@ -1,0 +1,42 @@
+exports[`test Should render Landing Layout 1`] = `
+<div>
+  <AppBar
+    iconElementRight={
+      <FlatButton
+        disabled={false}
+        href="https://github.com/mafigit/Komorebi"
+        label="木漏れ日"
+        labelPosition="after"
+        labelStyle={
+          Object {
+            "color": "#FF7260",
+            "fontSize": "30px",
+            "fontWeight": "bold",
+          }
+        }
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onTouchStart={[Function]}
+        primary={false}
+        secondary={false} />
+    }
+    onLeftIconButtonTouchTap={[Function]}
+    showMenuIconButton={true}
+    style={
+      Object {
+        "backgroundColor": "#505050",
+      }
+    }
+    title=""
+    zDepth={1} />
+  <MyMenu
+    landing={true}
+    open={false}
+    touchAwayHandler={[Function]} />
+  <BoardDialog
+    handleClose={[Function]}
+    open={false} />
+  <List />
+</div>
+`;

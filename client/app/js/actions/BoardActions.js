@@ -6,6 +6,11 @@ var BoardActions = {
       actionType: "FETCH_BOARD",
     });
   },
+  fetchBoards: () => {
+    AppDispatcher.dispatch({
+      actionType: "FETCH_BOARDS",
+    });
+  },
   fetchStories: () =>  {
     AppDispatcher.dispatch({
       actionType: "FETCH_STORIES",
@@ -86,6 +91,16 @@ var BoardActions = {
     AppDispatcher.dispatch({
       actionType: "UPDATE_TASK",
       data: data
+    });
+  },
+  openBoardDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_BOARD_DIALOG"
+    });
+  },
+  closeBoardDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_BOARD_DIALOG"
     });
   }
 };

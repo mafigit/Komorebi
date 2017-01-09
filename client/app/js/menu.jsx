@@ -9,24 +9,33 @@ class MyMenu extends React.Component {
 
   constructor(props) {
     super(props);
-    this.menu_items = [
-      {
-        name: "Add Task",
-        action: BoardActions.showTaskDialog
-      },
-      {
-        name: "Add Story",
-        action: BoardActions.openStoryEditDialog
-      },
-      {
-        name: "Add Story from Issue ID",
-        action: BoardActions.openStoryFromIssueEditDialog
-      },
-      {
-        name: "Add Column",
-        action: BoardActions.showColumnDialog
-      }
-    ];
+    if (this.props.landing) {
+      this.menu_items = [
+        {
+          name: "Add Board",
+          action: BoardActions.openBoardDialog
+        }
+      ];
+    } else {
+      this.menu_items = [
+        {
+          name: "Add Task",
+          action: BoardActions.showTaskDialog
+        },
+        {
+          name: "Add Story",
+          action: BoardActions.openStoryEditDialog
+        },
+        {
+          name: "Add Story from Issue ID",
+          action: BoardActions.openStoryFromIssueEditDialog
+        },
+        {
+          name: "Add Column",
+          action: BoardActions.showColumnDialog
+        }
+      ];
+    }
   }
 
   render() {
