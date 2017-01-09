@@ -43,7 +43,8 @@ jspm_packages
 server/pkg
 server/bin/*
 server/src/github.com
-server/src/gopkg.in/
+server/src/gopkg.in
+server/src/golang
 komorebi.db
 main
 
