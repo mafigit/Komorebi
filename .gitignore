@@ -44,7 +44,7 @@ server/pkg
 server/bin/*
 server/src/github.com
 server/src/gopkg.in
-server/src/golang
+server/src/golang.org
 komorebi.db
 main
 
