@@ -7,7 +7,6 @@ import NextIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import { Grid, Row, Col } from 'react-bootstrap';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 const styles = {
   small_icon: {
@@ -47,7 +46,7 @@ export default class Column extends React.Component {
    * handle click prev button event
    * @param {SytheticEvent} event
    */
-   onPrevButton = () => {
+  onPrevButton = () => {
     var next_column_id = this.getNewColumnId(-1);
     if (next_column_id != this.props.column_id) {
       this.updateTask(next_column_id);

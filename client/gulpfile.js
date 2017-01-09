@@ -4,6 +4,11 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var livereload = require('gulp-livereload');
+var jest = require('gulp-jest').default;
+
+gulp.task('test', function () {
+  return gulp.src('__tests__').pipe(jest());
+});
 
 gulp.task('build', function () {
   browserify({
@@ -19,6 +24,6 @@ gulp.task('build', function () {
 });
 gulp.task('watch', function () {
   livereload.listen();
-  gulp.watch('app/js/**/*.jsx', ['build']);
+  gulp.watch('app/js/**/*.jsx', ['build', 'test']);
 });
 gulp.task('default', ['build']);

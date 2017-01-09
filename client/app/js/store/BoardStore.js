@@ -154,13 +154,7 @@ var fetchAll = () => {
 };
 
 var updateTask = (data) => {
-  return Ajax.postJson('/tasks/' + data.id, data).then(response => {
-    var response_obj = JSON.parse(response.responseText);
-    if (response_obj.success) {
-      resolve();
-    } else {
-    }
-  });
+  return Ajax.postJson('/tasks/' + data.id, data);
 };
 
 AppDispatcher.register(function(action) {
