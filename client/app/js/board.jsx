@@ -1,6 +1,5 @@
 /*jshint esversion: 6 */
 import React from 'react';
-import BoardCanvas from './board_canvas';
 import Ajax from 'basic-ajax';
 import StoryShowDialog from './story_show_dialog';
 import BoardStore from './store/BoardStore';
@@ -9,9 +8,19 @@ import Column from './column';
 import { Grid, Row } from 'react-bootstrap';
 import Sidebar from './sidebar';
 
+/**
+ * board commponent
+ */
 export default class Board extends React.Component {
+  /**
+   * constructor
+   * @param {object} props
+  */
   constructor(props) {
     super(props);
+    /**
+     * @type {object}
+     */
     this.state = this.getState();
   }
 
