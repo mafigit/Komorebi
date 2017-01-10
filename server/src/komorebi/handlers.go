@@ -383,7 +383,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	con := &Connection{
-		Ws:          ws,
+		Ws: ws,
 	}
 
 	defer func() {

@@ -146,6 +146,9 @@ func TestBoardNested(t *testing.T) {
 	s = NewStory("Story 2", "description 2", "Do this and that", 3, 4,
 		cols[1].Id)
 	s.Save()
+	stories := GetStoriesByBoardName(board.Name)
+	task := NewTask("task for story2", "desctip", stories[1].Id, cols[1].Id, 1)
+	task.Save()
 	res1 := GetBoardNestedByName(board.Name)
 	res2 := GetBoardNestedByName(board.Name)
 	if !reflect.DeepEqual(res1, res2) {
@@ -161,9 +164,19 @@ func TestBoardNested(t *testing.T) {
 	if s_ws.Name != "Story 1" {
 		t.Error("First story of column 'WIP' should be 'Story 1'")
 	}
-	stories := GetStoriesByBoardName(board.Name)
+	stories = GetStoriesByBoardName(board.Name)
 	stories[0].Name = "fooo"
 	stories[0].Save()
+
+	ta := res1.ColumnsNested[1].StoriesNested[0].Tasks[0]
+	if ta.Name != task.Name {
+		t.Error("Task in story 2 should be 'task for story2'. Is:", ta.Name)
+	}
+
+	if s_ws.Name != "Story 1" {
+		t.Error("First story of column 'WIP' should be 'Story 1'")
+	}
+
 	res2 = GetBoardNestedByName(board.Name)
 
 	if reflect.DeepEqual(res1, res2) {
