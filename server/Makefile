@@ -14,7 +14,7 @@ install:
 	GOPATH=${GOPATH} go install ./...
 
 test:
-	GOPATH=${GOPATH} go test komorebi
+	GOPATH=${GOPATH} go test komorebi && cd src/komorebi && bash ./test_all_routes.sh
 
 .PHONY: clean
 clean:

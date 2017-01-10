@@ -140,6 +140,10 @@ echo "Create task foo"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":1,"priority":4}' localhost:8080/tasks 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
+echo "Get task foo by Id"
+resp=`curl localhost:8080/tasks/1 2>/dev/null`
+test_math "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}" $resp
+
 echo "Create task test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test", "desc":"desc", "story_id":1, "column_id":1,"priority":4}' localhost:8080/tasks 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
@@ -188,4 +192,6 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo 
 echo "#############"
-fatal "all tests passed"
+echo "all tests passed"
+kill -9 $komorebi_pid
+exit 0
