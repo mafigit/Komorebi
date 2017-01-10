@@ -19,7 +19,6 @@ class App extends React.Component {
     super(props);
     this.state = this.getBoardState();
   }
-
   getBoardState = () => {
     return {
       board_id: BoardStore.getBoardId(),
@@ -41,7 +40,7 @@ class App extends React.Component {
   componentDidMount = () => {
     BoardStore.addChangeListener(this._onChange);
     if(!this.props.landing) {
-      BoardActions.fetchAll();
+      BoardActions.initBoard();
     }
   }
 

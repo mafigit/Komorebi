@@ -1,54 +1,37 @@
 /*jshint esversion: 6 */
 import Snackbar from 'material-ui/Snackbar';
 import React from 'react';
+import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
 
 class MySnackbar extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      open: false,
-      message: "",
-      ws: undefined,
-      boardName: this.props.boardName,
+    this.state =  this.getState();
+  }
+
+  getState = () => {
+    return {
+      open: BoardStore.getShowMessage(),
+      message: BoardStore.getMessage()
     };
   }
 
-  show_message = () => {
-    this.setState({
-      open: true,
-      message: "Board Updated",
-    });
-  };
+  _onChange = () => {
+    this.setState(this.getState());
+  }
+  componentWillUnmount = () => {
+    BoardStore.removeChangeListener(this._onChange);
+  }
+
+  componentDidMount = () => {
+    BoardStore.addChangeListener(this._onChange);
+  }
 
   handleRequestClose = () => {
-    this.setState({
-      open: false,
-    });
-    BoardActions.fetchAll();
+    BoardActions.closeMessage();
   };
-
-  update_websocket = (board_name) => {
-    if (board_name.charAt(0) != "/") {
-      board_name = "/" + board_name;
-    }
-    var port = (location.port ? ':' + location.port : '');
-    var uri = window.location.hostname + port;
-    var socket = new WebSocket("ws://" + uri + board_name + "/ws");
-    socket.onmessage = this.show_message;
-    this.setState({
-      boardName: board_name,
-      ws: socket,
-    });
-  };
-
-  componentDidUpdate() {
-    var current_board = window.location.pathname;
-    if (this.state.boardName != current_board) {
-      this.update_websocket(current_board);
-    }
-  }
 
   render() {
     return (
@@ -56,7 +39,7 @@ class MySnackbar extends React.Component {
         <Snackbar
           open={this.state.open}
           message={this.state.message}
-          autoHideDuration={2000}
+          autoHideDuration={1000}
           onRequestClose={this.handleRequestClose}
         />
       </div>

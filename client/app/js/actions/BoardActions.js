@@ -147,6 +147,16 @@ var BoardActions = {
       actionType: "ADD_STORY",
       data: data
     });
+  },
+  initBoard: () => {
+    AppDispatcher.dispatch({
+      actionType: "INIT_BOARD"
+    });
+  },
+  closeMessage: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_MESSAGE"
+    });
   }
 };
 module.exports = BoardActions;
