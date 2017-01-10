@@ -11,6 +11,10 @@ var column_errors = {
   column_name: ""
 };
 
+var story_errors = {
+  story_name: ""
+};
+
 var ERROR_EVENT = 'error';
 var ErrorStore = assign({}, EventEmitter.prototype, {
   getBoardErrors: () => {
@@ -18,6 +22,9 @@ var ErrorStore = assign({}, EventEmitter.prototype, {
   },
   getColumnErrors: () => {
     return column_errors;
+  },
+  getStoryErrors: () => {
+    return story_errors;
   },
   emitChange: function() {
     this.emit(ERROR_EVENT);
@@ -49,6 +56,16 @@ AppDispatcher.register(function(action) {
     case "REMOVE_COLUMN_ERRORS":
       column_errors = {
         column_name: ""
+      };
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "ADD_STORY_ERRORS":
+      story_errors = action.errors;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "REMOVE_STORY_ERRORS":
+      story_errors = {
+        story_name: ""
       };
       ErrorStore.emitChange(ERROR_EVENT);
       break;

@@ -22,6 +22,17 @@ var ErrorActions = {
     AppDispatcher.dispatch({
       actionType: "REMOVE_COLUMN_ERRORS"
     });
+  },
+  addStoryErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY_ERRORS",
+      errors: errors
+    });
+  },
+  removeStoryErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_STORY_ERRORS"
+    });
   }
 };
 module.exports = ErrorActions;

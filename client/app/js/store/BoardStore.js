@@ -199,6 +199,19 @@ var addColumn = (column_name) => {
   });
 };
 
+var addStory = (form_values) => {
+  return Ajax.postJson('/stories', form_values).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      ErrorActions.removeStoryErrors();
+      story_edit_dialog_open = false;
+      fetchStories().then(() => {BoardStore.emitChange();});
+    } else {
+      ErrorActions.addStoryErrors({story_name: response_obj.message});
+    }
+  });
+};
+
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
@@ -299,6 +312,9 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_COLUMN":
       addColumn(action.data);
+      break;
+    case "ADD_STORY":
+      addStory(action.data);
       break;
     default:
       break;

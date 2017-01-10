@@ -114,6 +114,12 @@ var BoardActions = {
       actionType: "ADD_COLUMN",
       data: data
     });
+  },
+  addStory: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY",
+      data: data
+    });
   }
 };
 module.exports = BoardActions;
