@@ -15,6 +15,7 @@ var selected_stories = [];
 var boards = [];
 var selected_story_id: null;
 
+var message = "";
 var menu_open = false;
 var column_dialog_open = false;
 var story_edit_dialog_open = false;
@@ -22,6 +23,7 @@ var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
 var task_dialog_open = false;
 var board_dialog_open = false;
+var show_message = false;
 
 var story_show_id = null;
 
@@ -33,6 +35,12 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getBoardId: function () {
     return board_id;
+  },
+  getShowMessage: function() {
+    return show_message;
+  },
+  getMessage: function() {
+    return message;
   },
   getBoardTitle: function () {
     return board_title;
@@ -175,6 +183,20 @@ var fetchAll = () => {
   });
 };
 
+var initWebsocket = () => {
+  var port = (location.port ? ':' + location.port : '');
+  var uri = window.location.hostname + port;
+  var socket = new WebSocket("ws://" + uri + "/" + board_title + "/ws");
+  socket.onmessage = (ws_message) => {
+    message = ws_message.data;
+    show_message = true;
+    BoardStore.emitChange();
+    fetchAll().then(() => {
+      BoardStore.emitChange();
+    });
+  };
+};
+
 var updateTask = (data) => {
   return Ajax.postJson('/tasks/' + data.id, data);
 };
@@ -199,7 +221,6 @@ var addColumn = (column_name) => {
     if (response_obj.success) {
       column_dialog_open = false;
       ErrorActions.removeColumnErrors();
-      fetchAll().then(() => {BoardStore.emitChange();});
     } else {
       ErrorActions.addColumnErrors({column_name: response_obj.message});
     }
@@ -226,7 +247,6 @@ var addStory = (form_values) => {
     if (response_obj.success) {
       ErrorActions.removeStoryErrors();
       story_edit_dialog_open = false;
-      fetchStories().then(() => {BoardStore.emitChange();});
     } else {
       ErrorActions.addStoryErrors({story_name: response_obj.message});
     }
@@ -236,8 +256,7 @@ var addStory = (form_values) => {
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
-      fetchAll().
-        then(() => {BoardStore.emitChange();});
+      fetchAll().then(() => {BoardStore.emitChange();});
       break;
     case "FETCH_BOARD":
       fetchBoard().
@@ -315,7 +334,7 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "UPDATE_TASK":
-      updateTask(action.data).then(() => {BoardStore.emitChange();});
+      updateTask(action.data);
       break;
     case "OPEN_BOARD_DIALOG":
       board_dialog_open = true;
@@ -342,6 +361,16 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_STORY":
       addStory(action.data);
+      break;
+    case "INIT_BOARD":
+      fetchAll().then(() => {
+        initWebsocket();
+        BoardStore.emitChange();
+      });
+      break;
+    case "CLOSE_MESSAGE":
+      show_message = false;
+      BoardStore.emitChange();
       break;
     default:
       break;
