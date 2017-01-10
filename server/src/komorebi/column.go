@@ -76,6 +76,11 @@ func (c Column) Destroy() bool {
 		return false
 	}
 	reorderColumns(c.BoardId)
+
+	var board Board
+	GetById(&board, c.BoardId)
+	UpdateWebsockets(board.Name, "Column deleted")
+
 	return true
 }
 

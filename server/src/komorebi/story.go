@@ -108,6 +108,10 @@ func (s Story) Destroy() bool {
 		log.Println("delete of story failed.", errDelete)
 		return false
 	}
+
+	board := GetBoardByColumnId(s.ColumnId)
+	UpdateWebsockets(board.Name, "Story deleted")
+
 	return true
 }
 
