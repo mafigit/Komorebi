@@ -49,6 +49,39 @@ class OpenIcon extends React.Component {
   }
 }
 
+const styles = {
+  small_button: {
+    width: 20,
+    height: 20,
+    padding: 0,
+    position: 'absolute',
+    right: '4px'
+  },
+  small_icon: {
+    width: 20,
+    height: 20
+  }
+}
+
+class OpenIcon extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state={};
+  }
+
+  onClickHandler = (event) => {
+    event.stopPropagation();
+    BoardActions.openStoryShowDialog(this.props.story_id);
+  }
+
+  render() {
+    return <IconButton tooltip="Show story" style={styles.small_button}
+      iconStyle={styles.small_icon} onClick={this.onClickHandler}>
+      <OpenInNewIcon />
+    </IconButton>;
+  }
+}
+
 export default class StoryCard extends React.Component {
   constructor(props) {
     super(props);
