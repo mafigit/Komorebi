@@ -1,0 +1,63 @@
+exports[`test Should render TaskDialog 1`] = `
+<Dialog
+  actions={
+    Array [
+      <FlatButton
+        disabled={false}
+        keyboardFocused={true}
+        label="Ok"
+        labelPosition="after"
+        labelStyle={Object {}}
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onTouchStart={[Function]}
+        onTouchTap={[Function]}
+        primary={true}
+        secondary={false} />,
+    ]
+  }
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={true}
+  modal={false}
+  onRequestClose={[Function]}
+  open={false}
+  repositionOnUpdate={true}
+  title="Add Task">
+  <br />
+  Select Story
+  <br />
+  <StorySelect
+    onChange={[Function]} />
+  <br />
+  <br />
+  Add a name
+  <br />
+  <TextField
+    disabled={false}
+    errorText=""
+    floatingLabelFixed={false}
+    fullWidth={false}
+    hintText="Task Name"
+    multiLine={false}
+    rows={1}
+    type="text"
+    underlineShow={true} />
+  <br />
+  <br />
+  Add a Description
+  <br />
+  <TextField
+    disabled={false}
+    errorText=""
+    floatingLabelFixed={false}
+    fullWidth={true}
+    hintText="Task Description"
+    multiLine={true}
+    rows={1}
+    type="text"
+    underlineShow={true} />
+  <br />
+  <br />
+</Dialog>
+`;
