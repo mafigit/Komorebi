@@ -26,27 +26,28 @@ func NewBoard(name string) Board {
 	}
 }
 
-func (b Board) Validate() (bool, string) {
-	success, message := true, ""
+func (b Board) Validate() (bool, map[string][]string) {
+	success := true
+	errors := map[string][]string{}
 
 	if len(b.Name) <= 0 {
 		log.Println("Board validation failed. Name not present")
 		success = false
-		message += "Name not present.\n"
+		errors["name"] = append(errors["name"], "Name not present.")
 	}
 	if match, _ := regexp.MatchString("^[a-zA-Z0-9-]+$", b.Name); match == false {
 		log.Println("Board validation failed. Name not valid")
 		success = false
-		message += "Name not valid.\n"
+		errors["name"] = append(errors["name"], "Name not valid.")
 	}
 	var board Board
 	GetByName(&board, b.Name)
 	if board.Id != 0 && board.Id != b.Id {
 		log.Println("Board validation failed. Name not uniq")
 		success = false
-		message += "Name not uniq.\n"
+		errors["name"] = append(errors["name"], "Name not uniq.")
 	}
-	return success, message
+	return success, errors
 }
 
 func (b Board) TableName() string {

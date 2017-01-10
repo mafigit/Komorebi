@@ -30,8 +30,8 @@ type Connection struct {
 var connections = make(map[string][]*Connection, 0)
 
 type Response struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Success  bool                `json:"success"`
+	Messages map[string][]string `json:"messages"`
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -76,8 +76,8 @@ func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 	success, msg := m.Validate()
 
 	response := Response{
-		Success: success,
-		Message: msg,
+		Success:  success,
+		Messages: msg,
 	}
 	if response.Success == false {
 		w.WriteHeader(200)
@@ -96,8 +96,8 @@ func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 
 func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter, r *http.Request) {
 	response := Response{
-		Success: true,
-		Message: "",
+		Success:  true,
+		Messages: make(map[string][]string),
 	}
 
 	if var_id != update_m.GetId() {
@@ -107,7 +107,8 @@ func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter,
 
 	if old_m.GetId() == 0 {
 		response.Success = false
-		response.Message = "Model does not exist"
+		response.Messages["name"] = append(response.Messages["name"],
+			"Model does not exist")
 
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
@@ -118,7 +119,7 @@ func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter,
 
 	if success == false {
 		response.Success = success
-		response.Message = msg
+		response.Messages = msg
 
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
@@ -281,13 +282,14 @@ func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 
 func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
 	response := Response{
-		Success: true,
-		Message: "",
+		Success:  true,
+		Messages: make(map[string][]string),
 	}
 
 	if m.GetId() == 0 {
 		response.Success = false
-		response.Message = "Model does not exist"
+		response.Messages["name"] = append(response.Messages["name"],
+			"Model does not exist")
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
@@ -473,9 +475,11 @@ func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(200)
 		response := Response{
-			Success: false,
-			Message: "Could not get Story from features.genua.de",
+			Success:  false,
+			Messages: make(map[string][]string),
 		}
+		response.Messages["name"] = append(response.Messages["name"],
+			"Could not get Story from features.genua.de")
 		json.NewEncoder(w).Encode(response)
 		return
 	}
