@@ -85,6 +85,12 @@ var routes = Routes{
 		StoriesGetByColumn,
 	},
 	Route{
+		"TasksGetByColumn",
+		"GET",
+		"/columns/{column_id}/tasks",
+		TasksGetByColumn,
+	},
+	Route{
 		"ColumnCreate",
 		"POST",
 		"/columns",

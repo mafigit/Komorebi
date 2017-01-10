@@ -170,6 +170,14 @@ func StoriesGetByColumn(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(stories)
 }
 
+func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	column_id := vars["column_id"]
+	id, _ := strconv.Atoi(column_id)
+	tasks := GetTasksByColumnId(id)
+	json.NewEncoder(w).Encode(tasks)
+}
+
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_id := vars["board_id"]

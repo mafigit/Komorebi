@@ -82,3 +82,13 @@ func (t Task) Validate() (bool, map[string][]string) {
 
 	return success, errors
 }
+
+func GetTasksByColumnId(column_id int) Tasks {
+	var tasks Tasks
+	_, err := dbMapper.Connection.Select(&tasks,
+		"select * from tasks where ColumnId=? order by Id ", column_id)
+	if err != nil {
+		log.Println("Error while fetching tasks", column_id)
+	}
+	return tasks
+}
