@@ -4,11 +4,6 @@ GOPATH := $(shell git rev-parse --show-toplevel)/server
 
 BINARY=bin/komorebi
 
-VERSION=1.0.0
-BUILD_TIME=`date +%FT%T%z`
-
-LDFLAGS=-ldflags "-X src/main/core.Version=${VERSION} -X src/main/core.BuildTime=${BUILD_TIME}"
-
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCES)
@@ -16,7 +11,7 @@ $(BINARY): $(SOURCES)
 
 .PHONY: install
 install:
-	GOPATH=${GOPATH} go install ${LDFLAGS} ./...
+	GOPATH=${GOPATH} go install ./...
 
 test:
 	GOPATH=${GOPATH} go test komorebi
