@@ -217,6 +217,19 @@ var addTask = (data) => {
   });
 };
 
+var addStory = (form_values) => {
+  return Ajax.postJson('/stories', form_values).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      ErrorActions.removeStoryErrors();
+      story_edit_dialog_open = false;
+      fetchStories().then(() => {BoardStore.emitChange();});
+    } else {
+      ErrorActions.addStoryErrors({story_name: response_obj.message});
+    }
+  });
+};
+
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
@@ -323,6 +336,9 @@ AppDispatcher.register(function(action) {
       break;
     case "UPDATE_SELECTED_STORY_ID":
       selected_story_id = action.id;
+      break;
+    case "ADD_STORY":
+      addStory(action.data);
       break;
     default:
       break;

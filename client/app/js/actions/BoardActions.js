@@ -129,6 +129,12 @@ var BoardActions = {
       actionType: "UPDATE_SELECTED_STORY_ID",
       id: story_id
     });
+  },
+  addStory: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY",
+      data: data
+    });
   }
 };
 module.exports = BoardActions;

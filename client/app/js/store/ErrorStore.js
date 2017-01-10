@@ -16,6 +16,10 @@ var task_errors = {
   desc: ""
 };
 
+var story_errors = {
+  story_name: ""
+};
+
 var ERROR_EVENT = 'error';
 var ErrorStore = assign({}, EventEmitter.prototype, {
   getBoardErrors: () => {
@@ -26,6 +30,9 @@ var ErrorStore = assign({}, EventEmitter.prototype, {
   },
   getTaskErrors: () => {
     return task_errors;
+  },
+  getStoryErrors: () => {
+    return story_errors;
   },
   emitChange: function() {
     this.emit(ERROR_EVENT);
@@ -68,6 +75,15 @@ AppDispatcher.register(function(action) {
       task_errors = {
         name: "",
         desc: ""
+      };
+      break;
+    case "ADD_STORY_ERRORS":
+      story_errors = action.errors;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "REMOVE_STORY_ERRORS":
+      story_errors = {
+        story_name: ""
       };
       ErrorStore.emitChange(ERROR_EVENT);
       break;
