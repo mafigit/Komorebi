@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-function test_equal() {
+function test_equal {
     exp=$1
     got=$2
     if [ X$exp != X$got ];then
@@ -9,13 +9,13 @@ function test_equal() {
     fi
 }
 
-function test_match() {
+function test_match {
     regex=$1
     got=$2
     (echo $got | grep -qE "${regex}") || fatal "regex not matched \nregex:${regex} \ngot: ${got}"
 }
 
-function fatal() {
+function fatal {
     echo $1
     kill -9 $komorebi_pid
     exit 1
