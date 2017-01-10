@@ -4,6 +4,7 @@ import EventEmitter from 'events';
 import assign from 'object-assign';
 import Ajax from  'basic-ajax';
 import ErrorActions from '../actions/ErrorActions';
+import MessageActions from '../actions/MessageActions';
 
 var board_id = null;
 var board_title = "";
@@ -130,6 +131,16 @@ var fetchBoard = () => {
   });
 };
 
+var deleteBoard = (id) => {
+  var url = `/boards/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully delted");
+      fetchBoards().then(() => {BoardStore.emitChange();});
+    }
+  });
+};
+
 var fetchBoards = () => {
   return Ajax.getJson('/boards').then(response => {
     boards = JSON.parse(response.response);
@@ -242,6 +253,9 @@ AppDispatcher.register(function(action) {
     case "FETCH_BOARD":
       fetchBoard().
         then(() => {BoardStore.emitChange();});
+      break;
+    case "DELETE_BOARD":
+      deleteBoard(action.id);
       break;
     case "FETCH_STORIES":
       fetchStories().
