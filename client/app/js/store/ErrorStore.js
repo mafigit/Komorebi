@@ -7,10 +7,17 @@ var board_errors = {
   board_name: ""
 };
 
+var column_errors = {
+  column_name: ""
+};
+
 var ERROR_EVENT = 'error';
 var ErrorStore = assign({}, EventEmitter.prototype, {
   getBoardErrors: () => {
     return board_errors;
+  },
+  getColumnErrors: () => {
+    return column_errors;
   },
   emitChange: function() {
     this.emit(ERROR_EVENT);
@@ -32,6 +39,16 @@ AppDispatcher.register(function(action) {
     case "REMOVE_BOARD_ERRORS":
       board_errors = {
         board_name: ""
+      };
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "ADD_COLUMN_ERRORS":
+      column_errors = action.errors;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "REMOVE_COLUMN_ERRORS":
+      column_errors = {
+        column_name: ""
       };
       ErrorStore.emitChange(ERROR_EVENT);
       break;
