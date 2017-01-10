@@ -3,9 +3,16 @@ node_js:
   - "7"
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y curl build-essential
+  - sudo apt-get install -y curl build-essential golang
 script:
   - cd client
   - npm install
   - npm run-script lint
   - npm test
+  - cd ../server
+  - export GOPATH=`pwd`
+  - cd src/main
+  - go get
+  - cd ../../
+  - make
+  - make test
