@@ -12,6 +12,12 @@ var BoardActions = {
       id: id
     });
   },
+  deleteColumn: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "DELETE_COLUMN",
+      id: id
+    });
+  },
   fetchBoards: () => {
     AppDispatcher.dispatch({
       actionType: "FETCH_BOARDS",

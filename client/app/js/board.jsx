@@ -62,7 +62,7 @@ export default class Board extends React.Component {
         return acc;
       }, []);
 
-      return <Column key={key} name={col.name} >
+      return <Column key={key} name={col.name} id={col.id} >
         {tasks_for_column}
       </Column>;
     });

@@ -141,6 +141,15 @@ var deleteBoard = (id) => {
   });
 };
 
+var deleteColumn = (id) => {
+  var url = `/columns/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully delted");
+    }
+  });
+};
+
 var fetchBoards = () => {
   return Ajax.getJson('/boards').then(response => {
     boards = JSON.parse(response.response);
@@ -256,6 +265,9 @@ AppDispatcher.register(function(action) {
       break;
     case "DELETE_BOARD":
       deleteBoard(action.id);
+      break;
+    case "DELETE_COLUMN":
+      deleteColumn(action.id);
       break;
     case "FETCH_STORIES":
       fetchStories().
