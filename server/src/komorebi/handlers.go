@@ -414,6 +414,16 @@ func UpdateWebsockets(board_name string, msg string) {
 	}
 }
 
+func TaskGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	task_id := vars["task_id"]
+	id, _ := strconv.Atoi(task_id)
+
+	var task Task
+	GetById(&task, id)
+	json.NewEncoder(w).Encode(task)
+}
+
 func TasksGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	story_id := vars["story_id"]

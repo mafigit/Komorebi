@@ -175,6 +175,12 @@ var routes = Routes{
 		TasksGet,
 	},
 	Route{
+		"TaskGet",
+		"GET",
+		"/tasks/{task_id}",
+		TaskGet,
+	},
+	Route{
 		"BoardShow",
 		"GET",
 		"/{board_name}",
