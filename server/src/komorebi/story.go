@@ -11,6 +11,7 @@ type Story struct {
 	Priority     int    `json:"priority"`
 	Requirements string `json:"requirements"`
 	ColumnId     int    `json:"column_id"`
+	Archived     bool   `json:"archived"`
 }
 
 type StoryNested struct {
@@ -21,6 +22,7 @@ type StoryNested struct {
 	Requirements string `json:"requirements"`
 	ColumnId     int    `json:"column_id"`
 	Tasks        `json:"tasks"`
+	Archived     bool `json:"archived"`
 }
 
 type Stories []Story
@@ -38,6 +40,7 @@ func NewStory(name string, desc string, requirements string, points int,
 		Points:       points,
 		ColumnId:     columnId,
 		Desc:         desc,
+		Archived:     false,
 	}
 }
 
