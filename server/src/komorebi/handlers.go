@@ -23,8 +23,7 @@ var upgrader = websocket.Upgrader{
 }
 
 type Connection struct {
-	Ws          *websocket.Conn
-	BoardStruct *BoardNested
+	Ws *websocket.Conn
 }
 
 var connections = make(map[string][]*Connection, 0)
@@ -32,6 +31,10 @@ var connections = make(map[string][]*Connection, 0)
 type Response struct {
 	Success  bool                `json:"success"`
 	Messages map[string][]string `json:"messages"`
+}
+
+type WsResponse struct {
+	Message string `json:"message"`
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -414,8 +417,14 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 func UpdateWebsockets(board_name string, msg string) {
 	log.Println("Update Websockets for board", board_name)
 
+	resp := &WsResponse{
+		Message: msg,
+	}
+	json_resp, _ := json.Marshal(resp)
+
 	for i := range connections[board_name] {
-		err := connections[board_name][i].Ws.WriteMessage(websocket.TextMessage, []byte(msg))
+		err := connections[board_name][i].Ws.WriteMessage(
+			websocket.TextMessage, []byte(json_resp))
 		if err != nil {
 			fmt.Println("err", err)
 		}
