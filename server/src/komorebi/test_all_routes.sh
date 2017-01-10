@@ -156,6 +156,10 @@ echo "Get task with story id"
 resp=`curl localhost:8080/stories/1/tasks 2>/dev/null`
 test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}\]" $resp
 
+echo "Get task with column id"
+resp=`curl localhost:8080/columns/1/tasks 2>/dev/null`
+test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}\]" $resp
+
 echo "Update task with new name bar"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1,"priority":4, "id":1}' localhost:8080/tasks/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
