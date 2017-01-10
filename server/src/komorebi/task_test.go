@@ -9,6 +9,9 @@ func TestNewTask(t *testing.T) {
 	if task.Name != "haensel" {
 		t.Error("Should have instanciate a task:", task.Name)
 	}
+	if task.Archived != false {
+		t.Error("New task should not be archived:", task.Archived)
+	}
 }
 
 func TestTaskCreate(t *testing.T) {

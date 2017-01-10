@@ -18,6 +18,9 @@ func TestNewStory(t *testing.T) {
 	if s.Name != "haensel" {
 		t.Error("Should have instanciate a story:", s.Name)
 	}
+	if s.Archived != false {
+		t.Error("A new Story schould not be archived:", s.Archived)
+	}
 }
 
 func TestStoryCreate(t *testing.T) {
