@@ -99,6 +99,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getBoardDialogOpen: () => {
     return board_dialog_open;
   },
+  getStoryById: (story_id) => {
+    return stories.find((story) => { return story.id === story_id; });
+  },
   emitChange: function() {
     this.emit(CHANGE_EVENT);
   },
