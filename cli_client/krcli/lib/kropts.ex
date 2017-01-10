@@ -4,7 +4,6 @@ defmodule KrOpts do
       do: Krcli.Story.create_from_file() |> Util.comply_good,
     else: dispatch_from_args(args)
   end
-
   def show_help() do
     IO.puts("Komorebi commandline client v0.0.1-pre-alpha-1. Usage:
       krcli help -> this helpfile
@@ -18,7 +17,6 @@ defmodule KrOpts do
       krcli story <storyid> destroy -> destroy story
       krcli story <storyid> show -> show story")
   end
-
   def dispatch_from_args(args) do
     case args do
       ["help"] -> KrOpts.show_help()
@@ -31,15 +29,16 @@ defmodule KrOpts do
       ["board", board, "column", column, "destroy"] ->
         Krcli.Board.destroy_column(column, board)
       ["board", board, "column", column, "story", "new"] ->
-        Krcli.Board.create_story(column, board)
+        Krcli.Board.create_story(board, column)
       ["story", story_id, "destroy"] -> Krcli.Story.destroy(story_id)
       ["story", story_id, "show"] -> Krcli.Story.show(story_id)
       ["story", story_id, "move", board, column] -> Krcli.Story.move(board, column, story_id)
-
+      ["story", story_id, "tasks"] -> Krcli.Task.display(story_id)
+      ["board", board, "column", column, "story", story_id, "task", "new"] ->
+        Krcli.Board.create_task(board, column, story_id)
       _ -> error(:no_opt)
     end
   end
-
   def error(cause) do
     case cause do
       :no_opt -> IO.puts("Option is not known or currently" <>
