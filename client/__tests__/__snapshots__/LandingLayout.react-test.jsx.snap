@@ -38,5 +38,6 @@ exports[`test Should render Landing Layout 1`] = `
     handleClose={[Function]}
     open={false} />
   <List />
+  <MsgSnackbar />
 </div>
 `;

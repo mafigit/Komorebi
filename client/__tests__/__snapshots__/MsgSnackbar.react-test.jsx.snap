@@ -1,0 +1,9 @@
+exports[`<MessageSnackbar /> Should render MsgSnackbar 1`] = `
+<div>
+  <Snackbar
+    autoHideDuration={2000}
+    message="Hello"
+    onRequestClose={[Function]}
+    open={true} />
+</div>
+`;

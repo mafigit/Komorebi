@@ -6,6 +6,12 @@ var BoardActions = {
       actionType: "FETCH_BOARD",
     });
   },
+  deleteBoard: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "DELETE_BOARD",
+      id: id
+    });
+  },
   fetchBoards: () => {
     AppDispatcher.dispatch({
       actionType: "FETCH_BOARDS",
