@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 )
@@ -377,15 +376,14 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board_struct := GetBoardNestedByName(board_name)
+	board := GetBoardByName(board_name)
 
-	if board_struct.Name == "" {
+	if board.Name == "" {
 		return
 	}
 
 	con := &Connection{
 		Ws:          ws,
-		BoardStruct: &board_struct,
 	}
 
 	defer func() {
@@ -405,18 +403,12 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 
 func UpdateWebsockets(board_name string, msg string) {
 	log.Println("Update Websockets for board", board_name)
-	current_struct := GetBoardNestedByName(board_name)
 
 	for i := range connections[board_name] {
-
-		if !reflect.DeepEqual(*connections[board_name][i].BoardStruct, current_struct) {
-			err := connections[board_name][i].Ws.WriteMessage(websocket.TextMessage, []byte(msg))
-			connections[board_name][i].BoardStruct = &current_struct
-			if err != nil {
-				fmt.Println("err", err)
-			}
+		err := connections[board_name][i].Ws.WriteMessage(websocket.TextMessage, []byte(msg))
+		if err != nil {
+			fmt.Println("err", err)
 		}
-
 	}
 }
 
