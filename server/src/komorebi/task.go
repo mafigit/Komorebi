@@ -50,6 +50,10 @@ func (t Task) Destroy() bool {
 		log.Println("delete of task failed.", errDelete)
 		return false
 	}
+
+	board := GetBoardByColumnId(t.ColumnId)
+	UpdateWebsockets(board.Name, "Task deleted")
+
 	return true
 }
 
