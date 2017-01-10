@@ -88,13 +88,14 @@ func reorderColumns(board_id int) {
 	}
 }
 
-func (c Column) Validate() (bool, string) {
-	success, message := true, ""
+func (c Column) Validate() (bool, map[string][]string) {
+	success := true
+	errors := map[string][]string{}
 
 	if len(c.Name) <= 0 {
 		log.Println("Column validation failed. Name not present")
 		success = false
-		message += "Name not present.\n"
+		errors["name"] = append(errors["name"], "Name not present.")
 	}
 
 	var board Board
@@ -102,17 +103,17 @@ func (c Column) Validate() (bool, string) {
 	if board.Id == 0 {
 		log.Println("Column validation failed. BoardId does not exist:", c.BoardId)
 		success = false
-		message += "Board does not exist.\n"
+		errors["board_id"] = append(errors["board_id"], "Board does not exist.")
 	}
 
 	for _, column := range GetColumnsByBoardId(board.Id) {
 		if column.Name == c.Name && column.Id != c.Id {
 			log.Println("Column validation failed. Name not uniq")
 			success = false
-			message += "Name not uniq.\n"
+			errors["name"] = append(errors["name"], "Name not uniq.")
 		}
 	}
-	return success, message
+	return success, errors
 }
 
 func GetNestedColumnByColumnId(id int) ColumnNested {

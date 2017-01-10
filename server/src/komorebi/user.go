@@ -44,13 +44,14 @@ func (u User) Destroy() bool {
 	return true
 }
 
-func (u User) Validate() (bool, string) {
-	success, message := true, ""
+func (u User) Validate() (bool, map[string][]string) {
+	success := true
+	errors := map[string][]string{}
 
 	if len(u.Name) <= 0 {
 		log.Println("User validation failed. Name not present")
 		success = false
-		message += "Name not present.\n"
+		errors["name"] = append(errors["name"], "Name not present.")
 	}
 
 	var otherUser User
@@ -58,13 +59,14 @@ func (u User) Validate() (bool, string) {
 	if otherUser.Id != 0 && otherUser.Id != u.Id {
 		log.Println("User validation failed. Name not uniq")
 		success = false
-		message += "Name not uniq.\n"
+		errors["name"] = append(errors["name"], "Name not uniq.")
 	}
 
 	if len(u.ImagePath) <= 0 {
 		log.Println("User validation failed. ImagePath not present")
 		success = false
-		message += "ImagePath not present.\n"
+		errors["image_path"] = append(errors["image_path"],
+			"ImagePath not present.")
 	}
-	return success, message
+	return success, errors
 }

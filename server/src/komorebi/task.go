@@ -51,31 +51,34 @@ func (t Task) Destroy() bool {
 	return true
 }
 
-func (t Task) Validate() (bool, string) {
-	success, message := true, ""
+func (t Task) Validate() (bool, map[string][]string) {
+	success := true
+	errors := map[string][]string{}
 
 	if len(t.Name) <= 0 {
 		log.Println("Task validation failed. Name not present")
 		success = false
-		message += "Name not present.\n"
+		errors["name"] = append(errors["name"], "Name not present.")
 	}
 
 	if t.ColumnId <= 0 {
 		log.Println("Task validation failed. ColumnId not present")
 		success = false
-		message += "ColumnId not present.\n"
+		errors["column_id"] = append(errors["column_id"],
+			"ColumnId not present.")
 	}
 
 	if t.StoryId <= 0 {
 		log.Println("Task validation failed. StoryId not present")
 		success = false
-		message += "StoryId not present.\n"
+		errors["story_id"] = append(errors["story_id"], "StoryId not present.")
 	}
 	if t.Priority <= 0 || t.Priority > 10 {
 		log.Println("Task validation failed. Priority out of range")
 		success = false
-		message += "Priority out of range."
+		errors["priority"] = append(errors["priority"],
+			"Priority out of range.")
 	}
 
-	return success, message
+	return success, errors
 }

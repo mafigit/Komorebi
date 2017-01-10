@@ -19,7 +19,7 @@ type Model interface {
 	SetUpdatedAt()
 	TableName() string
 	Save() bool
-	Validate() (bool, string)
+	Validate() (bool, map[string][]string)
 	Destroy() bool
 }
 

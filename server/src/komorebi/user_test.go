@@ -23,21 +23,21 @@ func TestUserCreate(t *testing.T) {
 }
 
 func TestUserValidation(t *testing.T) {
-	success, msg := true, ""
 	u := NewUser("About a boy", "/tmp/foo")
-	success, msg = u.Validate()
+	success, msg := u.Validate()
 	if success == false {
 		t.Error("Should be valid")
 	}
 	u.Name = ""
 	success, msg = u.Validate()
-	if success == true || msg != "Name not present.\n" {
+	if success == true || !contains(msg["name"], "Name not present.") {
 		t.Error("Should be invalid by missing name")
 	}
 	u.Name = "Woot"
 	u.ImagePath = ""
 	success, msg = u.Validate()
-	if success == true || msg != "ImagePath not present.\n" {
+	if success == true ||
+		!contains(msg["image_path"], "ImagePath not present.") {
 		t.Error("Should be invalid by missing ImagePath")
 	}
 	u2 := NewUser("Franz", "/tmp/foo")
@@ -45,7 +45,7 @@ func TestUserValidation(t *testing.T) {
 	u.Name = u2.Name
 	u.ImagePath = "/tmp/foo"
 	success, msg = u.Validate()
-	if success == true || msg != "Name not uniq.\n" {
+	if success == true || !contains(msg["name"], "Name not uniq.") {
 		t.Error("Should be invalid by not uniq")
 	}
 }
