@@ -53,13 +53,11 @@ export default class BoardLayout extends Layout  {
       <AppBar
         title={this.props.title}
         iconElementRight={
-          <div>
           <FlatButton label="木漏れ日"
             href={"https://github.com/mafigit/Komorebi"}
             style={{verticalAlign: "baseline"}}
             labelStyle={{fontSize: "30px", color: Colors.light_red,
               fontWeight: "bold"}}/>
-          </div>
         }
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
         style={{backgroundColor: Colors.dark_gray}} />
