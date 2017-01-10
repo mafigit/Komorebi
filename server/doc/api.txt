@@ -21,17 +21,17 @@ curl  -H "Accept: application/json" localhost:8080/gz
 POST /boards as json
 curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boards
 => create board with name "gz", json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 POST /boards/{:id}
 curl  -H "Content-Type: application/json" -d '{"name":"foobar","id":1}' localhost:8080/boards/1
 => Update board, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 DELETE /boards/{:id}
 curl  -X DELETE localhost:8080/boards/4
 => delete board with id 4, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 
 ### Columns
@@ -44,17 +44,17 @@ curl  localhost:8080/columns/4
 POST /columns
 curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns
 => create columns for board boardId, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 POST /columns/{:id}
 curl  -H "Content-Type: application/json" -d '{"name":"WIPNEW", "position":99, "id":3}' localhost:8080/columns/3
 => Update column, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 DELETE /columns/{:id}
 curl  -X DELETE localhost:8080/columns/4
 => delete column with id 4, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 
 ### Stories
@@ -78,7 +78,7 @@ curl   localhost:8080/columns/1/stories
 POST /stories as json
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1,"priority":3 }' localhost:8080/stories
 => Create a user story
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 POST /stories/{:id}
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","column_id":1,"id":3,"priority:4"}' localhost:8080/stories/3
@@ -87,7 +87,7 @@ curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a descriptio
 DELETE /stories/{:id}
 curl  -X DELETE localhost:8080/stories/4
 => delete story with id 4, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 
 ### Tasks
@@ -97,20 +97,30 @@ curl   localhost:8080/stories/1/tasks
 => get tasks from story 1
 => [{"id":1,"name":"foo","updated_at":0,"desc":"desc","story_id":1,"column_id":1,"priority":4}]
 
+GET /tasks/{:task_id}
+curl   localhost:8080/tasks/1
+=> get task with id 1
+=> {"id":1,"name":"foo","updated_at":0,"desc":"desc","story_id":1,"column_id":1,"priority":4}
+
+GET /columns/{:column_id}/tasks
+curl   localhost:8080/columns/1/tasks
+=> get tasks from column 1
+=> [{"id":1,"name":"foo","updated_at":0,"desc":"desc","story_id":1,"column_id":1,"priority":4}]
+
 POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2,"priority":4}' localhost:8080/tasks
 => create a task
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2,"priority":4, "id":2}' localhost:8080/tasks/2
 => update task with id 2
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 DELETE /tasks/{:id}
 curl  -X DELETE localhost:8080/tasks/4
 => delete task with id 4, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 
 ### Users
@@ -123,14 +133,14 @@ curl   localhost:8080/users
 POST /users
 curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg"}' localhost:8080/users
 => create a user
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 POST /users/2
 curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg", "id":2 }' localhost:8080/users/2
 => update a user
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}
 
 DELETE /users/{:id}
 curl  -X DELETE localhost:8080/users/4
 => delete user with id 4, json response
-=> {"success":true,"message":""}
+=> {"success":true,"messages":{}}

@@ -4,6 +4,15 @@ import (
 	"testing"
 )
 
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 func TestNewStory(t *testing.T) {
 	s := NewStory("haensel", "gretel", "requirements", 5, 4, 1)
 	if s.Name != "haensel" {
@@ -23,39 +32,40 @@ func TestStoryCreate(t *testing.T) {
 }
 
 func TestStoryValidation(t *testing.T) {
-	success, msg := true, ""
 	s := NewStory("About a boy", "A meaningful description",
 		"Do this and that", 5, 4, 1)
-	success, msg = s.Validate()
+	success, msg := s.Validate()
 	if success == false {
 		t.Error("Should be valid")
 	}
 	s.Name = ""
 	success, msg = s.Validate()
-	if success == true || msg != "Name not present.\n" {
+	if success == true || !contains(msg["name"], "Name not present.") {
 		t.Error("Should be invalid by missing name")
 	}
 	s.Name = "Woot"
 	s.Points = 0
 	success, msg = s.Validate()
-	if success == true || msg != "Points out of range.\n" {
+	if success == true || !contains(msg["points"], "Points out of range.") {
 		t.Error("Should be invalid by missing points")
 	}
 	s.Points = 5
 	s.ColumnId = 0
 	success, msg = s.Validate()
-	if success == true || msg != "ColumnId not set.\n" {
+	if success == true || !contains(msg["column_id"], "ColumnId not set.") {
 		t.Error("Should be invalid by missing column id")
 	}
 	s.ColumnId = 5
 	s.Priority = 0
 	success, msg = s.Validate()
-	if success == true || msg != "Priority out of range.\n" {
+	if success == true ||
+		!contains(msg["priority"], "Priority out of range.") {
 		t.Error("Should be invalid by priority")
 	}
 	s.Points = 11
 	success, msg = s.Validate()
-	if success == true || msg != "Priority out of range.\n" {
+	if success == true ||
+		!contains(msg["priority"], "Priority out of range.") {
 		t.Error("Should be invalid by priority")
 	}
 }

@@ -68,7 +68,6 @@ export default class BoardCanvas {
   }
 
   createColumns() {
-    var column_canvas_elements = [];
     var column_count = this.columns.length;
     var column_width =
       Math.round(this.stage.getWidth()/column_count);

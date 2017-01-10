@@ -1,26 +1,44 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
-import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
-import MenuItem from 'material-ui/MenuItem';
-import StoryPointPicker from './story_point_picker';
 import StorySelect from './story_select';
 import BoardStore from './store/BoardStore';
+import ErrorStore from './store/ErrorStore';
 import BoardActions from './actions/BoardActions';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 export default class TaskDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      task_name_error: "",
-      task_desc_error: "",
-      last_sel_story_id: null
-    }
+    this.state = this.getState();
     this.setDefaultFormValues();
+  }
+
+  getState = () => {
+    return {
+      error: ErrorStore.getTaskErrors(),
+      last_sel_story_id: BoardStore.getSelectedStoryId()
+    };
+  }
+
+  _onError = () => {
+    this.setState(this.getState());
+  }
+
+  _onChange = () => {
+    this.setState(this.getState());
+  }
+
+  componentWillUnmount = () => {
+    ErrorStore.removeChangeListener(this._onError);
+    BoardStore.removeChangeListener(this._onChange);
+  }
+
+  componentDidMount = () => {
+    ErrorStore.addChangeListener(this._onError);
+    BoardStore.addChangeListener(this._onChange);
   }
 
   setDefaultFormValues = () => {
@@ -30,7 +48,7 @@ export default class TaskDialog extends React.Component {
       story_id: null,
       column_id: null,
       priority: 1
-    }
+    };
   }
 
   getInputValue = (ref, type) => {
@@ -38,32 +56,19 @@ export default class TaskDialog extends React.Component {
   }
 
   handleFormSubmit = () => {
-    this.form_values.name = this.getInputValue(this.refs.task_name, "input");
-    this.form_values.desc = this.getInputValue(this.refs.task_desc, "textarea");
-    this.form_values.story_id = this.state.last_sel_story_id;
-    this.form_values.column_id = BoardStore.getFirstColumn().id;
-
-    Ajax.postJson('/tasks', this.form_values).then(response => {
-      var response_obj = JSON.parse(response.responseText);
-      if (response_obj.success) {
-        BoardActions.closeTaskDialog(true);
-      } else {
-        this.setState({
-          task_name_error: response_obj.message,
-          task_desc_error: response_obj.message,
-        });
-      }
-   });
+    var form_data = {
+      name: this.getInputValue(this.refs.task_name, "input"),
+      desc: this.getInputValue(this.refs.task_desc, "textarea"),
+      story_id: BoardStore.getSelectedStoryId(),
+      column_id: BoardStore.getFirstColumn().id,
+      priority: 1
+    };
+    BoardActions.addTask(form_data);
   }
 
   handleStoryIdChange = (event, index, value) => {
-    this.setState({last_sel_story_id: value});
+    BoardActions.updateSelectedStoryId(value);
   }
-
-  valueHandler = (value) => {
-    this.form_values.points = value;
-  }
-
 
   render() {
     const actions = [
@@ -95,14 +100,14 @@ export default class TaskDialog extends React.Component {
         Add a name
         <br />
         <TextField ref="task_name" hintText="Task Name"
-          errorText={this.state.task_name_error} />
+          errorText={this.state.error.name} />
         <br />
         <br />
         Add a Description
         <br />
         <TextField ref="task_desc"
           hintText="Task Description"
-          errorText={this.state.task_desc_error}
+          errorText={this.state.error.desc}
           multiLine={true}
           fullWidth={true}
         />
@@ -110,5 +115,15 @@ export default class TaskDialog extends React.Component {
         <br />
       </Dialog>
     );
+  }
+
+  static childContextTypes = {
+    muiTheme: React.PropTypes.object
+  }
+
+  getChildContext() {
+    return {
+      muiTheme: getMuiTheme()
+    };
   }
 }

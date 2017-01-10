@@ -119,29 +119,31 @@ func GetTasksByStoryId(story_id int) Tasks {
 	return tasks
 }
 
-func (s Story) Validate() (bool, string) {
-	success, message := true, ""
+func (s Story) Validate() (bool, map[string][]string) {
+	success := true
+	errors := map[string][]string{}
 
 	if len(s.Name) <= 0 {
 		log.Println("Story validation failed. Name not present")
 		success = false
-		message += "Name not present.\n"
+		errors["name"] = append(errors["name"], "Name not present.")
 	}
 	if s.Points <= 0 {
 		log.Println("Story validation failed. Points out of range.")
 		success = false
-		message += "Points out of range.\n"
+		errors["points"] = append(errors["points"], "Points out of range.")
 	}
 	if s.ColumnId <= 0 {
 		log.Println("Story validation failed. ColumnId not set.")
 		success = false
-		message += "ColumnId not set.\n"
+		errors["column_id"] = append(errors["column_id"], "ColumnId not set.")
 	}
 	if s.Priority <= 0 || s.Priority > 10 {
 		log.Println("Story validation failed. Priority out of range")
 		success = false
-		message += "Priority out of range.\n"
+		errors["priority"] = append(errors["priority"],
+			"Priority out of range.")
 	}
 
-	return success, message
+	return success, errors
 }

@@ -1,33 +1,37 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
-import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
-import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
+import ErrorStore from './store/ErrorStore';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 export default class ColumnDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      column_name_error: ""
-    }
+    this.state = this.getState();
   }
+
+  getState = () => {
+    return {
+      error: ErrorStore.getColumnErrors()
+    };
+  }
+  _onError = () => {
+    this.setState(this.getState());
+  }
+  componentWillUnmount = () => {
+    ErrorStore.removeChangeListener(this._onError);
+  }
+  componentDidMount = () => {
+    ErrorStore.addChangeListener(this._onError);
+  }
+
   handleFormSubmit = () => {
     var column_name =
       ReactDOM.findDOMNode(this.refs.column_name).querySelectorAll("input")[0].value;
-    Ajax.postJson('/columns', {"name": column_name,
-      "board_id": BoardStore.getBoardId()}).then(response => {
-      var response_obj = JSON.parse(response.responseText);
-      if (response_obj.success) {
-        BoardActions.closeColumnDialog(true);
-      } else {
-        this.setState({column_name_error: response_obj.message});
-      }
-    });
+    BoardActions.addColumn(column_name);
   }
 
   render() {
@@ -51,9 +55,19 @@ export default class ColumnDialog extends React.Component {
         Add a name for the new Column
         <br />
         <TextField ref="column_name" hintText="Column Name"
-          errorText={this.state.column_name_error} />
+          errorText={this.state.error.column_name} />
         <br />
       </Dialog>
     );
+  }
+
+  static childContextTypes = {
+    muiTheme: React.PropTypes.object
+  }
+
+  getChildContext() {
+    return {
+      muiTheme: getMuiTheme()
+    };
   }
 }

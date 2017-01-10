@@ -1,0 +1,19 @@
+exports[`test Should render 1`] = `
+<div
+  className="board">
+  <StoryShowDialog
+    open={false}
+    story_id={1} />
+  <Grid
+    bsClass="container"
+    componentClass="div"
+    fluid={true}>
+    <Row
+      bsClass="row"
+      className="show-grid"
+      componentClass="div">
+      <Sidebar />
+    </Row>
+  </Grid>
+</div>
+`;

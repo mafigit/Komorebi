@@ -33,7 +33,7 @@ class MySnackbar extends React.Component {
     if (board_name.charAt(0) != "/") {
       board_name = "/" + board_name;
     }
-    var port = (location.port ? ':' + location.port : '')
+    var port = (location.port ? ':' + location.port : '');
     var uri = window.location.hostname + port;
     var socket = new WebSocket("ws://" + uri + board_name + "/ws");
     socket.onmessage = this.show_message;

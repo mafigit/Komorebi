@@ -4,7 +4,6 @@ import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 import Layout from './layout';
-import MenuItem from 'material-ui/MenuItem';
 import ColumnDialog from './column_dialog';
 import StoryEditDialog from './story_edit_dialog';
 import StoryFromIssueEditDialog from './story_from_issue_edit_dialog';
@@ -49,9 +48,6 @@ export default class BoardLayout extends Layout  {
     this.setState({menu_open: false, menu_achor: achor_element});
   }
 
-  handleFilter = (event, index, value) => {
-  }
-
   render() {
     return <div>
       <AppBar
@@ -74,6 +70,6 @@ export default class BoardLayout extends Layout  {
       <StoryFromIssueEditDialog open={this.state.story_from_issue_edit_open} />
       <TaskDialog open={this.state.task_open} />
       {this.props.children}
-     </div>
+     </div>;
   }
 }

@@ -3,15 +3,13 @@ package komorebi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-resty/resty"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/go-resty/resty"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
-	"reflect"
 	"strconv"
 	"strings"
 )
@@ -32,8 +30,8 @@ type Connection struct {
 var connections = make(map[string][]*Connection, 0)
 
 type Response struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Success  bool                `json:"success"`
+	Messages map[string][]string `json:"messages"`
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +76,8 @@ func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 	success, msg := m.Validate()
 
 	response := Response{
-		Success: success,
-		Message: msg,
+		Success:  success,
+		Messages: msg,
 	}
 	if response.Success == false {
 		w.WriteHeader(200)
@@ -98,8 +96,8 @@ func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 
 func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter, r *http.Request) {
 	response := Response{
-		Success: true,
-		Message: "",
+		Success:  true,
+		Messages: make(map[string][]string),
 	}
 
 	if var_id != update_m.GetId() {
@@ -109,7 +107,8 @@ func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter,
 
 	if old_m.GetId() == 0 {
 		response.Success = false
-		response.Message = "Model does not exist"
+		response.Messages["name"] = append(response.Messages["name"],
+			"Model does not exist")
 
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
@@ -120,7 +119,7 @@ func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter,
 
 	if success == false {
 		response.Success = success
-		response.Message = msg
+		response.Messages = msg
 
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
@@ -169,6 +168,14 @@ func StoriesGetByColumn(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(column_id)
 	stories := GetStoriesByColumnId(id)
 	json.NewEncoder(w).Encode(stories)
+}
+
+func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	column_id := vars["column_id"]
+	id, _ := strconv.Atoi(column_id)
+	tasks := GetTasksByColumnId(id)
+	json.NewEncoder(w).Encode(tasks)
 }
 
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
@@ -283,13 +290,14 @@ func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 
 func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
 	response := Response{
-		Success: true,
-		Message: "",
+		Success:  true,
+		Messages: make(map[string][]string),
 	}
 
 	if m.GetId() == 0 {
 		response.Success = false
-		response.Message = "Model does not exist"
+		response.Messages["name"] = append(response.Messages["name"],
+			"Model does not exist")
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
@@ -378,15 +386,14 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board_struct := GetBoardNestedByName(board_name)
+	board := GetBoardByName(board_name)
 
-	if board_struct.Name == "" {
+	if board.Name == "" {
 		return
 	}
 
 	con := &Connection{
-		Ws:          ws,
-		BoardStruct: &board_struct,
+		Ws: ws,
 	}
 
 	defer func() {
@@ -406,19 +413,23 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 
 func UpdateWebsockets(board_name string, msg string) {
 	log.Println("Update Websockets for board", board_name)
-	current_struct := GetBoardNestedByName(board_name)
 
 	for i := range connections[board_name] {
-
-		if !reflect.DeepEqual(*connections[board_name][i].BoardStruct, current_struct) {
-			err := connections[board_name][i].Ws.WriteMessage(websocket.TextMessage, []byte(msg))
-			connections[board_name][i].BoardStruct = &current_struct
-			if err != nil {
-				fmt.Println("err", err)
-			}
+		err := connections[board_name][i].Ws.WriteMessage(websocket.TextMessage, []byte(msg))
+		if err != nil {
+			fmt.Println("err", err)
 		}
-
 	}
+}
+
+func TaskGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	task_id := vars["task_id"]
+	id, _ := strconv.Atoi(task_id)
+
+	var task Task
+	GetById(&task, id)
+	json.NewEncoder(w).Encode(task)
 }
 
 func TasksGet(w http.ResponseWriter, r *http.Request) {
@@ -482,16 +493,18 @@ func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(200)
 		response := Response{
-			Success: false,
-			Message: "Could not get Story from features.genua.de",
+			Success:  false,
+			Messages: make(map[string][]string),
 		}
+		response.Messages["name"] = append(response.Messages["name"],
+			"Could not get Story from features.genua.de")
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 }
 
 func getStoryFromIssue(issue string, column_id int) (bool, Story) {
-    var story Story
+	var story Story
 	uri := "http://features.genua.de/issues/"
 	uri += issue
 	uri += ".json"
@@ -540,11 +553,6 @@ func getPublicDir() string {
 	if len(os.Args) >= 2 {
 		return os.Args[1]
 	} else {
-		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-		if err != nil {
-			return ""
-		} else {
-			return dir
-		}
+		return "public/"
 	}
 }

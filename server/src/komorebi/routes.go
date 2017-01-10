@@ -85,6 +85,12 @@ var routes = Routes{
 		StoriesGetByColumn,
 	},
 	Route{
+		"TasksGetByColumn",
+		"GET",
+		"/columns/{column_id}/tasks",
+		TasksGetByColumn,
+	},
+	Route{
 		"ColumnCreate",
 		"POST",
 		"/columns",
@@ -173,6 +179,12 @@ var routes = Routes{
 		"GET",
 		"/stories/{story_id}/tasks",
 		TasksGet,
+	},
+	Route{
+		"TaskGet",
+		"GET",
+		"/tasks/{task_id}",
+		TaskGet,
 	},
 	Route{
 		"BoardShow",

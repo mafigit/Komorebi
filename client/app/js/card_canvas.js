@@ -1,4 +1,6 @@
 /*jshint esversion: 6 */
+// will be removed
+/*eslint-disable */
 import Konva from 'konva';
 import Colors from './color';
 

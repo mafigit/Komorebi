@@ -6,6 +6,11 @@ var BoardActions = {
       actionType: "FETCH_BOARD",
     });
   },
+  fetchBoards: () => {
+    AppDispatcher.dispatch({
+      actionType: "FETCH_BOARDS",
+    });
+  },
   fetchStories: () =>  {
     AppDispatcher.dispatch({
       actionType: "FETCH_STORIES",
@@ -31,6 +36,9 @@ var BoardActions = {
       actionType: "CLOSE_TASK_DIALOG",
       reload: reload
     });
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_TASK_ERRORS"
+    });
   },
   openStoryShowDialog: (story_id) =>  {
     AppDispatcher.dispatch({
@@ -38,7 +46,7 @@ var BoardActions = {
       story_id: story_id
     });
   },
-  closeStoryShowDialog: (reload) =>  {
+  closeStoryShowDialog: () =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_STORY_SHOW_DIALOG",
     });
@@ -85,6 +93,46 @@ var BoardActions = {
   updateTask: (data) => {
     AppDispatcher.dispatch({
       actionType: "UPDATE_TASK",
+      data: data
+    });
+  },
+  openBoardDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_BOARD_DIALOG"
+    });
+  },
+  closeBoardDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_BOARD_DIALOG"
+    });
+  },
+  addBoard: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_BOARD",
+      data: data
+    });
+  },
+  addColumn: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_COLUMN",
+      data: data
+    });
+  },
+  addTask: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_TASK",
+      data: data
+    });
+  },
+  updateSelectedStoryId: (story_id) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_SELECTED_STORY_ID",
+      id: story_id
+    });
+  },
+  addStory: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY",
       data: data
     });
   }
