@@ -179,9 +179,22 @@ var addBoard = (board_name) => {
       ErrorActions.removeBoardErrors();
       board_dialog_open = false;
       fetchBoards().then(() => {BoardStore.emitChange();});
-
     } else {
       ErrorActions.addBoardErrors({board_name: response_obj.message});
+    }
+  });
+};
+
+var addColumn = (column_name) => {
+  var data = {"name": column_name, "board_id": BoardStore.getBoardId()};
+  Ajax.postJson('/columns', data).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      column_dialog_open = false;
+      ErrorActions.removeColumnErrors();
+      fetchAll().then(() => {BoardStore.emitChange();});
+    } else {
+      ErrorActions.addColumnErrors({column_name: response_obj.message});
     }
   });
 };
@@ -283,6 +296,9 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_BOARD":
       addBoard(action.data.name);
+      break;
+    case "ADD_COLUMN":
+      addColumn(action.data);
       break;
     default:
       break;

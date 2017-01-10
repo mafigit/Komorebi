@@ -68,6 +68,7 @@ export default class BoardDialog extends React.Component {
       </Dialog>
     );
   }
+
   static childContextTypes = {
     muiTheme: React.PropTypes.object
   }

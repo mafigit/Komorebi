@@ -1,0 +1,41 @@
+exports[`test Should render ColumnDialog 1`] = `
+<Dialog
+  actions={
+    Array [
+      <FlatButton
+        disabled={false}
+        keyboardFocused={true}
+        label="Ok"
+        labelPosition="after"
+        labelStyle={Object {}}
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onTouchStart={[Function]}
+        onTouchTap={[Function]}
+        primary={true}
+        secondary={false} />,
+    ]
+  }
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={false}
+  modal={false}
+  onRequestClose={[Function]}
+  open={false}
+  repositionOnUpdate={true}
+  title="Add New Column">
+  Add a name for the new Column
+  <br />
+  <TextField
+    disabled={false}
+    errorText=""
+    floatingLabelFixed={false}
+    fullWidth={false}
+    hintText="Column Name"
+    multiLine={false}
+    rows={1}
+    type="text"
+    underlineShow={true} />
+  <br />
+</Dialog>
+`;
