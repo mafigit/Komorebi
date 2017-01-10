@@ -23,6 +23,17 @@ var ErrorActions = {
       actionType: "REMOVE_COLUMN_ERRORS"
     });
   },
+  addTaskErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_TASK_ERRORS",
+      errors: errors
+    });
+  },
+  removeTaskErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_TASK_ERRORS"
+    });
+  },
   addStoryErrors: (errors) => {
     AppDispatcher.dispatch({
       actionType: "ADD_STORY_ERRORS",

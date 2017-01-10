@@ -36,6 +36,9 @@ var BoardActions = {
       actionType: "CLOSE_TASK_DIALOG",
       reload: reload
     });
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_TASK_ERRORS"
+    });
   },
   openStoryShowDialog: (story_id) =>  {
     AppDispatcher.dispatch({
@@ -113,6 +116,18 @@ var BoardActions = {
     AppDispatcher.dispatch({
       actionType: "ADD_COLUMN",
       data: data
+    });
+  },
+  addTask: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_TASK",
+      data: data
+    });
+  },
+  updateSelectedStoryId: (story_id) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_SELECTED_STORY_ID",
+      id: story_id
     });
   },
   addStory: (data) => {

@@ -13,6 +13,7 @@ var tasks = [];
 var tasks_to_display = {};
 var selected_stories = [];
 var boards = [];
+var selected_story_id: null;
 
 var menu_open = false;
 var column_dialog_open = false;
@@ -27,6 +28,9 @@ var story_show_id = null;
 var CHANGE_EVENT = 'change';
 
 var BoardStore = assign({}, EventEmitter.prototype, {
+  getSelectedStoryId: function () {
+    return selected_story_id;
+  },
   getBoardId: function () {
     return board_id;
   },
@@ -199,6 +203,20 @@ var addColumn = (column_name) => {
   });
 };
 
+var addTask = (data) => {
+  Ajax.postJson('/tasks', data).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      task_dialog_open = false;
+    } else {
+      ErrorActions.addTaskErrors({
+        name: response_obj.message,
+        desc: response_obj.message
+      });
+    }
+  });
+};
+
 var addStory = (form_values) => {
   return Ajax.postJson('/stories', form_values).then(response => {
     var response_obj = JSON.parse(response.responseText);
@@ -312,6 +330,12 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_COLUMN":
       addColumn(action.data);
+      break;
+    case "ADD_TASK":
+      addTask(action.data);
+      break;
+    case "UPDATE_SELECTED_STORY_ID":
+      selected_story_id = action.id;
       break;
     case "ADD_STORY":
       addStory(action.data);
