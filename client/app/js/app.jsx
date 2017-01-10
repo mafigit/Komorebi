@@ -7,6 +7,7 @@ import Board from './board';
 import LandingLayout from './landing_layout';
 import BoardLayout from './board_layout';
 import MySnackbar from './snackbar';
+import MsgSnackbar from './msg_snackbar';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
 
@@ -59,6 +60,7 @@ class App extends React.Component {
           board_id={this.state.board_id} >
           <Board />
           <MySnackbar boardName={this.state.title} />
+          <MsgSnackbar/>
         </BoardLayout>
       </MuiThemeProvider>;
     }
