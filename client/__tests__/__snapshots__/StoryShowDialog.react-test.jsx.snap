@@ -1,0 +1,53 @@
+exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
+<Dialog
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={true}
+  modal={false}
+  onRequestClose={[Function]}
+  open={true}
+  repositionOnUpdate={true}
+  title={
+    <div
+      style={
+        Object {
+          "height": "40px",
+          "padding": "10px",
+        }
+      }>
+      <div
+        style={
+          Object {
+            "float": "left",
+            "marginLeft": "20px",
+            "marginTop": "5px",
+          }
+        } />
+      <FloatingActionButton
+        disabled={true}
+        mini={true}
+        secondary={false}
+        style={
+          Object {
+            "float": "right",
+            "marginLeft": "20px",
+            "marginRight": "20px",
+          }
+        }
+        zDepth={2} />
+    </div>
+  }>
+  <br />
+  Description
+  <br />
+  <ReactMarkdown
+    containerTagName="div"
+    source="" />
+  <br />
+  Requirements
+  <br />
+  <ReactMarkdown
+    containerTagName="div"
+    source="" />
+  <br />
+</Dialog>
+`;
