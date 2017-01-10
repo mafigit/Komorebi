@@ -5,6 +5,7 @@ import TextField from 'material-ui/TextField';
 import ReactDOM from 'react-dom';
 import BoardActions from './actions/BoardActions';
 import ErrorStore from './store/ErrorStore';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 export default class BoardDialog extends React.Component {
   constructor(props) {
@@ -66,5 +67,14 @@ export default class BoardDialog extends React.Component {
         <br />
       </Dialog>
     );
+  }
+  static childContextTypes = {
+    muiTheme: React.PropTypes.object
+  }
+
+  getChildContext() {
+    return {
+      muiTheme: getMuiTheme()
+    };
   }
 }

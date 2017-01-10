@@ -3,7 +3,6 @@ import toJson from 'enzyme-to-json';
 import { shallow } from 'enzyme';
 import { mount } from 'enzyme';
 
-
 import LandingLayout from '../app/js/landing_layout.jsx';
 import BoardStore  from '../app/js/store/BoardStore';
 import injectTapEventPlugin from 'react-tap-event-plugin';
