@@ -165,14 +165,6 @@ func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 	modelUpdate(old_board, update_board, id, w, r)
 }
 
-func StoriesGetByColumn(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	column_id := vars["column_id"]
-	id, _ := strconv.Atoi(column_id)
-	stories := GetStoriesByColumnId(id)
-	json.NewEncoder(w).Encode(stories)
-}
-
 func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	column_id := vars["column_id"]
@@ -338,7 +330,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
-		story.Priority, story.ColumnId)
+		story.Priority, story.BoardId)
 	modelCreate(story, w, r)
 }
 
