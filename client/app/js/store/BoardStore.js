@@ -26,6 +26,7 @@ var story_show_dialog_open = false;
 var task_show_dialog_open = false;
 var task_dialog_open = false;
 var board_dialog_open = false;
+var user_dialog_open = false;
 var show_message = false;
 
 var story_show_id = null;
@@ -119,6 +120,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getBoardDialogOpen: () => {
     return board_dialog_open;
+  },
+  getUserDialogOpen: () => {
+    return user_dialog_open;
   },
   getStoryById: (story_id) => {
     return stories.find((story) => { return story.id === story_id; });
@@ -338,6 +342,22 @@ var addStory = (form_values) => {
   });
 };
 
+var addUser = (data) => {
+  return Ajax.postJson('/users', data).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      ErrorActions.removeUserErrors();
+      user_dialog_open = false;
+      BoardStore.emitChange();
+    } else {
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.USER;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addUserErrors(errors);
+    }
+  });
+};
+
 var addStoryFromIssue = (issue) => {
   var board_id = BoardStore.getBoardId();
   return Ajax.getJson(`/create_story_by_issue/${board_id}/${issue}`).then(
@@ -498,6 +518,17 @@ AppDispatcher.register(function(action) {
       break;
     case "CLOSE_MESSAGE":
       show_message = false;
+      BoardStore.emitChange();
+      break;
+    case "ADD_USER":
+      addUser(action.data);
+      break;
+    case "OPEN_USER_DIALOG":
+      user_dialog_open = true;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_USER_DIALOG":
+      user_dialog_open = false;
       BoardStore.emitChange();
       break;
     default:

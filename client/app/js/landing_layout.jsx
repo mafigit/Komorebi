@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
+import UserDialog from './user_dialog';
 import {List, ListItem} from 'material-ui/List';
 import Colors from './color';
 import React from 'react';
@@ -23,7 +24,8 @@ class LandingLayout extends Layout  {
     return {
       list_items: BoardStore.getBoards(),
       menu_open: false,
-      board_open: BoardStore.getBoardDialogOpen()
+      board_open: BoardStore.getBoardDialogOpen(),
+      user_open: BoardStore.getUserDialogOpen()
     };
   }
 
@@ -59,6 +61,11 @@ class LandingLayout extends Layout  {
     BoardActions.fetchBoards();
   }
 
+  handleUserDialogClose = () => {
+    BoardActions.closeUserDialog();
+    BoardActions.fetchBoards();
+  }
+
   onIconClickHandler = (event, id) => {
     event.stopPropagation();
     BoardActions.deleteBoard(id);
@@ -79,8 +86,11 @@ class LandingLayout extends Layout  {
         touchAwayHandler={this.handleTouchTapCloseMenu}
         landing={true}/>
       <BoardDialog open={this.state.board_open}
-       handleClose={this.handleBoardDialogClose}
-       />
+        handleClose={this.handleBoardDialogClose}
+      />
+      <UserDialog open={this.state.user_open}
+        handleClose={this.handleUserDialogClose}
+      />
       <List>
         {this.state.list_items.map((list_item, key) => {
           return <ListItem

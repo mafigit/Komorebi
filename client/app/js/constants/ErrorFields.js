@@ -3,6 +3,7 @@ const ErrorFields = {
   COLUMN: {'name': ''},
   BOARD: {'name': ''},
   STORY: {'name': '', 'desc': '', 'req': ''},
-  STORY_ISSUE: {'issue': ''},
+  USER: {'name': '', 'image_path': ''},
+  STORY_ISSUE: {'issue': ''}
 };
 export default ErrorFields;
