@@ -92,9 +92,10 @@ var BoardActions = {
       actionType: "CLOSE_TASK_SHOW_DIALOG",
     });
   },
-  openStoryEditDialog: () =>  {
+  openStoryEditDialog: (story_id) =>  {
     AppDispatcher.dispatch({
-      actionType: "OPEN_STORY_EDIT_DIALOG"
+      actionType: "OPEN_STORY_EDIT_DIALOG",
+      story_id: story_id
     });
   },
   openStoryFromIssueEditDialog: () =>  {
@@ -174,6 +175,12 @@ var BoardActions = {
   addStory: (data) => {
     AppDispatcher.dispatch({
       actionType: "ADD_STORY",
+      data: data
+    });
+  },
+  updateStory: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_STORY",
       data: data
     });
   },

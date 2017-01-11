@@ -14,14 +14,6 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
           "padding": "10px",
         }
       }>
-      <div
-        style={
-          Object {
-            "float": "left",
-            "marginLeft": "20px",
-            "marginTop": "5px",
-          }
-        } />
       <FloatingActionButton
         disabled={true}
         mini={true}
@@ -36,15 +28,16 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
         zDepth={2} />
     </div>
   }>
-  <br />
-  Description
-  <br />
+  <h4>
+    Description
+  </h4>
   <ReactMarkdown
     containerTagName="div"
     source="" />
   <br />
-  Requirements
-  <br />
+  <h4>
+    Requirements
+  </h4>
   <ReactMarkdown
     containerTagName="div"
     source="" />
@@ -60,6 +53,17 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
           } />
       }
       label="Delete"
+      onTouchTap={[Function]} />
+    <BottomNavigationItem
+      icon={
+        <EditorModeEdit
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Edit"
       onTouchTap={[Function]} />
   </BottomNavigation>
 </Dialog>

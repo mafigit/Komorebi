@@ -8,6 +8,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {BottomNavigation, BottomNavigationItem} from
   'material-ui/BottomNavigation';
 import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
+import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
 
 const icon_style = {
   display: "initial"
@@ -25,11 +26,21 @@ export default class StoryShowDialog extends React.Component {
     };
   }
 
+  compareStory = (a, b) => {
+    if (a && b) {
+      return (a.name === b.name &&
+        a.desc === b.desc &&
+        a.requirements === b.requirements &&
+        a.points === b.points);
+    } else {
+      return false;
+    }
+  }
+
   componentDidUpdate = () => {
     var story = BoardStore.getStoryById(this.props.story_id);
-    if (story && (this.props.story_id !== null) &&
-      (this.props.story_id !== this.state.story_id)) {
-
+    var equal = this.compareStory(story, this.state);
+    if (story && (this.props.story_id !== null) && !equal) {
       this.setState({
         story_id: story.id,
         name: story.name,
@@ -44,14 +55,16 @@ export default class StoryShowDialog extends React.Component {
     BoardActions.deleteStory(this.props.story_id);
   }
 
+  onClickEdit = () => {
+    BoardActions.openStoryEditDialog(this.props.story_id);
+  }
+
   showForm = () => {
     return(
       <Dialog
         title={
           <div style={{padding: "10px", height: "40px"}}>
-            <div style={{float: "left", marginLeft: "20px", marginTop: "5px"}}>
-              {this.state.name}
-            </div>
+            {this.state.name}
             <FloatingActionButton
               style={{marginRight: "20px", marginLeft: "20px", float: "right"}}
               ref="story_points" disabled={true} mini={true}>
@@ -64,19 +77,19 @@ export default class StoryShowDialog extends React.Component {
         onRequestClose={BoardActions.closeStoryShowDialog}
         autoScrollBodyContent={true}
       >
-        <br />
-        Description
-        <br />
+        <h4>Description</h4>
         <ReactMarkdown source={this.state.desc}/>
         <br />
-        Requirements
-        <br />
+        <h4>Requirements</h4>
         <ReactMarkdown source={this.state.requirements}/>
         <br />
         <BottomNavigation>
           <BottomNavigationItem label="Delete"
             icon={<DeleteForeverIcon style={icon_style} />}
             onTouchTap={this.onClickDestroy} />
+          <BottomNavigationItem label="Edit"
+            icon={<EditIcon style={icon_style} />}
+            onTouchTap={this.onClickEdit} />
         </BottomNavigation>
       </Dialog>
     );

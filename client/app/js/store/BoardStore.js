@@ -31,6 +31,7 @@ var user_dialog_open = false;
 var show_message = false;
 
 var story_show_id = null;
+var story_edit_id = null;
 var task_show_id = null;
 
 var CHANGE_EVENT = 'change';
@@ -118,6 +119,13 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getStoryShowId: () => {
     return story_show_id;
+  },
+  getStory: () => {
+    if (story_edit_id) {
+      return stories.find((story) => { return story.id === story_edit_id; });
+    } else {
+      return null;
+    }
   },
   getTaskShowId: () => {
     return task_show_id;
@@ -384,6 +392,22 @@ var addUser = (data) => {
   });
 };
 
+var updateStory = (form_values) => {
+  var url = `/stories/${story_edit_id}`;
+  return Ajax.postJson(url, form_values).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      ErrorActions.removeStoryErrors();
+      story_edit_dialog_open = false;
+    } else {
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.STORY;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addStoryErrors(errors);
+    }
+  });
+};
+
 var addStoryFromIssue = (issue) => {
   var board_id = BoardStore.getBoardId();
   return Ajax.getJson(`/create_story_by_issue/${board_id}/${issue}`).then(
@@ -451,6 +475,8 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "OPEN_STORY_EDIT_DIALOG":
+      story_edit_id = action.story_id;
+      story_show_dialog_open = false;
       story_edit_dialog_open = true;
       BoardStore.emitChange();
       break;
@@ -459,6 +485,7 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "CLOSE_STORY_EDIT_DIALOG":
+      story_edit_id = null;
       story_edit_dialog_open = false;
       if (action.reload) {
         fetchAll().then(() => {BoardStore.emitChange();});
@@ -535,6 +562,9 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_STORY":
       addStory(action.data);
+      break;
+    case "UPDATE_STORY":
+      updateStory(action.data);
       break;
     case "ADD_STORY_FROM_ISSUE":
       addStoryFromIssue(action.issue);
