@@ -338,6 +338,25 @@ var addStory = (form_values) => {
   });
 };
 
+var addStoryFromIssue = (issue) => {
+  var board_id = BoardStore.getBoardId();
+  return Ajax.getJson(`/create_story_by_issue/${board_id}/${issue}`).then(
+    response => {
+      var response_obj = JSON.parse(response.responseText);
+      if (response_obj.success) {
+        MessageActions.showMessage("Successfully created.");
+        ErrorActions.removeStoryIssueErrors();
+        story_from_issue_edit_dialog_open = false;
+      } else {
+        var obj_errors = response_obj.messages;
+        var error_fields = ErrorFields.STORY_ISSUE;
+        var errors = genErrors(error_fields, obj_errors);
+        ErrorActions.addStoryIssueErrors(errors);
+      }
+    }
+  );
+};
+
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
@@ -467,6 +486,9 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_STORY":
       addStory(action.data);
+      break;
+    case "ADD_STORY_FROM_ISSUE":
+      addStoryFromIssue(action.issue);
       break;
     case "INIT_BOARD":
       fetchAll().then(() => {

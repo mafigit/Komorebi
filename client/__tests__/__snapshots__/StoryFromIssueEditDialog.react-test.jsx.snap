@@ -1,0 +1,43 @@
+exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
+<Dialog
+  actions={
+    Array [
+      <FlatButton
+        disabled={false}
+        keyboardFocused={true}
+        label="Ok"
+        labelPosition="after"
+        labelStyle={Object {}}
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onTouchStart={[Function]}
+        onTouchTap={[Function]}
+        primary={true}
+        secondary={false} />,
+    ]
+  }
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={true}
+  modal={false}
+  onRequestClose={[Function]}
+  open={true}
+  repositionOnUpdate={true}
+  title="Add Story from Issue">
+  <br />
+  Issue Nr. from features.genua.de
+  <br />
+  <TextField
+    disabled={false}
+    errorText=""
+    floatingLabelFixed={false}
+    fullWidth={false}
+    hintText="Issue Nr"
+    multiLine={false}
+    rows={1}
+    type="text"
+    underlineShow={true} />
+  <br />
+  <br />
+</Dialog>
+`;
