@@ -91,3 +91,23 @@ func GetUsersByBoardId(board_id int) Users {
 
 	return users
 }
+
+func GetUsersByStoryId(story_id int) Users {
+	var users Users
+	var ids []string
+
+	_, err := dbMapper.Connection.Select(&ids,
+		"select UserId from story_users where StoryId=?", story_id)
+	if err != nil {
+		log.Println("Could not get user_ids by story id", story_id)
+	}
+	user_ids := strings.Join(ids, ", ")
+
+	_, err = dbMapper.Connection.Select(&users,
+		"select * from users where Id IN ("+user_ids+")")
+	if err != nil {
+		log.Println("Could not get users by story id", story_id)
+	}
+
+	return users
+}

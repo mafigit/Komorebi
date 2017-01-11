@@ -92,6 +92,15 @@ curl  -X DELETE localhost:8080/stories/4
 => delete story with id 4, json response
 => {"success":true,"messages":{}}
 
+POST /stories/{:story_id}/assign_users
+curl -H "Content-Type: application/json" -d '{"user_ids":[2,3]}' localhost:8080/stories/1/assign_users
+=> assign user 2 and user 3 to story 1
+=> {"success":true,"messages":{}}
+
+GET /stories/{:story_id}/users
+curl localhost:8080/stories/1/users
+=> get users from story 1
+=> [{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]
 
 ### Tasks
 
