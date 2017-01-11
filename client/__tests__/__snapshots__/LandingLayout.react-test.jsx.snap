@@ -40,7 +40,7 @@ exports[`test Should render Landing Layout 1`] = `
   <UserDialog
     handleClose={[Function]}
     open={false} />
-  <List />
+  <BoardList />
   <MsgSnackbar />
 </div>
 `;
