@@ -9,6 +9,7 @@ var column_errors = ErrorFields.COLUMN;
 var task_errors = ErrorFields.TASK;
 var story_errors = ErrorFields.STORY;
 var user_errors = ErrorFields.USER;
+var story_issue_errors = ErrorFields.STORY_ISSUE;
 
 var ERROR_EVENT = 'error';
 var ErrorStore = assign({}, EventEmitter.prototype, {
@@ -26,6 +27,9 @@ var ErrorStore = assign({}, EventEmitter.prototype, {
   },
   getUserErrors: () => {
     return user_errors;
+  },
+  getStoryIssueErrors: () => {
+    return story_issue_errors;
   },
   emitChange: function() {
     this.emit(ERROR_EVENT);
@@ -62,6 +66,13 @@ AppDispatcher.register(function(action) {
       break;
     case "REMOVE_TASK_ERRORS":
       task_errors =  ErrorFields.TASK;
+      break;
+    case "ADD_STORY_ISSUE_ERRORS":
+      story_issue_errors = action.errors;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "REMOVE_STORY_ISSUE_ERRORS":
+      story_issue_errors =  ErrorFields.STORY_ISSUE;
       break;
     case "ADD_STORY_ERRORS":
       story_errors = action.errors;

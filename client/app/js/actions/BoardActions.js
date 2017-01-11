@@ -177,6 +177,12 @@ var BoardActions = {
       data: data
     });
   },
+  addStoryFromIssue: (form_values) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY_FROM_ISSUE",
+      issue: form_values.issue
+    });
+  },
   initBoard: () => {
     AppDispatcher.dispatch({
       actionType: "INIT_BOARD"

@@ -1,7 +1,10 @@
 defmodule Krcli.Task do
   defstruct [:id, :name, :desc, :story_id, :column_id, :priority]
   use FN, url: "/tasks", name: "Story", json_name: "tasks"
-  def get_server_col(col), do: SbServer.get_json("/columns/" <> Integer.to_string(col["id"]) <> "/tasks")
+
+  def get_server_col(col),
+    do: SbServer.get_json("/columns/" <> Integer.to_string(col["id"]) <> "/tasks")
+
   def tasks_json(board, column) do
     all_json(board)
     |> Util.unwrap
@@ -11,8 +14,10 @@ defmodule Krcli.Task do
     |> Util.unwrap
     |> JSX.decode
   end
+
   def all(board, column),
     do: all_fun(fn() -> tasks_json(board, column) end)
+
   def parse(col) do
     %Krcli.Task{
       id: col["id"],
@@ -29,19 +34,23 @@ defmodule Krcli.Task do
     |> Util.unwrap_fn(&JSX.decode/1)
     |> Util.unwrap_fn(&parse/1)
   end
+
   def create_task(data) do
     with {:ok, json} <- data,
       {:ok, result} <- SbServer.post_json("/tasks", json),
       do: Util.success?(result)
   end
+
   def create(nname, board) do
     JSX.encode(%{name: nname, board_id: board})
     |> create_task
     |> Util.comply!("Column " <> nname <> " of board successfully created.")
   end
+
   def destroy(item, board) do
     Krcli.Board.with_column(board, item, &destroy_item/1)
   end
+
   def by_column(column) do
     SbServer.get_json("/columns/" <> Integer.to_string(column.id) <> "/tasks")
     |> Util.unwrap
