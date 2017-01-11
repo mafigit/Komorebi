@@ -33,6 +33,7 @@ var show_message = false;
 var story_show_id = null;
 var story_edit_id = null;
 var task_show_id = null;
+var task_edit_id = null;
 
 var CHANGE_EVENT = 'change';
 
@@ -123,6 +124,13 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getStory: () => {
     if (story_edit_id) {
       return stories.find((story) => { return story.id === story_edit_id; });
+    } else {
+      return null;
+    }
+  },
+  getTask: () => {
+    if (task_edit_id) {
+      return tasks.find((task) => { return task.id === task_edit_id; });
     } else {
       return null;
     }
@@ -301,7 +309,17 @@ var initWebsocket = () => {
 };
 
 var updateTask = (data) => {
-  return Ajax.postJson('/tasks/' + data.id, data);
+  return Ajax.postJson('/tasks/' + data.id, data).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      task_dialog_open = false;
+    } else {
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.TASK;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addTaskErrors(errors);
+    }
+  });
 };
 
 var addBoard = (board_name) => {
@@ -503,10 +521,13 @@ AppDispatcher.register(function(action) {
       break;
     case "SHOW_TASK_DIALOG":
       task_dialog_open = true;
+      task_show_dialog_open = false;
+      task_edit_id = action.task_id;
       BoardStore.emitChange();
       break;
     case "CLOSE_TASK_DIALOG":
       task_dialog_open = false;
+      task_edit_id = null;
       if (action.reload) {
         fetchAll().then(() => {BoardStore.emitChange();});
       } else {
@@ -533,6 +554,7 @@ AppDispatcher.register(function(action) {
       break;
     case "UPDATE_TASK":
       updateTask(action.data);
+      task_dialog_open = false;
       break;
     case "OPEN_BOARD_DIALOG":
       board_dialog_open = true;

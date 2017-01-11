@@ -9,18 +9,34 @@ import ErrorStore from './store/ErrorStore';
 import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
+const default_form_values = {
+  name: "",
+  desc: "",
+  story_id: null,
+  column_id: null,
+};
+
 export default class TaskDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.getState();
-    this.setDefaultFormValues();
+    this.state = this.getState(default_form_values);
   }
 
-  getState = () => {
-    return {
+  getState = (form_values) => {
+    var new_state = {
       error: ErrorStore.getTaskErrors(),
+      task: BoardStore.getTask(),
       last_sel_story_id: BoardStore.getSelectedStoryId()
     };
+
+    if (new_state.task) {
+      new_state.form_values = new_state.task;
+      new_state.last_sel_story_id = new_state.task.story_id;
+    } else if (form_values) {
+      new_state.form_values = form_values;
+    }
+
+    return new_state;
   }
 
   _onError = () => {
@@ -28,7 +44,19 @@ export default class TaskDialog extends React.Component {
   }
 
   _onChange = () => {
+    var task = BoardStore.getTask();
+    if (task && task !== this.state.task) {
+      this.setState(this.getState(task));
+    } else if (!task) {
+      this.setDefaultFormValues();
+    }
     this.setState(this.getState());
+  }
+
+  onChange(component, key, value) {
+    var form_values = this.state.form_values;
+    form_values[key] = value;
+    this.setState({form_values: form_values});
   }
 
   componentWillUnmount = () => {
@@ -42,26 +70,23 @@ export default class TaskDialog extends React.Component {
   }
 
   setDefaultFormValues = () => {
-    this.form_values = {
-      name: "",
-      desc: "",
-      story_id: null,
-      column_id: null,
-    };
-  }
-
-  getInputValue = (ref, type) => {
-    return ReactDOM.findDOMNode(ref).querySelectorAll(type)[0].value;
+    this.setState({form_values: default_form_values});
   }
 
   handleFormSubmit = () => {
-    var form_data = {
-      name: this.getInputValue(this.refs.task_name, "input"),
-      desc: this.getInputValue(this.refs.task_desc, "textarea"),
-      story_id: BoardStore.getSelectedStoryId(),
-      column_id: BoardStore.getFirstColumn().id,
-    };
-    BoardActions.addTask(form_data);
+    var form_data = this.state.form_values;
+
+    if (!form_data.story_id) {
+      form_data.story_id = BoardStore.getSelectedStoryId();
+    }
+
+    form_data.column_id = BoardStore.getFirstColumn().id;
+
+    if (this.state.task) {
+      BoardActions.updateTask(form_data);
+    } else {
+      BoardActions.addTask(form_data);
+    }
   }
 
   handleStoryIdChange = (event, index, value) => {
@@ -92,13 +117,18 @@ export default class TaskDialog extends React.Component {
         <br />
         <StorySelect onChange={this.handleStoryIdChange}
           story_id={this.state.last_sel_story_id}
+          errorText={this.state.error.story_id}
         />
         <br />
         <br />
         Add a name
         <br />
-        <TextField ref="task_name" hintText="Task Name"
-          errorText={this.state.error.name} />
+        <TextField ref="task_name"
+          hintText="Task Name"
+          errorText={this.state.error.name}
+          value={this.state.form_values.name}
+          onChange={(comp, val) => {this.onChange(comp, "name", val);}}
+        />
         <br />
         <br />
         Add a Description
@@ -108,6 +138,8 @@ export default class TaskDialog extends React.Component {
           errorText={this.state.error.desc}
           multiLine={true}
           fullWidth={true}
+          value={this.state.form_values.desc}
+          onChange={(comp, val) => {this.onChange(comp, "desc", val);}}
         />
         <br />
         <br />

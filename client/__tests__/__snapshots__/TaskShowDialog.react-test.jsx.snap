@@ -23,6 +23,17 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
       }
       label="Delete"
       onTouchTap={[Function]} />
+    <BottomNavigationItem
+      icon={
+        <EditorModeEdit
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Edit"
+      onTouchTap={[Function]} />
   </BottomNavigation>
 </Dialog>
 `;

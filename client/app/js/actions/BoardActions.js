@@ -56,9 +56,10 @@ var BoardActions = {
       actionType: "FETCH_ALL",
     });
   },
-  showTaskDialog: () =>  {
+  showTaskDialog: (task_id) =>  {
     AppDispatcher.dispatch({
-      actionType: "SHOW_TASK_DIALOG"
+      actionType: "SHOW_TASK_DIALOG",
+      task_id: task_id
     });
   },
   closeTaskDialog: (reload) =>  {
