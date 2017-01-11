@@ -53,6 +53,7 @@ export default class StoryEditDialog extends React.Component {
     this.form_values.name = this.getInputValue(this.refs.story_name, "input");
     this.form_values.desc = this.getInputValue(this.refs.story_desc, "textarea");
     this.form_values.requirements = this.getInputValue(this.refs.story_req, "textarea");
+    this.form_values.board_id = BoardStore.getBoardId();
     var column = BoardStore.getFirstColumn();
     if (!column) {
       ErrorActions.addStoryErrors({name:
