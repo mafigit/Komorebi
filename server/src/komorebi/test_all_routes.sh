@@ -105,11 +105,11 @@ test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"tasks\":\[
 ### Story routes
 
 echo "Create story doit"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","board_id":1,"priority":3 }' localhost:8080/stories 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","board_id":1 }' localhost:8080/stories 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Create story test"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"test","desc":"desc","points":3,"requirements":"Do this!","board_id":1,"priority":3 }' localhost:8080/stories 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"test","desc":"desc","points":3,"requirements":"Do this!","board_id":1 }' localhost:8080/stories 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Delete Story test"
@@ -118,14 +118,14 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get Story by ID"
 resp=`curl  localhost:8080/stories/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}" $resp
+test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}" $resp
 
 echo "Get Stories by board name"
 resp=`curl  localhost:8080/foo/stories 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}\]" $resp
 
 echo "Update Story doit with new name do_that"
-resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"priority":3,"requirements":"Do_this!","board_id":1}' localhost:8080/stories/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"requirements":"Do_this!","board_id":1}' localhost:8080/stories/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 
@@ -133,15 +133,15 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 ### Task routes
 
 echo "Create task foo"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":1,"priority":4}' localhost:8080/tasks 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":1}' localhost:8080/tasks 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get task foo by Id"
 resp=`curl localhost:8080/tasks/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":false}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"column_id\":1,\"archived\":false}" $resp
 
 echo "Create task test"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"test", "desc":"desc", "story_id":1, "column_id":1,"priority":4}' localhost:8080/tasks 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"test", "desc":"desc", "story_id":1, "column_id":1}' localhost:8080/tasks 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Delete task test"
@@ -150,27 +150,27 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get tasks with story id"
 resp=`curl localhost:8080/stories/1/tasks 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"column_id\":1,\"archived\":false}\]" $resp
 
 echo "Get tasks with column id"
 resp=`curl localhost:8080/columns/1/tasks 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"column_id\":1,\"archived\":false}\]" $resp
 
 echo "Update task with new name bar"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1,"priority":4, "id":1}' localhost:8080/tasks/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1, "id":1}' localhost:8080/tasks/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Update task to archived it"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1,"priority":4, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Update task without column_id"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1,"priority":4, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"column_id\":[\"ColumnId not present.\"]}}" "${resp}"
 
 echo "Get task bar"
 resp=`curl localhost:8080/stories/1/tasks 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":true}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"column_id\":1,\"archived\":true}\]" $resp
 
 
 

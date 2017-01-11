@@ -8,21 +8,18 @@ type Task struct {
 	DbModel
 	Desc     string `json:"desc"`
 	StoryId  int    `json:"story_id"`
-	Priority int    `json:"priority"`
 	ColumnId int    `json:"column_id"`
 	Archived bool   `json:"archived"`
 }
 
 type Tasks []Task
 
-func NewTask(name string, desc string, story_id int, column_id int,
-	priority int) Task {
+func NewTask(name string, desc string, story_id int, column_id int) Task {
 	return Task{
 		DbModel: DbModel{
 			Name: name,
 		},
 		Desc:     desc,
-		Priority: priority,
 		ColumnId: column_id,
 		StoryId:  story_id,
 		Archived: false,
@@ -78,12 +75,6 @@ func (t Task) Validate() (bool, map[string][]string) {
 		log.Println("Task validation failed. StoryId not present")
 		success = false
 		errors["story_id"] = append(errors["story_id"], "StoryId not present.")
-	}
-	if t.Priority <= 0 || t.Priority > 10 {
-		log.Println("Task validation failed. Priority out of range")
-		success = false
-		errors["priority"] = append(errors["priority"],
-			"Priority out of range.")
 	}
 
 	return success, errors
