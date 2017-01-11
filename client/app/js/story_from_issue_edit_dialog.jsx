@@ -2,25 +2,39 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
-import Ajax from  'basic-ajax';
 import ReactDOM from 'react-dom';
 import BoardActions from './actions/BoardActions';
-import BoardStore from './store/BoardStore';
+import ErrorStore from './store/ErrorStore';
 
 export default class StoryFromIssueEditDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      issue_error: "",
-    };
+    this.state = this.getState();
     this.setDefaultFormValues();
+  }
+
+  getState = () => {
+    return {
+      error: ErrorStore.getStoryIssueErrors()
+    };
+  }
+
+  _onError = () => {
+    this.setState(this.getState());
   }
 
   setDefaultFormValues = () => {
     this.form_values = {
-      issue: "",
-      column_id: "",
+      issue: ""
     };
+  }
+
+  componentWillUnmount = () => {
+    ErrorStore.removeChangeListener(this._onError);
+  }
+
+  componentDidMount = () => {
+    ErrorStore.addChangeListener(this._onError);
   }
 
   getInputValue = (ref, type) => {
@@ -28,19 +42,8 @@ export default class StoryFromIssueEditDialog extends React.Component {
   }
 
   handleFormSubmit = () => {
-    this.form_values.issue = this.getInputValue(this.refs.issue_nr, "input");
-    this.form_values.column_id = BoardStore.getFirstColumn().id;
-
-    Ajax.getJson(`/create_story_by_issue/${this.form_values.column_id}/${this.form_values.issue}`).then(response => {
-      var response_obj = JSON.parse(response.responseText);
-      if (response_obj.success) {
-        BoardActions.closeStoryFromIssueEditDialog(true);
-      } else {
-        this.setState({
-          issue_error: response_obj.message,
-        });
-      }
-    });
+    this.form_values.issue = this.getInputValue(this.refs.issue, "input");
+    BoardActions.addStoryFromIssue(this.form_values);
   }
 
   editForm = () => {
@@ -65,8 +68,8 @@ export default class StoryFromIssueEditDialog extends React.Component {
         <br />
         Issue Nr. from features.genua.de
         <br />
-        <TextField ref="issue_nr" hintText="Issue Nr"
-          errorText={this.state.issue_error} />
+        <TextField ref="issue" hintText="Issue Nr"
+          errorText={this.state.error.issue} />
         <br />
         <br />
       </Dialog>
