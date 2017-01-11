@@ -1,0 +1,28 @@
+exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
+<Dialog
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={true}
+  modal={false}
+  onRequestClose={[Function]}
+  open={true}
+  repositionOnUpdate={true}
+  title="">
+  <br />
+  <ReactMarkdown
+    containerTagName="div"
+    source="" />
+  <BottomNavigation>
+    <BottomNavigationItem
+      icon={
+        <ActionDeleteForever
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Delete"
+      onTouchTap={[Function]} />
+  </BottomNavigation>
+</Dialog>
+`;

@@ -27,6 +27,15 @@ var BoardActions = {
       actionType: "CLOSE_STORY_SHOW_DIALOG",
     });
   },
+  deleteTask: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "DELETE_TASK",
+      id: id
+    });
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_TASK_SHOW_DIALOG",
+    });
+  },
   fetchBoards: () => {
     AppDispatcher.dispatch({
       actionType: "FETCH_BOARDS",
@@ -70,6 +79,17 @@ var BoardActions = {
   closeStoryShowDialog: () =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_STORY_SHOW_DIALOG",
+    });
+  },
+  openTaskShowDialog: (task_id) =>  {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_TASK_SHOW_DIALOG",
+      task_id: task_id
+    });
+  },
+  closeTaskShowDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_TASK_SHOW_DIALOG",
     });
   },
   openStoryEditDialog: () =>  {

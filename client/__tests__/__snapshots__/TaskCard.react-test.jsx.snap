@@ -33,6 +33,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
                 "width": 20,
               }
             }
+            onClick={[Function]}
             style={
               Object {
                 "height": 20,
@@ -40,10 +41,10 @@ exports[`test Should update position of task after clicking on next button 1`] =
                 "width": 20,
               }
             }
-            tooltip="Edit Task"
+            tooltip="Show Task"
             tooltipPosition="top-center"
             touch={false}>
-            <EditorModeEdit />
+            <ActionOpenInNew />
           </IconButton>
         </Col>
         <Col
