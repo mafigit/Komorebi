@@ -5,6 +5,13 @@ import ReactMarkdown from 'react-markdown';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import {BottomNavigation, BottomNavigationItem} from
+  'material-ui/BottomNavigation';
+import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
+
+const icon_style = {
+  display: "initial"
+};
 
 export default class StoryShowDialog extends React.Component {
   constructor(props) {
@@ -33,6 +40,10 @@ export default class StoryShowDialog extends React.Component {
     }
   }
 
+  onClickDestroy = () => {
+    BoardActions.deleteStory(this.props.story_id);
+  }
+
   showForm = () => {
     return(
       <Dialog
@@ -41,7 +52,9 @@ export default class StoryShowDialog extends React.Component {
             <div style={{float: "left", marginLeft: "20px", marginTop: "5px"}}>
               {this.state.name}
             </div>
-            <FloatingActionButton style={{marginRight: "20px", marginLeft: "20px", float: "right"}} ref="story_points" disabled={true} mini={true}>
+            <FloatingActionButton
+              style={{marginRight: "20px", marginLeft: "20px", float: "right"}}
+              ref="story_points" disabled={true} mini={true}>
               {this.state.points}
             </FloatingActionButton>
           </div>
@@ -60,6 +73,11 @@ export default class StoryShowDialog extends React.Component {
         <br />
         <ReactMarkdown source={this.state.requirements}/>
         <br />
+        <BottomNavigation>
+          <BottomNavigationItem label="Delete"
+            icon={<DeleteForeverIcon style={icon_style} />}
+            onTouchTap={this.onClickDestroy} />
+        </BottomNavigation>
       </Dialog>
     );
   }

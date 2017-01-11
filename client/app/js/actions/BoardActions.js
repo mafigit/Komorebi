@@ -18,6 +18,15 @@ var BoardActions = {
       id: id
     });
   },
+  deleteStory: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "DELETE_STORY",
+      id: id
+    });
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_STORY_SHOW_DIALOG",
+    });
+  },
   fetchBoards: () => {
     AppDispatcher.dispatch({
       actionType: "FETCH_BOARDS",
