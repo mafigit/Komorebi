@@ -61,6 +61,18 @@ var routes = Routes{
 		BoardUpdate,
 	},
 	Route{
+		"AssignUsersToBoard",
+		"POST",
+		"/boards/{board_id}/assign_users",
+		AssignUsersToBoard,
+	},
+	Route{
+		"GetUsersFromBoard",
+		"GET",
+		"/boards/{board_id}/users",
+		GetUsersFromBoard,
+	},
+	Route{
 		"BoardDelete",
 		"DELETE",
 		"/boards/{board_id}",

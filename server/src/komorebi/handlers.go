@@ -37,6 +37,10 @@ type WsResponse struct {
 	Message string `json:"message"`
 }
 
+type UserIds struct {
+	UserIds []int `json:"user_ids"`
+}
+
 func Index(w http.ResponseWriter, r *http.Request) {
 	data, _ := ioutil.ReadFile(getPublicDir() + "/landing.html")
 	site := string(data)
@@ -479,6 +483,70 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	GetById(&task, id)
 	modelDelete(task, w, r)
+}
+
+func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_id, _ := strconv.Atoi(vars["board_id"])
+	var users UserIds
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	var board Board
+	GetById(&board, board_id)
+
+	if board.Id <= 0 {
+		response.Success = false
+		response.Messages["board_id"] = append(response.Messages["board_id"],
+			"BoardId does not exist.")
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&users); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	resp := AddUsersToBoard(board, users)
+
+	if resp == false {
+		response.Success = false
+		response.Messages["user_ids"] = append(response.Messages["user_ids"],
+			"UserIds not valid.")
+	}
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(response)
+}
+
+func GetUsersFromBoard(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_id, _ := strconv.Atoi(vars["board_id"])
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	var board Board
+	GetById(&board, board_id)
+
+	if board.Id <= 0 {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["board_id"] = append(response.Messages["board_id"],
+			"BoardId does not exist.")
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	users := GetUsersByBoardId(board_id)
+	json.NewEncoder(w).Encode(users)
 }
 
 func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
