@@ -13,7 +13,8 @@ type Board struct {
 
 type BoardNested struct {
 	DbModel
-	ColumnsNested `json:"columns"`
+	StoriesNested `json:"stories"`
+	Columns       `json:"columns"`
 }
 
 type Boards []Board
@@ -66,6 +67,9 @@ func (b Board) Destroy() bool {
 	if b.Id == 0 {
 		return true
 	}
+	for _, story := range GetStoriesByBoardId(b.Id) {
+		story.Destroy()
+	}
 	for _, column := range GetColumnsByBoardId(b.Id) {
 		column.Destroy()
 	}
@@ -85,21 +89,14 @@ func GetBoardNestedByName(name string) BoardNested {
 		log.Println("could not find board with name", name)
 		return board
 	}
-	_, err = dbMapper.Connection.Select(&board.ColumnsNested,
+	_, err = dbMapper.Connection.Select(&board.Columns,
 		"select * from columns where BoardId=? order by Position", board.Id)
 
-	column_id_array := []string{}
-	for _, col := range board.ColumnsNested {
-		column_id_array = append(column_id_array, strconv.Itoa(col.Id))
-	}
-	column_ids := strings.Join(column_id_array, ", ")
-
-	var stories StoriesNested
-	_, err = dbMapper.Connection.Select(&stories,
-		"select * from stories where ColumnId IN ("+column_ids+")")
+	_, err = dbMapper.Connection.Select(&board.StoriesNested,
+		"select * from stories where BoardId=?", board.Id)
 
 	story_id_array := []string{}
-	for _, story := range stories {
+	for _, story := range board.StoriesNested {
 		story_id_array = append(story_id_array, strconv.Itoa(story.Id))
 	}
 	story_ids := strings.Join(story_id_array, ", ")
@@ -108,23 +105,14 @@ func GetBoardNestedByName(name string) BoardNested {
 	_, err = dbMapper.Connection.Select(&tasks,
 		"select * from tasks where StoryId IN ("+story_ids+")")
 
-	for col_index, col := range board.ColumnsNested {
-		col_stories := make([]StoryNested, 0)
-		for _, s := range stories {
-			if s.ColumnId == col.Id {
-				col_stories = append(col_stories, s)
+	for sto_index, sto := range board.StoriesNested {
+		sto_tasks := make([]Task, 0)
+		for _, t := range tasks {
+			if t.StoryId == sto.Id {
+				sto_tasks = append(sto_tasks, t)
 			}
 		}
-		board.ColumnsNested[col_index].StoriesNested = col_stories
-		for sto_index, sto := range board.ColumnsNested[col_index].StoriesNested {
-			sto_tasks := make([]Task, 0)
-			for _, t := range tasks {
-				if t.StoryId == sto.Id {
-					sto_tasks = append(sto_tasks, t)
-				}
-			}
-			board.ColumnsNested[col_index].StoriesNested[sto_index].Tasks = sto_tasks
-		}
+		board.StoriesNested[sto_index].Tasks = sto_tasks
 	}
 	return board
 }

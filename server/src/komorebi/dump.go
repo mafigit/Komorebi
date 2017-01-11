@@ -9,7 +9,7 @@ type Dump struct {
 	Id        int
 	Type      string `json:"type"`
 	Name      string `json:"name"`
-	ColumnId  int    `json:"column_id"`
+	BoardId   int    `json:"board_id"`
 	BoardName string `json:"board_name"`
 	CreatedAt int64  `json:"created_at"`
 }
@@ -31,7 +31,7 @@ func DumpForBoard(board Board) {
 		dump.Name = story.Name
 		dump.Type = story.TableName()
 		dump.BoardName = board.Name
-		dump.ColumnId = story.ColumnId
+		dump.BoardId = story.BoardId
 		dump.CreatedAt = t
 		if err := dbMapper.Connection.Insert(&dump); err != nil {
 			log.Println("save dump failed", err)
