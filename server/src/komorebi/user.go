@@ -2,6 +2,7 @@ package komorebi
 
 import (
 	"log"
+	"strings"
 )
 
 type User struct {
@@ -69,4 +70,24 @@ func (u User) Validate() (bool, map[string][]string) {
 			"ImagePath not present.")
 	}
 	return success, errors
+}
+
+func GetUsersByBoardId(board_id int) Users {
+	var users Users
+	var ids []string
+
+	_, err := dbMapper.Connection.Select(&ids,
+		"select UserId from board_users where BoardId=?", board_id)
+	if err != nil {
+		log.Println("Could not get user_ids by board id", board_id)
+	}
+	user_ids := strings.Join(ids, ", ")
+
+	_, err = dbMapper.Connection.Select(&users,
+		"select * from users where Id IN ("+user_ids+")")
+	if err != nil {
+		log.Println("Could not get users by board id", board_id)
+	}
+
+	return users
 }

@@ -33,6 +33,15 @@ curl  -X DELETE localhost:8080/boards/4
 => delete board with id 4, json response
 => {"success":true,"messages":{}}
 
+POST /boards/{:board_id}/assign_users
+curl -H "Content-Type: application/json" -d '{"user_ids":[2,3]}' localhost:8080/boards/1/assign_users
+=> assign user 2 and user 3 to board 1
+=> {"success":true,"messages":{}}
+
+GET /boards/{:board_id}/users
+curl localhost:8080/boards/1/users
+=> get users from board 1
+=> [{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]
 
 ### Columns
 

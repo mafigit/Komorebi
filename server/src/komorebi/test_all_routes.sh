@@ -192,6 +192,23 @@ echo "Update user franz with name august"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
+### Assign users to Board
+
+echo "Assign user august to board foo"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/1/assign_users 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get users from board foo"
+resp=`curl localhost:8080/boards/1/users 2>/dev/null`
+test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\"}\]" $resp
+
+echo "Assign no user to board foo"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/boards/1/assign_users 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get no users from board foo"
+resp=`curl localhost:8080/boards/1/users 2>/dev/null`
+test_match "\[\]" $resp
 
 
 echo 
