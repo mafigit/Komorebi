@@ -15,6 +15,7 @@ var tasks = [];
 var tasks_to_display = {};
 var selected_stories = [];
 var boards = [];
+var users = [];
 var selected_story_id: null;
 
 var message = "";
@@ -35,6 +36,9 @@ var task_show_id = null;
 var CHANGE_EVENT = 'change';
 
 var BoardStore = assign({}, EventEmitter.prototype, {
+  getUsers: function() {
+    return users;
+  },
   getSelectedStoryId: function () {
     return selected_story_id;
   },
@@ -138,6 +142,19 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   }
 });
 
+var toggleUserById = (user_id) => {
+  users = users.map((user) => {
+    if (user.id === user_id) {
+      if (user.selected) {
+        user.selected = false;
+      } else {
+        user.selected = true;
+      }
+    }
+    return user;
+  });
+};
+
 var fetchBoard = () => {
   board_id = null;
   board_title = "";
@@ -191,6 +208,15 @@ var deleteTask = (id) => {
 var fetchBoards = () => {
   return Ajax.getJson('/boards').then(response => {
     boards = JSON.parse(response.response);
+  });
+};
+
+var fetchUsers = () => {
+  return Ajax.getJson('/users').then(response => {
+    users = JSON.parse(response.response).map((user) => {
+      user.selected = false;
+      return user;
+    });
   });
 };
 
@@ -492,6 +518,9 @@ AppDispatcher.register(function(action) {
     case "FETCH_BOARDS":
       fetchBoards().then(() => {BoardStore.emitChange();});
       break;
+    case "FETCH_USERS":
+      fetchUsers().then(() => {BoardStore.emitChange();});
+      break;
     case "ADD_BOARD":
       addBoard(action.data.name);
       break;
@@ -529,6 +558,10 @@ AppDispatcher.register(function(action) {
       break;
     case "CLOSE_USER_DIALOG":
       user_dialog_open = false;
+      BoardStore.emitChange();
+      break;
+    case "TOGGLE_USER_BY_ID":
+      toggleUserById(action.user_id);
       BoardStore.emitChange();
       break;
     default:

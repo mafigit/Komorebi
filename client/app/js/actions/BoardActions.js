@@ -208,6 +208,17 @@ var BoardActions = {
     AppDispatcher.dispatch({
       actionType: "CLOSE_USER_DIALOG"
     });
+  },
+  fetchUsers: () => {
+    AppDispatcher.dispatch({
+      actionType: "FETCH_USERS"
+    });
+  },
+  toggleUserById: (user_id) => {
+    AppDispatcher.dispatch({
+      user_id: user_id,
+      actionType: "TOGGLE_USER_BY_ID"
+    });
   }
 };
 module.exports = BoardActions;
