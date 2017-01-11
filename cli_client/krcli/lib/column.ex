@@ -18,21 +18,25 @@ defmodule Krcli.Column do
       sort_col = fn (a,b) -> a.position < b.position end,
     do: Util.wrap(Enum.sort(columns, sort_col))
   end
+
   def by_id(column) do
     SbServer.get_json("/columns/" <> column)
     |> Util.unwrap_fn(&JSX.decode/1)
     |> Util.unwrap_fn(&parse/1)
   end
+
   def create_column(data) do
     with {:ok, json} <- data,
       {:ok, result} <- SbServer.post_json("/columns", json),
       do: Util.success?(result)
   end
+
   def create(nname, board) do
     JSX.encode(%{name: nname, board_id: board})
     |> create_column
     |> Util.comply!("Column " <> nname <> " of board successfully created.")
   end
+
   def destroy(item, board) do
     Krcli.Board.with_column(board, item, &destroy_item/1)
   end

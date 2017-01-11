@@ -44,6 +44,7 @@ defmodule KrOpts do
       _ -> error(:no_opt)
     end
   end
+
   def error(cause) do
     case cause do
       :no_opt -> IO.puts("Option is not known. try krcli help.")
