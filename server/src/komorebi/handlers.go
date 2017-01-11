@@ -130,6 +130,7 @@ func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter,
 
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
+		return
 	}
 
 	if update_m.Save() {

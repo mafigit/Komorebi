@@ -2,16 +2,16 @@
 
 
 function test_equal() {
-    exp=$1
-    got=$2
-    if [ X$exp != X$got ];then
+    exp="$1"
+    got="$2"
+    if [ "X$exp" != "X$got" ];then
         fatal "${exp} expected, got: ${got}"
     fi
 }
 
 function test_match() {
-    regex=$1
-    got=$2
+    regex="$1"
+    got="$2"
     (echo $got | grep -qE "${regex}") || fatal "regex not matched \nregex:${regex} \ngot: ${got}"
 }
 
@@ -164,6 +164,10 @@ echo "Update task to archived it"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1,"priority":4, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
+echo "Update task without column_id"
+resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1,"priority":4, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"column_id\":[\"ColumnId not present.\"]}}" "${resp}"
+
 echo "Get task bar"
 resp=`curl localhost:8080/stories/1/tasks 2>/dev/null`
 test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":true}\]" $resp
@@ -191,6 +195,8 @@ test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path
 echo "Update user franz with name august"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+
 
 ### Assign users to Board
 
