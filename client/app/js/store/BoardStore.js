@@ -143,10 +143,6 @@ var fetchBoard = () => {
       var board = JSON.parse(response.responseText);
       board_id = board.id;
       board_title = board.name;
-      // should get columns over action and ajax
-      columns = board.columns.sort((a, b) => {
-        a.position - b.position;
-      });
     }
   });
 };
@@ -227,9 +223,23 @@ var fetchTasks = () => {
 };
 
 var fetchAll = () => {
-  return new Promise((resolve) => {
-    fetchBoard();
-    fetchStories().then(fetchTasks).then(resolve);
+  board_id = null;
+  board_title = "";
+  return Ajax.get(window.location.pathname, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      var board = JSON.parse(response.responseText);
+      board_id = board.id;
+      board_title = board.name;
+      // should get columns over action and ajax
+      columns = board.columns.sort((a, b) => {
+        a.position - b.position;
+      });
+      stories = board.stories;
+      tasks = board.stories.reduce((acc, story) => {
+        Array.prototype.push.apply(acc, story.tasks);
+        return acc;
+      }, []);
+    }
   });
 };
 
