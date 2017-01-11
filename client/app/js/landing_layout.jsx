@@ -5,14 +5,13 @@ import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
 import UserDialog from './user_dialog';
-import {List, ListItem} from 'material-ui/List';
 import Colors from './color';
 import React from 'react';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
 import MsgSnackbar from './msg_snackbar';
+import BoardList from './board_list';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -39,7 +38,6 @@ class LandingLayout extends Layout  {
 
   componentDidMount = () => {
     BoardStore.addChangeListener(this._onChange);
-    BoardActions.fetchBoards();
   }
 
   handleTouchTapMenuBtn = (event) => {
@@ -52,10 +50,6 @@ class LandingLayout extends Layout  {
     this.setState({menu_open: false, menu_achor: achor_element});
   }
 
-  handleListClick = (event, name) => {
-    window.location.pathname = `/${name}`;
-  }
-
   handleBoardDialogClose = () => {
     BoardActions.closeBoardDialog();
     BoardActions.fetchBoards();
@@ -64,11 +58,6 @@ class LandingLayout extends Layout  {
   handleUserDialogClose = () => {
     BoardActions.closeUserDialog();
     BoardActions.fetchBoards();
-  }
-
-  onIconClickHandler = (event, id) => {
-    event.stopPropagation();
-    BoardActions.deleteBoard(id);
   }
 
   render() {
@@ -91,16 +80,7 @@ class LandingLayout extends Layout  {
       <UserDialog open={this.state.user_open}
         handleClose={this.handleUserDialogClose}
       />
-      <List>
-        {this.state.list_items.map((list_item, key) => {
-          return <ListItem
-            onClick={event => {this.handleListClick(event, list_item.name);}}
-            key={key} primaryText={list_item.name}
-            rightIcon={ <DeleteForeverIcon onClick={event =>
-              {this.onIconClickHandler(event, list_item.id);}}/> }
-          />;
-        })}
-      </List>
+      <BoardList />
       {this.props.children}
       <MsgSnackbar/>
      </div>;
