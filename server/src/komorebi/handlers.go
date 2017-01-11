@@ -497,7 +497,7 @@ func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 			Success:  false,
 			Messages: make(map[string][]string),
 		}
-		response.Messages["name"] = append(response.Messages["name"],
+		response.Messages["issue"] = append(response.Messages["issue"],
 			"Could not get Story from features.genua.de")
 		json.NewEncoder(w).Encode(response)
 		return
