@@ -189,7 +189,7 @@ var routes = Routes{
 	Route{
 		"GetFeatureAndCreateStory",
 		"GET",
-		"/create_story_by_issue/{column_id}/{issue}",
+		"/create_story_by_issue/{board_id}/{issue}",
 		GetFeatureAndCreateStory,
 	},
 }
