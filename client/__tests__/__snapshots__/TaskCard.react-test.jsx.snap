@@ -70,8 +70,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
                   "width": 20,
                 }
               }
-              tooltip="Move To Previous Column"
-              tooltipPosition="top-center"
+              tooltipPosition="bottom-center"
               touch={false}>
               <NavigationChevronLeft />
             </IconButton>
@@ -93,8 +92,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
                   "width": 20,
                 }
               }
-              tooltip="Move To Next Column"
-              tooltipPosition="top-center"
+              tooltipPosition="bottom-center"
               touch={false}>
               <NavigationChevronRight />
             </IconButton>

@@ -39,7 +39,7 @@ class MySnackbar extends React.Component {
         <Snackbar
           open={this.state.open}
           message={this.state.message}
-          autoHideDuration={1000}
+          autoHideDuration={2000}
           onRequestClose={this.handleRequestClose}
         />
       </div>

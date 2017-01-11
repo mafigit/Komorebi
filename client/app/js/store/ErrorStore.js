@@ -2,23 +2,12 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import EventEmitter from 'events';
 import assign from 'object-assign';
+import ErrorFields from '../constants/ErrorFields';
 
-var board_errors = {
-  board_name: ""
-};
-
-var column_errors = {
-  column_name: ""
-};
-
-var task_errors = {
-  name: "",
-  desc: ""
-};
-
-var story_errors = {
-  story_name: ""
-};
+var board_errors = ErrorFields.BOARD;
+var column_errors = ErrorFields.COLUMN;
+var task_errors = ErrorFields.TASK;
+var story_errors = ErrorFields.STORY;
 
 var ERROR_EVENT = 'error';
 var ErrorStore = assign({}, EventEmitter.prototype, {
@@ -52,9 +41,7 @@ AppDispatcher.register(function(action) {
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     case "REMOVE_BOARD_ERRORS":
-      board_errors = {
-        board_name: ""
-      };
+      board_errors = ErrorFields.BOARD;
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     case "ADD_COLUMN_ERRORS":
@@ -62,9 +49,7 @@ AppDispatcher.register(function(action) {
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     case "REMOVE_COLUMN_ERRORS":
-      column_errors = {
-        column_name: ""
-      };
+      column_errors = ErrorFields.COLUMN;
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     case "ADD_TASK_ERRORS":
@@ -72,19 +57,14 @@ AppDispatcher.register(function(action) {
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     case "REMOVE_TASK_ERRORS":
-      task_errors = {
-        name: "",
-        desc: ""
-      };
+      task_errors =  ErrorFields.TASK;
       break;
     case "ADD_STORY_ERRORS":
       story_errors = action.errors;
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     case "REMOVE_STORY_ERRORS":
-      story_errors = {
-        story_name: ""
-      };
+      story_errors = ErrorFields.STORY;
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     default:
