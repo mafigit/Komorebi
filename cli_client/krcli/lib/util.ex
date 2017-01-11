@@ -1,5 +1,4 @@
 defmodule Util do
-
   def wrap(item) do
     {:ok, item}
   end
@@ -24,7 +23,6 @@ defmodule Util do
   end
 
   def success?({:ok, item}),   do: success?(item)
-
   def success?(item) do
     with {:ok, data} <- JSX.decode(item),
     do: if data["success"], do: {:ok, ""}, else: {:error, data["message"]}

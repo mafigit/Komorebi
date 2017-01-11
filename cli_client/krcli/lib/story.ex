@@ -1,6 +1,5 @@
 defmodule Krcli.Story do
   defstruct [:id, :name, :desc, :points, :requirements, :column_id, :priority]
-
   use FN, url: "/stories", name: "Story", json_name: "stories"
 
   def stories_json(board, column) do
@@ -40,6 +39,7 @@ defmodule Krcli.Story do
       SbServer.post_json("/stories", json)
       |> Util.lift_maybe(fn(_) -> File.rm("/tmp/krcli.story") end)
       |> Util.comply!("Story created successfully!")
+
   end
 
   def create(board, column) do

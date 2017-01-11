@@ -1,5 +1,6 @@
 defmodule Krcli.Board do
   defstruct [:id, :name, :columns]
+
   use FN, url: "/boards", name: "Board"
 
   defmodule Print do
@@ -14,13 +15,13 @@ defmodule Krcli.Board do
     def print_story_at(stories, colid, cnt) do
       if x=Enum.at(stories[colid], cnt) do
         case x do
-          %Krcli.Task{} -> :io.format(IO.ANSI.cyan() <> "TA: ~-12s (~3B) "<>IO.ANSI.reset(),
+          %Krcli.Task{} -> :io.format(IO.ANSI.cyan() <> "TA: ~-20s (~3B)"<>IO.ANSI.reset()<>"|",
             [x.name || "", x.id])
-          _ -> :io.format(IO.ANSI.green() <> "ST: ~-12s (~3B) "<>IO.ANSI.reset(),
+          _ -> :io.format(IO.ANSI.green() <> "ST: ~-20s (~3B)"<>IO.ANSI.reset()<>"|",
             [x.name || "", x.id])
         end
       else
-        :io.format("~23s", [""])
+        :io.format("~30s|", [""])
       end
     end
 
@@ -30,15 +31,19 @@ defmodule Krcli.Board do
     end
 
     def story_line_by_column(cnt, board, stories) do
+      :io.format("|")
       Enum.each(board.columns,
         fn(col) -> print_story_at(stories, col.id, cnt) end) |> Util.no_args(&IO.puts/1, "")
     end
 
     def stories_by_column(stories, board) do
-      :io.format("~-24s" <> String.duplicate("~-23s", length(board.columns)-1) <> "\n",
+      IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
+      :io.format("|"<> String.duplicate("~-30s|", length(board.columns)) <> "\n",
         Enum.map(board.columns, fn(x) -> x.name end))
-      Enum.map(0..max_depth_in_stories(stories),
+      IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
+      Enum.map(0..max_depth_in_stories(stories)-1,
         fn(cnt) -> story_line_by_column(cnt, board, stories) end) |> Util.good
+      IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
     end
   end
 
@@ -98,7 +103,7 @@ defmodule Krcli.Board do
   end
 
   def create_task(board, column, story) do
-    with_item(board, &(Krcli.Column.create_task(column, &1)))
+    with_structure(board, column, story, &(Krcli.Task.create(&1, &2, &3)))
   end
 
   def story_tasks_by_column(col) do

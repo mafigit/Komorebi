@@ -2,7 +2,8 @@ defmodule Krcli.Task do
   defstruct [:id, :name, :desc, :story_id, :column_id, :priority]
   use FN, url: "/tasks", name: "Story", json_name: "tasks"
 
-  def get_server_col(col), do: SbServer.get_json("/columns/" <> Integer.to_string(col["id"]) <> "/tasks")
+  def get_server_col(col),
+    do: SbServer.get_json("/columns/" <> Integer.to_string(col["id"]) <> "/tasks")
 
   def tasks_json(board, column) do
     all_json(board)
@@ -16,6 +17,7 @@ defmodule Krcli.Task do
 
   def all(board, column),
     do: all_fun(fn() -> tasks_json(board, column) end)
+
   def parse(col) do
     %Krcli.Task{
       id: col["id"],

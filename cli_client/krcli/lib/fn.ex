@@ -1,12 +1,10 @@
 defmodule FN do
   defmacro __using__(opts) do
+
     quote do
       import FN
-
       def type_url, do: unquote(opts[:url])
-
       def type_name, do: unquote(opts[:name])
-
       def type_json_name, do: unquote(opts[:json_name])
 
       def from_hash(_) do
@@ -59,4 +57,5 @@ defmodule FN do
       defoverridable [from_hash: 1, by_name: 1]
     end
   end
+
 end

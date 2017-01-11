@@ -2,8 +2,11 @@ defmodule KrOpts do
   def dispatch(args) do
     if File.exists?("/tmp/krcli.story"),
       do: Krcli.Story.create_from_file() |> Util.comply_good,
-    else: dispatch_from_args(args)
+    else: if File.exists?("/tmp/krcli.task"),
+      do: Krcli.Task.create_from_file() |> Util.comply_good,
+      else: dispatch_from_args(args)
   end
+
   def show_help() do
     IO.puts("Komorebi commandline client v0.0.1-pre-alpha-1. Usage:
       krcli help -> this helpfile
@@ -21,6 +24,7 @@ defmodule KrOpts do
       krcli task <taskid> show -> show details of a task
       krcli task <taskid> move <boardid> <columnid> -> move task to board / column")
   end
+
   def dispatch_from_args(args) do
     case args do
       ["help"] -> KrOpts.show_help()
