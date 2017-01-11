@@ -484,9 +484,9 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	issue := vars["issue"]
-	column_id, _ := strconv.Atoi(vars["column_id"])
+	board_id, _ := strconv.Atoi(vars["board_id"])
 
-	ret, story := getStoryFromIssue(issue, column_id)
+	ret, story := getStoryFromIssue(issue, board_id)
 
 	if ret == true {
 		modelCreate(story, w, r)
@@ -504,7 +504,7 @@ func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getStoryFromIssue(issue string, column_id int) (bool, Story) {
+func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	var story Story
 	uri := "http://features.genua.de/issues/"
 	uri += issue
@@ -530,7 +530,7 @@ func getStoryFromIssue(issue string, column_id int) (bool, Story) {
 	}
 
 	story = NewStory(resp_json.Issue.Subject,
-		resp_json.Issue.Description, "", 3, 5, column_id)
+		resp_json.Issue.Description, "", 3, 5, board_id)
 	return true, story
 }
 
