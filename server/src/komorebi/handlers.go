@@ -335,7 +335,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
-		story.Priority, story.BoardId)
+		story.BoardId)
 	modelCreate(story, w, r)
 }
 
@@ -455,8 +455,7 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId,
-		task.Priority)
+	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
 	modelCreate(task, w, r)
 }
 
@@ -599,7 +598,7 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	}
 
 	story = NewStory(resp_json.Issue.Subject,
-		resp_json.Issue.Description, "", 3, 5, board_id)
+		resp_json.Issue.Description, "", 3, board_id)
 	return true, story
 }
 

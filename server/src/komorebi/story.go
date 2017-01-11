@@ -8,7 +8,6 @@ type Story struct {
 	DbModel
 	Desc         string `json:"desc"`
 	Points       int    `json:"points"`
-	Priority     int    `json:"priority"`
 	Requirements string `json:"requirements"`
 	BoardId      int    `json:"board_id"`
 	Archived     bool   `json:"archived"`
@@ -18,7 +17,6 @@ type StoryNested struct {
 	DbModel
 	Desc         string `json:"desc"`
 	Points       int    `json:"points"`
-	Priority     int    `json:"priority"`
 	Requirements string `json:"requirements"`
 	BoardId      int    `json:"board_id"`
 	Tasks        `json:"tasks"`
@@ -29,14 +27,13 @@ type Stories []Story
 type StoriesNested []StoryNested
 
 func NewStory(name string, desc string, requirements string, points int,
-	priority int, boardId int) Story {
+	boardId int) Story {
 
 	return Story{
 		DbModel: DbModel{
 			Name: name,
 		},
 		Requirements: requirements,
-		Priority:     priority,
 		Points:       points,
 		BoardId:      boardId,
 		Desc:         desc,
@@ -144,12 +141,6 @@ func (s Story) Validate() (bool, map[string][]string) {
 		log.Println("Story validation failed. BoardId not set.")
 		success = false
 		errors["board_id"] = append(errors["board_id"], "BoardId not set.")
-	}
-	if s.Priority <= 0 || s.Priority > 10 {
-		log.Println("Story validation failed. Priority out of range")
-		success = false
-		errors["priority"] = append(errors["priority"],
-			"Priority out of range.")
 	}
 
 	return success, errors
