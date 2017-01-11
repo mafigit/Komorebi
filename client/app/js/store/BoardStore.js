@@ -143,7 +143,7 @@ var deleteBoard = (id) => {
   var url = `/boards/${id}`;
   return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
     if(response.status == 200) {
-      MessageActions.showMessage("Successfully delted");
+      MessageActions.showMessage("Successfully deleted");
       fetchBoards().then(() => {BoardStore.emitChange();});
     }
   });
@@ -153,7 +153,16 @@ var deleteColumn = (id) => {
   var url = `/columns/${id}`;
   return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
     if(response.status == 200) {
-      MessageActions.showMessage("Successfully delted");
+      MessageActions.showMessage("Successfully deleted");
+    }
+  });
+};
+
+var deleteStory = (id) => {
+  var url = `/stories/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
     }
   });
 };
@@ -287,6 +296,9 @@ AppDispatcher.register(function(action) {
       break;
     case "DELETE_COLUMN":
       deleteColumn(action.id);
+      break;
+    case "DELETE_STORY":
+      deleteStory(action.id);
       break;
     case "FETCH_STORIES":
       fetchStories().
