@@ -71,7 +71,12 @@ export default class StoryCard extends React.Component {
   }
 
   render() {
-    return <ListGroupItem onClick={this.onClickHandler} className="story_card" href="#">
+    return <ListGroupItem
+      onClick={this.onClickHandler}
+      className="story_card"
+      href="#"
+      active={this.props.active}
+    >
       {this.props.name}
       <OpenIcon story_id={this.props.story_id} />
     </ListGroupItem>;

@@ -53,9 +53,10 @@ export default class StoryEditDialog extends React.Component {
     this.form_values.name = this.getInputValue(this.refs.story_name, "input");
     this.form_values.desc = this.getInputValue(this.refs.story_desc, "textarea");
     this.form_values.requirements = this.getInputValue(this.refs.story_req, "textarea");
+    this.form_values.board_id = BoardStore.getBoardId();
     var column = BoardStore.getFirstColumn();
     if (!column) {
-      ErrorActions.addStoryErrors({story_name:
+      ErrorActions.addStoryErrors({name:
         "No column found. Add column first." });
       return;
     }
@@ -98,14 +99,14 @@ export default class StoryEditDialog extends React.Component {
         Add a name
         <br />
         <TextField ref="story_name" hintText="Story Name"
-          errorText={this.state.error.story_name} />
+          errorText={this.state.error.name} />
         <br />
         <br />
         Add a Description
         <br />
         <TextField ref="story_desc"
           hintText="Story Description"
-          errorText={this.state.error.story_name}
+          errorText={this.state.error.desc}
           multiLine={true}
           fullWidth={true}
         />
@@ -115,7 +116,7 @@ export default class StoryEditDialog extends React.Component {
         <br />
         <TextField ref="story_req"
           hintText="Story Requirements"
-          errorText={this.state.error.story_name}
+          errorText={this.state.error.req}
           multiLine={true}
           fullWidth={true}
         />

@@ -18,6 +18,9 @@ func TestNewStory(t *testing.T) {
 	if s.Name != "haensel" {
 		t.Error("Should have instanciate a story:", s.Name)
 	}
+	if s.Archived != false {
+		t.Error("A new Story schould not be archived:", s.Archived)
+	}
 }
 
 func TestStoryCreate(t *testing.T) {
@@ -50,12 +53,12 @@ func TestStoryValidation(t *testing.T) {
 		t.Error("Should be invalid by missing points")
 	}
 	s.Points = 5
-	s.ColumnId = 0
+	s.BoardId = 0
 	success, msg = s.Validate()
-	if success == true || !contains(msg["column_id"], "ColumnId not set.") {
-		t.Error("Should be invalid by missing column id")
+	if success == true || !contains(msg["board_id"], "BoardId not set.") {
+		t.Error("Should be invalid by missing board id")
 	}
-	s.ColumnId = 5
+	s.BoardId = 5
 	s.Priority = 0
 	success, msg = s.Validate()
 	if success == true ||

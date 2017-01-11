@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 import React from 'react';
 import StoryShowDialog from './story_show_dialog';
+import TaskShowDialog from './task_show_dialog';
 import BoardStore from './store/BoardStore';
 import TaskCard from './task_card';
 import Column from './column';
@@ -31,6 +32,8 @@ export default class Board extends React.Component {
     return {
       story_view_open: BoardStore.getStoryShowDialogOpen(),
       story_id: BoardStore.getStoryShowId(),
+      task_view_open: BoardStore.getTaskShowDialogOpen(),
+      task_id: BoardStore.getTaskShowId(),
       columns: BoardStore.getColumns(),
       tasks_to_display: BoardStore.getTasksToDisplay()
     };
@@ -62,7 +65,7 @@ export default class Board extends React.Component {
         return acc;
       }, []);
 
-      return <Column key={key} name={col.name} >
+      return <Column key={key} name={col.name} id={col.id} >
         {tasks_for_column}
       </Column>;
     });
@@ -70,6 +73,8 @@ export default class Board extends React.Component {
     return <div className="board">
       <StoryShowDialog story_id={this.state.story_id}
         open={this.state.story_view_open} />
+      <TaskShowDialog task_id={this.state.task_id}
+        open={this.state.task_view_open} />
       <Grid fluid={true}>
         <Row className="show-grid">
           <Sidebar/>

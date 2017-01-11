@@ -10,7 +10,8 @@ import React from 'react';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-
+import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
+import MsgSnackbar from './msg_snackbar';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -58,6 +59,11 @@ class LandingLayout extends Layout  {
     BoardActions.fetchBoards();
   }
 
+  onIconClickHandler = (event, id) => {
+    event.stopPropagation();
+    BoardActions.deleteBoard(id);
+  }
+
   render() {
     return <div>
       <AppBar
@@ -72,18 +78,21 @@ class LandingLayout extends Layout  {
       <MyMenu open={this.state.menu_open} achor={this.state.menu_achor}
         touchAwayHandler={this.handleTouchTapCloseMenu}
         landing={true}/>
-  <BoardDialog open={this.state.board_open}
-    handleClose={this.handleBoardDialogClose}
-  />
+      <BoardDialog open={this.state.board_open}
+       handleClose={this.handleBoardDialogClose}
+       />
       <List>
         {this.state.list_items.map((list_item, key) => {
           return <ListItem
             onClick={event => {this.handleListClick(event, list_item.name);}}
             key={key} primaryText={list_item.name}
+            rightIcon={ <DeleteForeverIcon onClick={event =>
+              {this.onIconClickHandler(event, list_item.id);}}/> }
           />;
         })}
       </List>
       {this.props.children}
+      <MsgSnackbar/>
      </div>;
   }
 

@@ -33,6 +33,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
                 "width": 20,
               }
             }
+            onClick={[Function]}
             style={
               Object {
                 "height": 20,
@@ -40,10 +41,10 @@ exports[`test Should update position of task after clicking on next button 1`] =
                 "width": 20,
               }
             }
-            tooltip="Edit Task"
+            tooltip="Show Task"
             tooltipPosition="top-center"
             touch={false}>
-            <EditorModeEdit />
+            <ActionOpenInNew />
           </IconButton>
         </Col>
         <Col
@@ -70,8 +71,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
                   "width": 20,
                 }
               }
-              tooltip="Move To Previous Column"
-              tooltipPosition="top-center"
+              tooltipPosition="bottom-center"
               touch={false}>
               <NavigationChevronLeft />
             </IconButton>
@@ -93,8 +93,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
                   "width": 20,
                 }
               }
-              tooltip="Move To Next Column"
-              tooltipPosition="top-center"
+              tooltipPosition="bottom-center"
               touch={false}>
               <NavigationChevronRight />
             </IconButton>

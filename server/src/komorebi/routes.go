@@ -79,12 +79,6 @@ var routes = Routes{
 		ColumnUpdate,
 	},
 	Route{
-		"StoriesGetByColumn",
-		"GET",
-		"/columns/{column_id}/stories",
-		StoriesGetByColumn,
-	},
-	Route{
 		"TasksGetByColumn",
 		"GET",
 		"/columns/{column_id}/tasks",
@@ -195,7 +189,7 @@ var routes = Routes{
 	Route{
 		"GetFeatureAndCreateStory",
 		"GET",
-		"/create_story_by_issue/{column_id}/{issue}",
+		"/create_story_by_issue/{board_id}/{issue}",
 		GetFeatureAndCreateStory,
 	},
 }

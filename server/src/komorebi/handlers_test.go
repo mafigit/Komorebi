@@ -124,16 +124,9 @@ func TestStoryCreateHandler(t *testing.T) {
 	GetByName(&board, "testStoryCreate")
 	c := NewColumn("testColumn", 0, board.Id)
 	c.Save()
-	var column Column
-	columns := GetColumnsByBoardId(board.Id)
-	for _, col := range columns {
-		if col.Name == "testColumn" {
-			column = col
-		}
-	}
 
-	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"column_id\":%d, \"priority\":4}",
-		column.Id)
+	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"board_id\":%d, \"priority\":4}",
+		board.Id)
 
 	req, _ := http.NewRequest("POST", "/stories",
 		bytes.NewBufferString(data))
@@ -164,7 +157,7 @@ func TestTaskCreateHandler(t *testing.T) {
 			column = col
 		}
 	}
-	s := NewStory("testStory", "desc", "req", 0, 4, column.Id)
+	s := NewStory("testStory", "desc", "req", 0, 4, board.Id)
 	s.Save()
 
 	stories := GetStoriesByBoardName(board.Name)

@@ -4,6 +4,8 @@ import EventEmitter from 'events';
 import assign from 'object-assign';
 import Ajax from  'basic-ajax';
 import ErrorActions from '../actions/ErrorActions';
+import MessageActions from '../actions/MessageActions';
+import ErrorFields from '../constants/ErrorFields';
 
 var board_id = null;
 var board_title = "";
@@ -15,15 +17,19 @@ var selected_stories = [];
 var boards = [];
 var selected_story_id: null;
 
+var message = "";
 var menu_open = false;
 var column_dialog_open = false;
 var story_edit_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
+var task_show_dialog_open = false;
 var task_dialog_open = false;
 var board_dialog_open = false;
+var show_message = false;
 
 var story_show_id = null;
+var task_show_id = null;
 
 var CHANGE_EVENT = 'change';
 
@@ -33,6 +39,12 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getBoardId: function () {
     return board_id;
+  },
+  getShowMessage: function() {
+    return show_message;
+  },
+  getMessage: function() {
+    return message;
   },
   getBoardTitle: function () {
     return board_title;
@@ -64,6 +76,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     }, {});
     return tasks_to_display;
   },
+  getTaskById: function(id) {
+    return tasks.find((task) => { return task.id === id; });
+  },
   getTaskByStoryId: function(story_id) {
     return tasks.reduce((acc, task) => {
       if (task.story_id == story_id) {
@@ -93,8 +108,14 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getStoryShowDialogOpen: () => {
     return story_show_dialog_open;
   },
+  getTaskShowDialogOpen: () => {
+    return task_show_dialog_open;
+  },
   getStoryShowId: () => {
     return story_show_id;
+  },
+  getTaskShowId: () => {
+    return task_show_id;
   },
   getBoardDialogOpen: () => {
     return board_dialog_open;
@@ -122,10 +143,43 @@ var fetchBoard = () => {
       var board = JSON.parse(response.responseText);
       board_id = board.id;
       board_title = board.name;
-      // should get columns over action and ajax
-      columns = board.columns.sort((a, b) => {
-        a.position - b.position;
-      });
+    }
+  });
+};
+
+var deleteBoard = (id) => {
+  var url = `/boards/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
+      fetchBoards().then(() => {BoardStore.emitChange();});
+    }
+  });
+};
+
+var deleteColumn = (id) => {
+  var url = `/columns/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
+    }
+  });
+};
+
+var deleteStory = (id) => {
+  var url = `/stories/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
+    }
+  });
+};
+
+var deleteTask = (id) => {
+  var url = `/tasks/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
     }
   });
 };
@@ -169,10 +223,43 @@ var fetchTasks = () => {
 };
 
 var fetchAll = () => {
-  return new Promise((resolve) => {
-    fetchBoard();
-    fetchStories().then(fetchTasks).then(resolve);
+  board_id = null;
+  board_title = "";
+  return Ajax.get(window.location.pathname, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      var board = JSON.parse(response.responseText);
+      board_id = board.id;
+      board_title = board.name;
+      // should get columns over action and ajax
+      columns = board.columns.sort((a, b) => {
+        a.position - b.position;
+      });
+      stories = board.stories;
+      tasks = board.stories.reduce((acc, story) => {
+        Array.prototype.push.apply(acc, story.tasks);
+        return acc;
+      }, []);
+    }
   });
+};
+
+var initWebsocket = () => {
+  var port = (location.port ? ':' + location.port : '');
+  var uri = window.location.hostname + port;
+  var socket = new WebSocket("ws://" + uri + "/" + board_title + "/ws");
+  socket.onmessage = (ws_message) => {
+    let con_string = "Connection established";
+    var message_data =
+      ws_message.data === con_string ? {} : JSON.parse(ws_message.data);
+    if (message_data.message) {
+      message = message_data.message;
+      show_message = true;
+      BoardStore.emitChange();
+    }
+    fetchAll().then(() => {
+      BoardStore.emitChange();
+    });
+  };
 };
 
 var updateTask = (data) => {
@@ -187,7 +274,10 @@ var addBoard = (board_name) => {
       board_dialog_open = false;
       fetchBoards().then(() => {BoardStore.emitChange();});
     } else {
-      ErrorActions.addBoardErrors({board_name: response_obj.message});
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.BOARD;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addBoardErrors(errors);
     }
   });
 };
@@ -199,11 +289,24 @@ var addColumn = (column_name) => {
     if (response_obj.success) {
       column_dialog_open = false;
       ErrorActions.removeColumnErrors();
-      fetchAll().then(() => {BoardStore.emitChange();});
     } else {
-      ErrorActions.addColumnErrors({column_name: response_obj.message});
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.COLUMN;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addColumnErrors(errors);
     }
   });
+};
+
+var genErrors = (error_fields, obj_errors) => {
+  return Object.keys(error_fields).reduce((acc, field) => {
+    if (obj_errors[field]) {
+      acc[field] = obj_errors[field].join(' ');
+    } else {
+      acc[field] = '';
+    }
+    return acc;
+  }, {});
 };
 
 var addTask = (data) => {
@@ -212,10 +315,10 @@ var addTask = (data) => {
     if (response_obj.success) {
       task_dialog_open = false;
     } else {
-      ErrorActions.addTaskErrors({
-        name: response_obj.message,
-        desc: response_obj.message
-      });
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.TASK;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addTaskErrors(errors);
     }
   });
 };
@@ -226,9 +329,11 @@ var addStory = (form_values) => {
     if (response_obj.success) {
       ErrorActions.removeStoryErrors();
       story_edit_dialog_open = false;
-      fetchStories().then(() => {BoardStore.emitChange();});
     } else {
-      ErrorActions.addStoryErrors({story_name: response_obj.message});
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.STORY;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addStoryErrors(errors);
     }
   });
 };
@@ -236,12 +341,23 @@ var addStory = (form_values) => {
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
     case "FETCH_ALL":
-      fetchAll().
-        then(() => {BoardStore.emitChange();});
+      fetchAll().then(() => {BoardStore.emitChange();});
       break;
     case "FETCH_BOARD":
       fetchBoard().
         then(() => {BoardStore.emitChange();});
+      break;
+    case "DELETE_BOARD":
+      deleteBoard(action.id);
+      break;
+    case "DELETE_COLUMN":
+      deleteColumn(action.id);
+      break;
+    case "DELETE_STORY":
+      deleteStory(action.id);
+      break;
+    case "DELETE_TASK":
+      deleteTask(action.id);
       break;
     case "FETCH_STORIES":
       fetchStories().
@@ -258,6 +374,15 @@ AppDispatcher.register(function(action) {
       break;
     case "CLOSE_STORY_SHOW_DIALOG":
       story_show_dialog_open = false;
+      BoardStore.emitChange();
+      break;
+    case "OPEN_TASK_SHOW_DIALOG":
+      task_show_dialog_open = true;
+      task_show_id = action.task_id;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_TASK_SHOW_DIALOG":
+      task_show_dialog_open = false;
       BoardStore.emitChange();
       break;
     case "OPEN_STORY_EDIT_DIALOG":
@@ -315,7 +440,7 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "UPDATE_TASK":
-      updateTask(action.data).then(() => {BoardStore.emitChange();});
+      updateTask(action.data);
       break;
     case "OPEN_BOARD_DIALOG":
       board_dialog_open = true;
@@ -342,6 +467,16 @@ AppDispatcher.register(function(action) {
       break;
     case "ADD_STORY":
       addStory(action.data);
+      break;
+    case "INIT_BOARD":
+      fetchAll().then(() => {
+        initWebsocket();
+        BoardStore.emitChange();
+      });
+      break;
+    case "CLOSE_MESSAGE":
+      show_message = false;
+      BoardStore.emitChange();
       break;
     default:
       break;

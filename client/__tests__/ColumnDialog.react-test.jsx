@@ -21,9 +21,9 @@ it('Should show Error when Error action is called', () => {
   const wrapper = mount(
     <ColumnDialog open={true} />
   );
-  expect(wrapper.state().error.column_name).toEqual("");
+  expect(wrapper.state().error.name).toEqual("");
 
-  ErrorActions.addColumnErrors({column_name: "Error!"});
+  ErrorActions.addColumnErrors({name: "Error!"});
 
-  expect(wrapper.state().error.column_name).toEqual("Error!");
+  expect(wrapper.state().error.name).toEqual("Error!");
 });

@@ -49,5 +49,18 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
     containerTagName="div"
     source="" />
   <br />
+  <BottomNavigation>
+    <BottomNavigationItem
+      icon={
+        <ActionDeleteForever
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Delete"
+      onTouchTap={[Function]} />
+  </BottomNavigation>
 </Dialog>
 `;

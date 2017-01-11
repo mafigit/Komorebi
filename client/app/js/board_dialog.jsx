@@ -63,7 +63,7 @@ export default class BoardDialog extends React.Component {
         Add a name for the new Board
         <br />
         <TextField ref="board_name" hintText="Board Name"
-          errorText={this.state.error.board_name} />
+          errorText={this.state.error.name} />
         <br />
       </Dialog>
     );

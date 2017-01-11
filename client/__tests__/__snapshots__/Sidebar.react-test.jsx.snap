@@ -1,0 +1,17 @@
+exports[`<Sidebar /> Should render Sidebar 1`] = `
+<Col
+  bsClass="col"
+  componentClass="div"
+  lg={2}
+  md={12}
+  xs={12}>
+  <ListGroup
+    bsClass="list-group"
+    className="sidebar">
+    <StoryCard
+      active={false}
+      name="Story1"
+      story_id={1} />
+  </ListGroup>
+</Col>
+`;

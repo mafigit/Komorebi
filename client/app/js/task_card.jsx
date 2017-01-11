@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, CardTitle, CardActions, CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
-import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
+import OpenInNewIcon from 'material-ui/svg-icons/action/open-in-new';
 import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left';
 import NextIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import { Grid, Row, Col } from 'react-bootstrap';
@@ -64,6 +64,10 @@ export default class Column extends React.Component {
     }
   }
 
+  onClickOpen = () => {
+    BoardActions.openTaskShowDialog(this.props.task_id);
+  }
+
   /**
    * update task
    * @param {number} column_id id of the new column for task
@@ -108,27 +112,25 @@ export default class Column extends React.Component {
         <Grid fluid={true}>
           <Row className="show-grid">
             <Col lg={4} >
-            <IconButton tooltip="Edit Task" style={styles.small_button}
-              iconStyle={styles.small_icon}
+            <IconButton tooltip="Show Task" style={styles.small_button}
+              iconStyle={styles.small_icon} onClick={this.onClickOpen}
               tooltipPosition="top-center">
-              <EditIcon />
+              <OpenInNewIcon />
             </IconButton>
             </Col>
             <Col lg={8} >
               <div className="pull-right">
-                <IconButton tooltip="Move To Previous Column"
+                <IconButton
                   style={styles.small_button}
                   iconStyle={styles.small_icon}
                   onClick={this.onPrevButton}
-                  tooltipPosition="top-center"
                   className="prevButton">
                   <PrevIcon />
                 </IconButton>
-                <IconButton tooltip="Move To Next Column"
+                <IconButton
                   style={styles.small_button}
                   iconStyle={styles.small_icon}
                   onClick={this.onNextButton}
-                  tooltipPosition="top-center"
                   className="nextButton">
                   <NextIcon />
                 </IconButton>

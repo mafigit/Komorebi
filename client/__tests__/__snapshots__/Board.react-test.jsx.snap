@@ -4,6 +4,9 @@ exports[`test Should render 1`] = `
   <StoryShowDialog
     open={false}
     story_id={1} />
+  <TaskShowDialog
+    open={false}
+    task_id={null} />
   <Grid
     bsClass="container"
     componentClass="div"

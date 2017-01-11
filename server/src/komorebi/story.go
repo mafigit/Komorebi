@@ -10,7 +10,8 @@ type Story struct {
 	Points       int    `json:"points"`
 	Priority     int    `json:"priority"`
 	Requirements string `json:"requirements"`
-	ColumnId     int    `json:"column_id"`
+	BoardId      int    `json:"board_id"`
+	Archived     bool   `json:"archived"`
 }
 
 type StoryNested struct {
@@ -19,15 +20,16 @@ type StoryNested struct {
 	Points       int    `json:"points"`
 	Priority     int    `json:"priority"`
 	Requirements string `json:"requirements"`
-	ColumnId     int    `json:"column_id"`
+	BoardId      int    `json:"board_id"`
 	Tasks        `json:"tasks"`
+	Archived     bool `json:"archived"`
 }
 
 type Stories []Story
 type StoriesNested []StoryNested
 
 func NewStory(name string, desc string, requirements string, points int,
-	priority int, columnId int) Story {
+	priority int, boardId int) Story {
 
 	return Story{
 		DbModel: DbModel{
@@ -36,8 +38,9 @@ func NewStory(name string, desc string, requirements string, points int,
 		Requirements: requirements,
 		Priority:     priority,
 		Points:       points,
-		ColumnId:     columnId,
+		BoardId:      boardId,
 		Desc:         desc,
+		Archived:     false,
 	}
 }
 
@@ -46,8 +49,7 @@ func GetStoriesByBoardName(board_name string) Stories {
 
 	_, err := dbMapper.Connection.
 		Select(&stories, "select stories.* from stories left join "+
-			"columns on columns.Id = stories.ColumnId left join "+
-			"boards on boards.Id = columns.BoardId where "+
+			"boards on boards.Id = stories.BoardId where "+
 			"boards.Name =?", board_name)
 	if err != nil {
 		log.Println("could not find boards")
@@ -55,13 +57,12 @@ func GetStoriesByBoardName(board_name string) Stories {
 	return stories
 }
 
-func GetStoriesByColumnId(id int) Stories {
+func GetStoriesByBoardId(id int) Stories {
 	var stories Stories
 
 	_, err := dbMapper.Connection.
-		Select(&stories, "select stories.* from stories left join "+
-			"columns on columns.Id = stories.ColumnId "+
-			"where columns.Id=? order by stories.Id", id)
+		Select(&stories, "select * from stories "+
+			"where BoardId=? order by Id", id)
 	if err != nil {
 		log.Println("could not find stories")
 	}
@@ -86,7 +87,8 @@ func (s Story) Save() bool {
 	if !dbMapper.Save(&s) {
 		return false
 	}
-	board := GetBoardByColumnId(s.ColumnId)
+	var board Board
+	GetById(&board, s.BoardId)
 	UpdateWebsockets(board.Name, "Story updated")
 	return true
 }
@@ -105,6 +107,11 @@ func (s Story) Destroy() bool {
 		log.Println("delete of story failed.", errDelete)
 		return false
 	}
+
+	var board Board
+	GetById(&board, s.BoardId)
+	UpdateWebsockets(board.Name, "Story deleted")
+
 	return true
 }
 
@@ -133,10 +140,10 @@ func (s Story) Validate() (bool, map[string][]string) {
 		success = false
 		errors["points"] = append(errors["points"], "Points out of range.")
 	}
-	if s.ColumnId <= 0 {
-		log.Println("Story validation failed. ColumnId not set.")
+	if s.BoardId <= 0 {
+		log.Println("Story validation failed. BoardId not set.")
 		success = false
-		errors["column_id"] = append(errors["column_id"], "ColumnId not set.")
+		errors["board_id"] = append(errors["board_id"], "BoardId not set.")
 	}
 	if s.Priority <= 0 || s.Priority > 10 {
 		log.Println("Story validation failed. Priority out of range")

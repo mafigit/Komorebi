@@ -70,7 +70,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get board foo"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"columns\":\[*\]}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"stories\":\[*\],\"columns\":\[*\]}" $resp
 
 
 
@@ -90,7 +90,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get board with columns"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"columns\":\[{\"id\":1,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"stories\":\[*\],\"position\":0,\"board_id\":1}\]}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"stories\":\[*\],\"columns\":\[{\"id\":1,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":0}\]}" $resp
 
 echo "Update board WIP with new name BACKLOG"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"BACKLOG", "position":0, "id":1}' localhost:8080/columns/1 2>/dev/null`
@@ -98,18 +98,18 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get column BACKLOG"
 resp=`curl  localhost:8080/columns/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"stories\":\[\],\"position\":0,\"board_id\":1}" $resp
+test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"tasks\":\[*\],\"position\":0,\"board_id\":1}" $resp
 
 
 
 ### Story routes
 
 echo "Create story doit"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","column_id":1,"priority":3 }' localhost:8080/stories 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","board_id":1,"priority":3 }' localhost:8080/stories 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Create story test"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"test","desc":"desc","points":3,"requirements":"Do this!","column_id":1,"priority":3 }' localhost:8080/stories 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"test","desc":"desc","points":3,"requirements":"Do this!","board_id":1,"priority":3 }' localhost:8080/stories 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Delete Story test"
@@ -118,18 +118,14 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get Story by ID"
 resp=`curl  localhost:8080/stories/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"column_id\":1}" $resp
+test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}" $resp
 
-echo "Get Story by board name"
+echo "Get Stories by board name"
 resp=`curl  localhost:8080/foo/stories 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"column_id\":1}\]" $resp
-
-echo "Get Story by Column"
-resp=`curl localhost:8080/columns/1/stories 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"column_id\":1}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"priority\":3,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}\]" $resp
 
 echo "Update Story doit with new name do_that"
-resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"priority":3,"requirements":"Do_this!","column_id":1}' localhost:8080/stories/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"priority":3,"requirements":"Do_this!","board_id":1}' localhost:8080/stories/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 
@@ -142,7 +138,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get task foo by Id"
 resp=`curl localhost:8080/tasks/1 2>/dev/null`
-test_math "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":false}" $resp
 
 echo "Create task test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test", "desc":"desc", "story_id":1, "column_id":1,"priority":4}' localhost:8080/tasks 2>/dev/null`
@@ -152,21 +148,25 @@ echo "Delete task test"
 resp=`curl -X DELETE localhost:8080/tasks/2 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
-echo "Get task with story id"
+echo "Get tasks with story id"
 resp=`curl localhost:8080/stories/1/tasks 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":false}\]" $resp
 
-echo "Get task with column id"
+echo "Get tasks with column id"
 resp=`curl localhost:8080/columns/1/tasks 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":false}\]" $resp
 
 echo "Update task with new name bar"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1,"priority":4, "id":1}' localhost:8080/tasks/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
+echo "Update task to archived it"
+resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":1, "column_id":1,"priority":4, "id":1,"archived":true}' localhost:8080/tasks/1 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
 echo "Get task bar"
 resp=`curl localhost:8080/stories/1/tasks 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"priority\":4,\"column_id\":1,\"archived\":true}\]" $resp
 
 
 

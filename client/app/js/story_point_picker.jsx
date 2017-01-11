@@ -6,12 +6,12 @@ export default class StoryPointPicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
+      value: 1
     };
-    this.value = 0;
+    this.value = 1;
     this.iterrator = 0;
     this.range = this.props.range || [
-      0, 1, 2, 3, 5, 8, 13, 21, 34, 55
+      1, 2, 3, 5, 8, 13, 21, 34, 55
     ];
   }
 
@@ -36,17 +36,24 @@ export default class StoryPointPicker extends React.Component {
       marginRight: 5,
       fontSize: 30
     };
+    const header_style = {
+      position: "relative",
+      bottom: 13
+    };
     return <div>
-      <br/>
-        {this.props.title}
-      <br/>
-    <FloatingActionButton onClick={() => {this.storyPointsHandler(true, false);}} style={btnstyle} key="1">
+    <span style={header_style}>{this.props.title}</span>
+    <FloatingActionButton mini={true}
+      onClick={() => {this.storyPointsHandler(true, false);}}
+      style={btnstyle} key="1">
       <ContentAdd />
     </FloatingActionButton>
-    <FloatingActionButton onClick={() => {this.storyPointsHandler(false, true);}} style={btnstyle} key="3" secondary={true} >
+    <FloatingActionButton mini={true}
+      onClick={() => {this.storyPointsHandler(false, true);}}
+      style={btnstyle} key="3" secondary={true} >
       <ContentRemove />
     </FloatingActionButton>
-    <FloatingActionButton ref="story_points" style={btnstyle} key="2" disabled={true}>
+    <FloatingActionButton mini={true} ref="story_points"
+      style={btnstyle} key="2" disabled={true}>
       {this.state.value}
     </FloatingActionButton>
     </div>;

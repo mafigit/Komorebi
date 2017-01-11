@@ -10,6 +10,7 @@ type Task struct {
 	StoryId  int    `json:"story_id"`
 	Priority int    `json:"priority"`
 	ColumnId int    `json:"column_id"`
+	Archived bool   `json:"archived"`
 }
 
 type Tasks []Task
@@ -24,6 +25,7 @@ func NewTask(name string, desc string, story_id int, column_id int,
 		Priority: priority,
 		ColumnId: column_id,
 		StoryId:  story_id,
+		Archived: false,
 	}
 }
 
@@ -48,6 +50,10 @@ func (t Task) Destroy() bool {
 		log.Println("delete of task failed.", errDelete)
 		return false
 	}
+
+	board := GetBoardByColumnId(t.ColumnId)
+	UpdateWebsockets(board.Name, "Task deleted")
+
 	return true
 }
 

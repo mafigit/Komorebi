@@ -12,9 +12,9 @@ type Column struct {
 
 type ColumnNested struct {
 	DbModel
-	StoriesNested `json:"stories"`
-	Position      int `json:"position"`
-	BoardId       int `json:"board_id"`
+	Tasks    `json:"tasks"`
+	Position int `json:"position"`
+	BoardId  int `json:"board_id"`
 }
 
 type ColumnsNested []ColumnNested
@@ -66,9 +66,9 @@ func (c Column) Destroy() bool {
 		return true
 	}
 
-	stories := GetStoriesByColumnId(c.Id)
-	for _, story := range stories {
-		story.Destroy()
+	tasks := GetTasksByColumnId(c.Id)
+	for _, task := range tasks {
+		task.Destroy()
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&c); errDelete != nil {
@@ -76,6 +76,11 @@ func (c Column) Destroy() bool {
 		return false
 	}
 	reorderColumns(c.BoardId)
+
+	var board Board
+	GetById(&board, c.BoardId)
+	UpdateWebsockets(board.Name, "Column deleted")
+
 	return true
 }
 
@@ -126,20 +131,12 @@ func GetNestedColumnByColumnId(id int) ColumnNested {
 		log.Println("could not find column", err)
 		return column
 	}
-	_, err = dbMapper.Connection.Select(&column.StoriesNested,
-		"select * from stories where ColumnId=?", column.Id)
-
-	if err != nil {
-		log.Println("could not find stories", err)
-		return column
-	}
 
 	var tasks Tasks
-	for story_index, st := range column.StoriesNested {
-		_, err = dbMapper.Connection.Select(&tasks,
-			"select * from tasks where StoryId=?", st.Id)
-		column.StoriesNested[story_index].Tasks = tasks
-	}
+	_, err = dbMapper.Connection.Select(&tasks,
+		"select * from tasks where ColumnId=?", column.Id)
+	column.Tasks = tasks
+
 	return column
 }
 
