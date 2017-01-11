@@ -55,7 +55,7 @@ export default class ColumnDialog extends React.Component {
         Add a name for the new Column
         <br />
         <TextField ref="column_name" hintText="Column Name"
-          errorText={this.state.error.column_name} />
+          errorText={this.state.error.name} />
         <br />
       </Dialog>
     );

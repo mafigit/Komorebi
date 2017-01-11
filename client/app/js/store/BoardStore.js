@@ -5,6 +5,7 @@ import assign from 'object-assign';
 import Ajax from  'basic-ajax';
 import ErrorActions from '../actions/ErrorActions';
 import MessageActions from '../actions/MessageActions';
+import ErrorFields from '../constants/ErrorFields';
 
 var board_id = null;
 var board_title = "";
@@ -208,9 +209,14 @@ var initWebsocket = () => {
   var uri = window.location.hostname + port;
   var socket = new WebSocket("ws://" + uri + "/" + board_title + "/ws");
   socket.onmessage = (ws_message) => {
-    message = ws_message.data;
-    show_message = true;
-    BoardStore.emitChange();
+    let con_string = "Connection established";
+    var message_data =
+      ws_message.data === con_string ? {} : JSON.parse(ws_message.data);
+    if (message_data.message) {
+      message = message_data.message;
+      show_message = true;
+      BoardStore.emitChange();
+    }
     fetchAll().then(() => {
       BoardStore.emitChange();
     });
@@ -229,7 +235,10 @@ var addBoard = (board_name) => {
       board_dialog_open = false;
       fetchBoards().then(() => {BoardStore.emitChange();});
     } else {
-      ErrorActions.addBoardErrors({board_name: response_obj.message});
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.BOARD;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addBoardErrors(errors);
     }
   });
 };
@@ -242,9 +251,23 @@ var addColumn = (column_name) => {
       column_dialog_open = false;
       ErrorActions.removeColumnErrors();
     } else {
-      ErrorActions.addColumnErrors({column_name: response_obj.message});
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.COLUMN;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addColumnErrors(errors);
     }
   });
+};
+
+var genErrors = (error_fields, obj_errors) => {
+  return Object.keys(error_fields).reduce((acc, field) => {
+    if (obj_errors[field]) {
+      acc[field] = obj_errors[field].join(' ');
+    } else {
+      acc[field] = '';
+    }
+    return acc;
+  }, {});
 };
 
 var addTask = (data) => {
@@ -253,10 +276,10 @@ var addTask = (data) => {
     if (response_obj.success) {
       task_dialog_open = false;
     } else {
-      ErrorActions.addTaskErrors({
-        name: response_obj.message,
-        desc: response_obj.message
-      });
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.TASK;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addTaskErrors(errors);
     }
   });
 };
@@ -268,7 +291,10 @@ var addStory = (form_values) => {
       ErrorActions.removeStoryErrors();
       story_edit_dialog_open = false;
     } else {
-      ErrorActions.addStoryErrors({story_name: response_obj.message});
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.STORY;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addStoryErrors(errors);
     }
   });
 };

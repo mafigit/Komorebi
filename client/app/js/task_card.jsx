@@ -116,19 +116,17 @@ export default class Column extends React.Component {
             </Col>
             <Col lg={8} >
               <div className="pull-right">
-                <IconButton tooltip="Move To Previous Column"
+                <IconButton
                   style={styles.small_button}
                   iconStyle={styles.small_icon}
                   onClick={this.onPrevButton}
-                  tooltipPosition="top-center"
                   className="prevButton">
                   <PrevIcon />
                 </IconButton>
-                <IconButton tooltip="Move To Next Column"
+                <IconButton
                   style={styles.small_button}
                   iconStyle={styles.small_icon}
                   onClick={this.onNextButton}
-                  tooltipPosition="top-center"
                   className="nextButton">
                   <NextIcon />
                 </IconButton>

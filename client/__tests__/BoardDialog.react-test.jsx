@@ -24,9 +24,9 @@ it('Should show Error when Error action is called', () => {
   const wrapper = mount(
     <BoardDialog open={true} />
   );
-  expect(wrapper.state().error.board_name).toEqual("");
+  expect(wrapper.state().error.name).toEqual("");
 
-  ErrorActions.addBoardErrors({board_name: "Error!"});
+  ErrorActions.addBoardErrors({name: "Error!"});
 
-  expect(wrapper.state().error.board_name).toEqual("Error!");
+  expect(wrapper.state().error.name).toEqual("Error!");
 });
