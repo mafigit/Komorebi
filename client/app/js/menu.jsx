@@ -14,6 +14,10 @@ class MyMenu extends React.Component {
         {
           name: "Add Board",
           action: BoardActions.openBoardDialog
+        },
+        {
+          name: "Add User",
+          action: BoardActions.openUserDialog
         }
       ];
     } else {

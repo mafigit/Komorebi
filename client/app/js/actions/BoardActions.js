@@ -186,6 +186,22 @@ var BoardActions = {
     AppDispatcher.dispatch({
       actionType: "CLOSE_MESSAGE"
     });
+  },
+  addUser: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_USER",
+      data: data
+    });
+  },
+  openUserDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_USER_DIALOG"
+    });
+  },
+  closeUserDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_USER_DIALOG"
+    });
   }
 };
 module.exports = BoardActions;

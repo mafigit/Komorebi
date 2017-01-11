@@ -37,6 +37,9 @@ exports[`test Should render Landing Layout 1`] = `
   <BoardDialog
     handleClose={[Function]}
     open={false} />
+  <UserDialog
+    handleClose={[Function]}
+    open={false} />
   <List />
   <MsgSnackbar />
 </div>
