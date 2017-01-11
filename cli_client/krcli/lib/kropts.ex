@@ -15,7 +15,11 @@ defmodule KrOpts do
       krcli board <boardid> column <columnid> destroy -> destroy column
       krcli board <boardid> column <columnid> story new -> new story
       krcli story <storyid> destroy -> destroy story
-      krcli story <storyid> show -> show story")
+      krcli story <storyid> show -> show story
+      krcli story <storyid> move <boardid> <columnid> -> move story to board / column
+      krcli board <boardid> column <columnid> story <storyid> task new -> new task
+      krcli task <taskid> show -> show details of a task
+      krcli task <taskid> move <boardid> <columnid> -> move task to board / column")
   end
   def dispatch_from_args(args) do
     case args do
@@ -36,13 +40,13 @@ defmodule KrOpts do
       ["story", story_id, "tasks"] -> Krcli.Task.display(story_id)
       ["board", board, "column", column, "story", story_id, "task", "new"] ->
         Krcli.Board.create_task(board, column, story_id)
+      ["task", task_id, "show"] -> Krcli.Task.show(task_id)
       _ -> error(:no_opt)
     end
   end
   def error(cause) do
     case cause do
-      :no_opt -> IO.puts("Option is not known or currently" <>
-        " unknown.")
+      :no_opt -> IO.puts("Option is not known. try krcli help.")
       _ -> IO.puts("Generic Error 42 :-(")
     end
   end
