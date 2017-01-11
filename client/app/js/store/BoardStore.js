@@ -22,11 +22,13 @@ var column_dialog_open = false;
 var story_edit_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
+var task_show_dialog_open = false;
 var task_dialog_open = false;
 var board_dialog_open = false;
 var show_message = false;
 
 var story_show_id = null;
+var task_show_id = null;
 
 var CHANGE_EVENT = 'change';
 
@@ -73,6 +75,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     }, {});
     return tasks_to_display;
   },
+  getTaskById: function(id) {
+    return tasks.find((task) => { return task.id === id; });
+  },
   getTaskByStoryId: function(story_id) {
     return tasks.reduce((acc, task) => {
       if (task.story_id == story_id) {
@@ -102,8 +107,14 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getStoryShowDialogOpen: () => {
     return story_show_dialog_open;
   },
+  getTaskShowDialogOpen: () => {
+    return task_show_dialog_open;
+  },
   getStoryShowId: () => {
     return story_show_id;
+  },
+  getTaskShowId: () => {
+    return task_show_id;
   },
   getBoardDialogOpen: () => {
     return board_dialog_open;
@@ -160,6 +171,15 @@ var deleteColumn = (id) => {
 
 var deleteStory = (id) => {
   var url = `/stories/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
+    }
+  });
+};
+
+var deleteTask = (id) => {
+  var url = `/tasks/${id}`;
   return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
     if(response.status == 200) {
       MessageActions.showMessage("Successfully deleted");
@@ -300,6 +320,9 @@ AppDispatcher.register(function(action) {
     case "DELETE_STORY":
       deleteStory(action.id);
       break;
+    case "DELETE_TASK":
+      deleteTask(action.id);
+      break;
     case "FETCH_STORIES":
       fetchStories().
         then(() => {BoardStore.emitChange();});
@@ -315,6 +338,15 @@ AppDispatcher.register(function(action) {
       break;
     case "CLOSE_STORY_SHOW_DIALOG":
       story_show_dialog_open = false;
+      BoardStore.emitChange();
+      break;
+    case "OPEN_TASK_SHOW_DIALOG":
+      task_show_dialog_open = true;
+      task_show_id = action.task_id;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_TASK_SHOW_DIALOG":
+      task_show_dialog_open = false;
       BoardStore.emitChange();
       break;
     case "OPEN_STORY_EDIT_DIALOG":
