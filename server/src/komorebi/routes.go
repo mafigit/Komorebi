@@ -127,6 +127,18 @@ var routes = Routes{
 		StoryUpdate,
 	},
 	Route{
+		"AssignUsersToStory",
+		"POST",
+		"/stories/{story_id}/assign_users",
+		AssignUsersToStory,
+	},
+	Route{
+		"GetUsersFromStory",
+		"GET",
+		"/stories/{story_id}/users",
+		GetUsersFromStory,
+	},
+	Route{
 		"StoryDelete",
 		"DELETE",
 		"/stories/{story_id}",

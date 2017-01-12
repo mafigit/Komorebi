@@ -2,6 +2,8 @@ package komorebi
 
 import (
 	"log"
+	"strconv"
+	"strings"
 )
 
 type Story struct {
@@ -144,4 +146,37 @@ func (s Story) Validate() (bool, map[string][]string) {
 	}
 
 	return success, errors
+}
+
+func AddUsersToStory(story Story, users UserIds) bool {
+	user_id_array := []string{}
+	for _, user_id := range users.UserIds {
+		user_id_array = append(user_id_array, strconv.Itoa(user_id))
+	}
+	user_ids := strings.Join(user_id_array, ", ")
+
+	count, err := dbMapper.Connection.SelectInt(
+		"select count(Id) from users where Id IN (" + user_ids + ")")
+	if count != int64(len(users.UserIds)) || err != nil {
+		log.Println("UserIds not valid", users)
+		return false
+	}
+
+	_, err = dbMapper.Connection.Exec(
+		"DELETE FROM story_users WHERE StoryId=?", story.Id)
+	if err != nil {
+		log.Println("could not delete users from story", story.Id)
+		return false
+	}
+
+	for _, user_id := range users.UserIds {
+		_, err = dbMapper.Connection.Exec(
+			"INSERT INTO story_users (StoryId, UserId) "+
+				"VALUES (?, ?)", story.Id, user_id)
+	}
+	if err != nil {
+		log.Println("could not insert users", users)
+		return false
+	}
+	return true
 }

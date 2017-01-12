@@ -485,6 +485,70 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	modelDelete(task, w, r)
 }
 
+func AssignUsersToStory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	story_id, _ := strconv.Atoi(vars["story_id"])
+	var users UserIds
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	var story Story
+	GetById(&story, story_id)
+
+	if story.Id <= 0 {
+		response.Success = false
+		response.Messages["story_id"] = append(response.Messages["story_id"],
+			"StoryId does not exist.")
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&users); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	resp := AddUsersToStory(story, users)
+
+	if resp == false {
+		response.Success = false
+		response.Messages["user_ids"] = append(response.Messages["user_ids"],
+			"UserIds not valid.")
+	}
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(response)
+}
+
+func GetUsersFromStory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	story_id, _ := strconv.Atoi(vars["story_id"])
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	var story Story
+	GetById(&story, story_id)
+
+	if story.Id <= 0 {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["story_id"] = append(response.Messages["story_id"],
+			"StoryId does not exist.")
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	users := GetUsersByStoryId(story_id)
+	json.NewEncoder(w).Encode(users)
+}
+
 func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_id, _ := strconv.Atoi(vars["board_id"])

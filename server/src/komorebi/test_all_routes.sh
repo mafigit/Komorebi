@@ -216,6 +216,33 @@ echo "Get no users from board foo"
 resp=`curl localhost:8080/boards/1/users 2>/dev/null`
 test_match "\[\]" $resp
 
+echo "Assign wrong user to board foo"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localhost:8080/boards/1/assign_users 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
+
+
+
+### Assign users to Story
+
+echo "Assign user august to story 1"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/stories/1/assign_users 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get users from story 1"
+resp=`curl localhost:8080/stories/1/users 2>/dev/null`
+test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\"}\]" $resp
+
+echo "Assign no user to story 1"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/stories/1/assign_users 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get no users from board foo"
+resp=`curl localhost:8080/stories/1/users 2>/dev/null`
+test_match "\[\]" $resp
+
+echo "Assign wrong user to story 1"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localhost:8080/stories/1/assign_users 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
 
 echo 
 echo "#############"
