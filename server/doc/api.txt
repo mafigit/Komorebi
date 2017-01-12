@@ -48,6 +48,10 @@ curl localhost:8080/boards/1/burndown
 => get burndown data from board 1
 => [{"creation":1484242228544839480,"todo":2},{"creation":1484242278509896481,"todo":1},{"creation":1484242291715158436,"todo":0}]
 
+GET /boards/{:board_id}/clear
+curl localhost:8080/boards/1/clear
+=> clear burndown datas
+=> {"success":true,"messages":{}}
 
 ### Columns
 
