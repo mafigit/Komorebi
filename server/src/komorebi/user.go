@@ -62,12 +62,6 @@ func (u User) Validate() (bool, map[string][]string) {
 		errors["name"] = append(errors["name"], "Name not uniq.")
 	}
 
-	if len(u.ImagePath) <= 0 {
-		Logger.Printf("User validation failed. ImagePath not present")
-		success = false
-		errors["image_path"] = append(errors["image_path"],
-			"ImagePath not present.")
-	}
 	return success, errors
 }
 
