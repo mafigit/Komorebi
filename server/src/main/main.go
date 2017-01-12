@@ -64,6 +64,10 @@ func main() {
 	ticker := time.NewTicker(time.Hour * 24)
 	go func() {
 		for _ = range ticker.C {
+			weekday := time.Now().Weekday().String()
+			if weekday == "Sunday" || weekday == "Saturday" {
+				continue
+			}
 			komorebi.DumpIt()
 		}
 	}()
