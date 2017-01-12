@@ -50,6 +50,14 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getUsers: function() {
     return users;
   },
+  getUsersForBoard: function() {
+    return users.reduce((acc, user) => {
+      if (user.selected) {
+        acc.push(user);
+      }
+      return acc;
+    }, []);
+  },
   getSelectedStoryId: function () {
     return selected_story_id;
   },
@@ -338,6 +346,8 @@ var fetchAll = () => {
         return acc;
       }, []);
     }
+  }).then(fetchUsers).then(() => {
+    return fetchUsersByBoardId(board_id);
   });
 };
 

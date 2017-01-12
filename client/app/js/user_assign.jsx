@@ -32,12 +32,12 @@ export default class UserAssgin extends React.Component {
     return <Grid fluid={true}>
       <Row>
         <Col md={6} mdPush={6} >
-          <h2>Boards</h2>
-          <BoardList assign={true} />
-        </Col>
-        <Col md={6} mdPull={6} >
           <h2>Users</h2>
           <UserList />
+        </Col>
+        <Col md={6} mdPull={6} >
+          <h2>Boards</h2>
+          <BoardList assign={true} />
         </Col>
       </Row>
     </Grid>;

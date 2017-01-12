@@ -25,6 +25,12 @@ exports[`test Should render TaskDialog 1`] = `
   repositionOnUpdate={true}
   title="Add Task">
   <br />
+  Select User
+  <br />
+  <UserSelect
+    users={Array []} />
+  <br />
+  <br />
   Select Story
   <br />
   <StorySelect

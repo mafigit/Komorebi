@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import ReactDOM from 'react-dom';
 import StorySelect from './story_select';
+import UserSelect from './user_select';
 import BoardStore from './store/BoardStore';
 import ErrorStore from './store/ErrorStore';
 import BoardActions from './actions/BoardActions';
@@ -26,7 +27,8 @@ export default class TaskDialog extends React.Component {
     var new_state = {
       error: ErrorStore.getTaskErrors(),
       task: BoardStore.getTask(),
-      last_sel_story_id: BoardStore.getSelectedStoryId()
+      last_sel_story_id: BoardStore.getSelectedStoryId(),
+      users: BoardStore.getUsersForBoard()
     };
 
     if (new_state.task) {
@@ -112,6 +114,11 @@ export default class TaskDialog extends React.Component {
         onRequestClose={BoardActions.closeTaskDialog}
         autoScrollBodyContent={true}
       >
+        <br />
+        Select User
+        <br />
+        <UserSelect users={this.state.users} />
+        <br />
         <br />
         Select Story
         <br />
