@@ -47,7 +47,6 @@ export default class TaskDialog extends React.Component {
       desc: "",
       story_id: null,
       column_id: null,
-      priority: 1
     };
   }
 
@@ -61,7 +60,6 @@ export default class TaskDialog extends React.Component {
       desc: this.getInputValue(this.refs.task_desc, "textarea"),
       story_id: BoardStore.getSelectedStoryId(),
       column_id: BoardStore.getFirstColumn().id,
-      priority: 1
     };
     BoardActions.addTask(form_data);
   }

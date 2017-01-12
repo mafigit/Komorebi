@@ -35,7 +35,6 @@ export default class Column extends React.Component {
      * @property {number} task_id id of task
      * @property {string} name name of task
      * @property {string} desc description of task
-     * @property {string} task_priority prority of task,
      * @property {number} task_story_id story id of task
      * @property {number} column_id column id of the task
      */
@@ -77,7 +76,6 @@ export default class Column extends React.Component {
       "id": this.props.task_id,
       "name": this.props.name,
       "desc": this.props.desc,
-      "priority": this.props.task_priority,
       "story_id": this.props.task_story_id,
       "column_id": column_id
     });
