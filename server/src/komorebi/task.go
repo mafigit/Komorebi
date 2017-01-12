@@ -2,6 +2,8 @@ package komorebi
 
 import (
 	"log"
+	"strconv"
+	"strings"
 )
 
 type Task struct {
@@ -88,4 +90,37 @@ func GetTasksByColumnId(column_id int) Tasks {
 		log.Println("Error while fetching tasks", column_id)
 	}
 	return tasks
+}
+
+func AddUsersToTask(task Task, users UserIds) bool {
+	user_id_array := []string{}
+	for _, user_id := range users.UserIds {
+		user_id_array = append(user_id_array, strconv.Itoa(user_id))
+	}
+	user_ids := strings.Join(user_id_array, ", ")
+
+	count, err := dbMapper.Connection.SelectInt(
+		"select count(Id) from users where Id IN (" + user_ids + ")")
+	if count != int64(len(users.UserIds)) || err != nil {
+		log.Println("UserIds not valid", users)
+		return false
+	}
+
+	_, err = dbMapper.Connection.Exec(
+		"DELETE FROM task_users WHERE TaskId=?", task.Id)
+	if err != nil {
+		log.Println("could not delete users from task", task.Id)
+		return false
+	}
+
+	for _, user_id := range users.UserIds {
+		_, err = dbMapper.Connection.Exec(
+			"INSERT INTO task_users (TaskId, UserId) "+
+				"VALUES (?, ?)", task.Id, user_id)
+	}
+	if err != nil {
+		log.Println("could not insert users", users)
+		return false
+	}
+	return true
 }

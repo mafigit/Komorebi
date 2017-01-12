@@ -127,18 +127,6 @@ var routes = Routes{
 		StoryUpdate,
 	},
 	Route{
-		"AssignUsersToStory",
-		"POST",
-		"/stories/{story_id}/assign_users",
-		AssignUsersToStory,
-	},
-	Route{
-		"GetUsersFromStory",
-		"GET",
-		"/stories/{story_id}/users",
-		GetUsersFromStory,
-	},
-	Route{
 		"StoryDelete",
 		"DELETE",
 		"/stories/{story_id}",
@@ -185,6 +173,18 @@ var routes = Routes{
 		"POST",
 		"/tasks/{task_id}",
 		TaskUpdate,
+	},
+	Route{
+		"AssignUsersToTask",
+		"POST",
+		"/tasks/{task_id}/assign_users",
+		AssignUsersToTask,
+	},
+	Route{
+		"GetUsersFromTask",
+		"GET",
+		"/tasks/{task_id}/users",
+		GetUsersFromTask,
 	},
 	Route{
 		"TaskDelete",

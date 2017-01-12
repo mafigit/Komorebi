@@ -1,7 +1,7 @@
 package komorebi
 
-type StoryUsers struct {
+type TaskUsers struct {
 	Id      int `json:"id"`
-	StoryId int `json:"story_id"`
+	TaskId int `json:"task_id"`
 	UserId  int `json:"user_id"`
 }
