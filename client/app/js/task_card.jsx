@@ -7,6 +7,7 @@ import NextIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import { Grid, Row, Col } from 'react-bootstrap';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
+import ReactMarkdown from 'react-markdown';
 
 const styles = {
   small_icon: {
@@ -100,11 +101,33 @@ export default class Column extends React.Component {
     }
   }
 
+  disablePrevBtn = () => {
+    var cols = BoardStore.getColumnsInOrder();
+    if (cols.length > 0) {
+      var first_col = cols[0];
+      return first_col.id === this.props.column_id;
+    }
+    return true;
+  }
+
+  disableNextBtn = () => {
+    var cols = BoardStore.getColumnsInOrder();
+    if (cols.length > 0) {
+      var last_col = cols[cols.length-1];
+      return last_col.id === this.props.column_id;
+    }
+    return true;
+  }
+
   render () {
+    var story = BoardStore.getStoryById(this.props.task_story_id);
     return <Card className="task">
-      <CardTitle title={this.props.name} subtitle="Story tag" />
+      <CardTitle titleStyle={{fontSize: 20}}
+        title={this.props.name}
+        subtitle={story.name}
+      />
       <CardText className="task-text">
-       {this.props.desc}
+        <ReactMarkdown source={this.props.desc}/>
       </CardText>
       <CardActions>
         <Grid fluid={true}>
@@ -120,6 +143,7 @@ export default class Column extends React.Component {
               <div className="pull-right">
                 <IconButton
                   style={styles.small_button}
+                  disabled={this.disablePrevBtn()}
                   iconStyle={styles.small_icon}
                   onClick={this.onPrevButton}
                   className="prevButton">
@@ -127,6 +151,7 @@ export default class Column extends React.Component {
                 </IconButton>
                 <IconButton
                   style={styles.small_button}
+                  disabled={this.disableNextBtn()}
                   iconStyle={styles.small_icon}
                   onClick={this.onNextButton}
                   className="nextButton">
