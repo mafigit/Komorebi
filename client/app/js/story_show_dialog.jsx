@@ -52,7 +52,9 @@ export default class StoryShowDialog extends React.Component {
   }
 
   onClickDestroy = () => {
-    BoardActions.deleteStory(this.props.story_id);
+    BoardActions.showConfirmation(() => {
+      BoardActions.deleteStory(this.props.story_id);
+    });
   }
 
   onClickEdit = () => {
