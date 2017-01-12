@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import ReactDOM from 'react-dom';
 import StorySelect from './story_select';
+import UserSelect from './user_select';
 import BoardStore from './store/BoardStore';
 import ErrorStore from './store/ErrorStore';
 import BoardActions from './actions/BoardActions';
@@ -26,7 +27,8 @@ export default class TaskDialog extends React.Component {
     var new_state = {
       error: ErrorStore.getTaskErrors(),
       task: BoardStore.getTask(),
-      last_sel_story_id: BoardStore.getSelectedStoryId()
+      last_sel_story_id: BoardStore.getSelectedStoryId(),
+      users: BoardStore.getUsersForBoard()
     };
 
     if (new_state.task) {
@@ -53,9 +55,9 @@ export default class TaskDialog extends React.Component {
     this.setState(this.getState());
   }
 
-  onChange(component, key, value) {
+  onChange(component, key, value, select_value) {
     var form_values = this.state.form_values;
-    form_values[key] = value;
+    form_values[key] = select_value || value;
     this.setState({form_values: form_values});
   }
 
@@ -74,8 +76,7 @@ export default class TaskDialog extends React.Component {
   }
 
   handleFormSubmit = () => {
-    var form_data = this.state.form_values;
-
+    var form_data = JSON.parse(JSON.stringify(this.state.form_values));
     if (!form_data.story_id) {
       form_data.story_id = BoardStore.getSelectedStoryId();
     }
@@ -112,6 +113,17 @@ export default class TaskDialog extends React.Component {
         onRequestClose={BoardActions.closeTaskDialog}
         autoScrollBodyContent={true}
       >
+        <br />
+        Select User
+        <br />
+        <UserSelect
+          users={this.state.users}
+          user_id={this.state.form_values.user_id}
+          onChange={
+            (comp, val, val2) => { this.onChange(comp, "user_id", val, val2); }
+          }
+        />
+        <br />
         <br />
         Select Story
         <br />

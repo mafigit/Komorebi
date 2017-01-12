@@ -60,6 +60,14 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getUsers: function() {
     return users;
   },
+  getUsersForBoard: function() {
+    return users.reduce((acc, user) => {
+      if (user.selected) {
+        acc.push(user);
+      }
+      return acc;
+    }, []);
+  },
   getSelectedStoryId: function () {
     return selected_story_id;
   },
@@ -162,9 +170,19 @@ var BoardStore = assign({}, EventEmitter.prototype, {
       return null;
     }
   },
+  getUsersByTask: (task) => {
+    return task.users;
+  },
   getTask: () => {
     if (task_edit_id) {
-      return tasks.find((task) => { return task.id === task_edit_id; });
+      var _task = tasks.find((task) => { return task.id === task_edit_id; });
+      if (_task) {
+        var _users = BoardStore.getUsersByTask(_task);
+        if (_users.length > 0) {
+          _task.user_id = _users[0].id;
+        }
+      }
+      return _task;
     } else {
       return null;
     }
@@ -363,6 +381,8 @@ var fetchAll = () => {
         return acc;
       }, []);
     }
+  }).then(fetchUsers).then(() => {
+    return fetchUsersByBoardId(board_id);
   });
 };
 
@@ -385,17 +405,26 @@ var initWebsocket = () => {
   };
 };
 
+var assignUserToTask = (user_id, task) => {
+  let url = `/tasks/${task.id}/assign_users`;
+  let data = {"user_ids": [user_id]};
+  return Ajax.postJson(url, data);
+};
+
 var updateTask = (data) => {
-  return Ajax.postJson('/tasks/' + data.id, data).then(response => {
-    var response_obj = JSON.parse(response.responseText);
-    if (response_obj.success) {
-      task_dialog_open = false;
-    } else {
-      var obj_errors = response_obj.messages;
-      var error_fields = ErrorFields.TASK;
-      var errors = genErrors(error_fields, obj_errors);
-      ErrorActions.addTaskErrors(errors);
-    }
+  return new Promise((resolve) => {
+    Ajax.postJson('/tasks/' + data.id, data).then(response => {
+      var response_obj = JSON.parse(response.responseText);
+      if (response_obj.success) {
+        resolve(data);
+        task_dialog_open = false;
+      } else {
+        var obj_errors = response_obj.messages;
+        var error_fields = ErrorFields.TASK;
+        var errors = genErrors(error_fields, obj_errors);
+        ErrorActions.addTaskErrors(errors);
+      }
+    });
   });
 };
 
@@ -641,8 +670,11 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "UPDATE_TASK":
-      updateTask(action.data);
+      assignUserToTask(action.data.user_id, action.data).then(updateTask.bind(this, action.data));
       task_dialog_open = false;
+      break;
+    case "UPDATE_TASK_POSITION":
+      updateTask(action.data);
       break;
     case "OPEN_BOARD_DIALOG":
       board_dialog_open = true;
