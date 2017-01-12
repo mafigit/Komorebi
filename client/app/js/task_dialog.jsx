@@ -55,9 +55,9 @@ export default class TaskDialog extends React.Component {
     this.setState(this.getState());
   }
 
-  onChange(component, key, value) {
+  onChange(component, key, value, select_value) {
     var form_values = this.state.form_values;
-    form_values[key] = value;
+    form_values[key] = select_value || value;
     this.setState({form_values: form_values});
   }
 
@@ -76,8 +76,7 @@ export default class TaskDialog extends React.Component {
   }
 
   handleFormSubmit = () => {
-    var form_data = this.state.form_values;
-
+    var form_data = JSON.parse(JSON.stringify(this.state.form_values));
     if (!form_data.story_id) {
       form_data.story_id = BoardStore.getSelectedStoryId();
     }
@@ -117,7 +116,13 @@ export default class TaskDialog extends React.Component {
         <br />
         Select User
         <br />
-        <UserSelect users={this.state.users} />
+        <UserSelect
+          users={this.state.users}
+          user_id={this.state.form_values.user_id}
+          onChange={
+            (comp, val, val2) => { this.onChange(comp, "user_id", val, val2); }
+          }
+        />
         <br />
         <br />
         Select Story

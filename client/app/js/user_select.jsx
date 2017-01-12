@@ -10,14 +10,6 @@ const error_style = {
 export default class UserSelect extends React.Component {
   constructor(props) {
     super(props);
-    this.state={select_value: this.props.story_id};
-  }
-
-  handleStoryChange= (event, index, value) => {
-    this.setState({select_value: value});
-    if (this.props.onChange) {
-      this.props.onChange(event, index, value);
-    }
   }
 
   menuItems = () => {
@@ -28,8 +20,8 @@ export default class UserSelect extends React.Component {
 
   render() {
     return <div>
-      <SelectField value={this.state.select_value}
-        onChange={this.handleStoryChange}
+      <SelectField value={this.props.user_id}
+        onChange={this.props.onChange}
         floatingLabelStyle={this.props.style}>
         {this.menuItems()}
       </SelectField>

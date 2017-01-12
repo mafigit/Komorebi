@@ -73,7 +73,7 @@ export default class Column extends React.Component {
    * @param {number} column_id id of the new column for task
    */
   updateTask = (column_id) => {
-    BoardActions.updateTask({
+    BoardActions.updateTaskPosition({
       "id": this.props.task_id,
       "name": this.props.name,
       "desc": this.props.desc,

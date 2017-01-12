@@ -28,6 +28,7 @@ exports[`test Should render TaskDialog 1`] = `
   Select User
   <br />
   <UserSelect
+    onChange={[Function]}
     users={Array []} />
   <br />
   <br />

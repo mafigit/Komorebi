@@ -40,7 +40,7 @@ it('Should update position of task after clicking on next button', () => {
     });
   });
 
-  var next_button = wrapper.find(IconButton).find({className: 'nextButton'}).first()
+  var next_button = wrapper.find(IconButton).find({className: 'nextButton'}).first();
   next_button.simulate('click');
   expect(updated_task.column_id).toEqual(new_column_id);
 });

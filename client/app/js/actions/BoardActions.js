@@ -139,6 +139,12 @@ var BoardActions = {
       data: data
     });
   },
+  updateTaskPosition: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_TASK_POSITION",
+      data: data
+    });
+  },
   openBoardDialog: () => {
     AppDispatcher.dispatch({
       actionType: "OPEN_BOARD_DIALOG"
