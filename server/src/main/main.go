@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"komorebi"
 	"log"
 	"net/http"
@@ -13,6 +14,26 @@ var (
 )
 
 func main() {
+
+	port := flag.String("port", "8080", "Listening port")
+	logfile := flag.String("logfile", "", "Logfile (default stdout)")
+	dump := flag.Bool("dump", false, "Dump stories, make a snapshot")
+	flag.StringVar(&komorebi.PublicDir, "publicdir", "public/", "Public directory")
+
+	flag.Parse()
+
+	if len(*logfile) > 0 {
+		f, err := os.OpenFile(*logfile, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+		if err != nil {
+			log.Printf("error opening logfile: %v", err)
+		}
+		defer f.Close()
+		komorebi.Logger = log.New(f, "komorebi:", log.Lmicroseconds)
+	} else {
+		komorebi.Logger = log.New(os.Stdout, "komorebi:", log.Lmicroseconds)
+	}
+
+	komorebi.Logger.Printf("starting ")
 
 	db := komorebi.InitDb("komorebi.db")
 	db.AddTable(komorebi.Board{}, "boards")
@@ -27,11 +48,11 @@ func main() {
 	tableMap.ColMap("Requirements").SetMaxSize(1024)
 	db.CreateTables()
 
-	if len(os.Args) >= 2 && os.Args[1] == "-d" {
-		log.Println("Dump cards")
+	if *dump {
+		komorebi.Logger.Printf("Dump cards")
 		komorebi.DumpIt()
 	} else {
 		router := komorebi.NewRouter()
-		log.Fatal(http.ListenAndServe(":8080", router))
+		log.Fatal(http.ListenAndServe(":"+*port, router))
 	}
 }
