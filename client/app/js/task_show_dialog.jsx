@@ -7,6 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import {BottomNavigation, BottomNavigationItem} from
   'material-ui/BottomNavigation';
 import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
+import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
 
 const icon_style = {
   display: "initial"
@@ -39,6 +40,10 @@ export default class TaskShowDialog extends React.Component {
     BoardActions.deleteTask(this.props.task_id);
   }
 
+  onClickEdit = () => {
+    BoardActions.showTaskDialog(this.props.task_id);
+  }
+
   showForm = () => {
     return(
       <Dialog
@@ -54,6 +59,9 @@ export default class TaskShowDialog extends React.Component {
           <BottomNavigationItem label="Delete"
             icon={<DeleteForeverIcon style={icon_style} />}
             onTouchTap={this.onClickDestroy} />
+          <BottomNavigationItem label="Edit"
+            icon={<EditIcon style={icon_style} />}
+            onTouchTap={this.onClickEdit} />
         </BottomNavigation>
       </Dialog>
     );

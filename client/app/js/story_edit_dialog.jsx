@@ -8,21 +8,22 @@ import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import ErrorStore from './store/ErrorStore';
 
+const default_form_values = {
+  name: "",
+  desc: "",
+  points: 0,
+  requirements: "",
+  board_id: ""
+};
+
 export default class StoryEditDialog extends React.Component {
   constructor(props) {
     super(props);
-    var default_form_values = {
-      name: "",
-      desc: "",
-      points: 0,
-      requirements: "",
-      board_id: ""
-    };
     this.state = this.getState(default_form_values);
   }
 
   getState = (form_values) => {
-    var new_state =  {
+    var new_state = {
       error: ErrorStore.getStoryErrors(),
       story: BoardStore.getStory(),
     };
@@ -54,18 +55,7 @@ export default class StoryEditDialog extends React.Component {
   }
 
   setDefaultFormValues = () => {
-    this.setState({story: null, form_values: {
-      name: "",
-      desc: "",
-      points: 0,
-      requirements: "",
-      board_id: ""
-    },
-    });
-  }
-
-  getInputValue = (ref, type) => {
-    return ReactDOM.findDOMNode(ref).querySelectorAll(type)[0].value;
+    this.setState({story: null, form_values: default_form_values, });
   }
 
   handleFormSubmit = () => {

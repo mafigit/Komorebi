@@ -28,6 +28,7 @@ exports[`test Should render TaskDialog 1`] = `
   Select Story
   <br />
   <StorySelect
+    errorText=""
     onChange={[Function]} />
   <br />
   <br />
@@ -40,9 +41,11 @@ exports[`test Should render TaskDialog 1`] = `
     fullWidth={false}
     hintText="Task Name"
     multiLine={false}
+    onChange={[Function]}
     rows={1}
     type="text"
-    underlineShow={true} />
+    underlineShow={true}
+    value="" />
   <br />
   <br />
   Add a Description
@@ -54,9 +57,11 @@ exports[`test Should render TaskDialog 1`] = `
     fullWidth={true}
     hintText="Task Description"
     multiLine={true}
+    onChange={[Function]}
     rows={1}
     type="text"
-    underlineShow={true} />
+    underlineShow={true}
+    value="" />
   <br />
   <br />
 </Dialog>
