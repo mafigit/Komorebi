@@ -1,7 +1,6 @@
 package komorebi
 
 import (
-	"log"
 	"strconv"
 	"strings"
 )
@@ -46,7 +45,7 @@ func (t Task) Destroy() bool {
 		return true
 	}
 	if _, errDelete := dbMapper.Connection.Delete(&t); errDelete != nil {
-		log.Println("delete of task failed.", errDelete)
+		Logger.Printf("delete of task failed.", errDelete)
 		return false
 	}
 
@@ -61,20 +60,20 @@ func (t Task) Validate() (bool, map[string][]string) {
 	errors := map[string][]string{}
 
 	if len(t.Name) <= 0 {
-		log.Println("Task validation failed. Name not present")
+		Logger.Printf("Task validation failed. Name not present")
 		success = false
 		errors["name"] = append(errors["name"], "Name not present.")
 	}
 
 	if t.ColumnId <= 0 {
-		log.Println("Task validation failed. ColumnId not present")
+		Logger.Printf("Task validation failed. ColumnId not present")
 		success = false
 		errors["column_id"] = append(errors["column_id"],
 			"ColumnId not present.")
 	}
 
 	if t.StoryId <= 0 {
-		log.Println("Task validation failed. StoryId not present")
+		Logger.Printf("Task validation failed. StoryId not present")
 		success = false
 		errors["story_id"] = append(errors["story_id"], "StoryId not present.")
 	}
@@ -87,7 +86,7 @@ func GetTasksByColumnId(column_id int) Tasks {
 	_, err := dbMapper.Connection.Select(&tasks,
 		"select * from tasks where ColumnId=? order by Id ", column_id)
 	if err != nil {
-		log.Println("Error while fetching tasks", column_id)
+		Logger.Printf("Error while fetching tasks", column_id)
 	}
 	return tasks
 }
@@ -102,14 +101,14 @@ func AddUsersToTask(task Task, users UserIds) bool {
 	count, err := dbMapper.Connection.SelectInt(
 		"select count(Id) from users where Id IN (" + user_ids + ")")
 	if count != int64(len(users.UserIds)) || err != nil {
-		log.Println("UserIds not valid", users)
+		Logger.Println("UserIds not valid", users)
 		return false
 	}
 
 	_, err = dbMapper.Connection.Exec(
 		"DELETE FROM task_users WHERE TaskId=?", task.Id)
 	if err != nil {
-		log.Println("could not delete users from task", task.Id)
+		Logger.Println("could not delete users from task", task.Id)
 		return false
 	}
 
@@ -119,7 +118,7 @@ func AddUsersToTask(task Task, users UserIds) bool {
 				"VALUES (?, ?)", task.Id, user_id)
 	}
 	if err != nil {
-		log.Println("could not insert users", users)
+		Logger.Println("could not insert users", users)
 		return false
 	}
 	return true

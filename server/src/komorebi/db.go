@@ -47,10 +47,13 @@ func InitDb(path string) Db {
 	db, err := sql.Open("sqlite3", path)
 	checkErr(err, "sql.Open failed")
 
+	if Logger == nil {
+		Logger = log.New(os.Stdout, "komorebi:", log.Lmicroseconds)
+	}
+
 	// construct a gorp DbMap
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.SqliteDialect{}}
-	dbmap.TraceOn("[gorp]", log.New(os.Stdout, "komorebi:",
-		log.Lmicroseconds))
+	dbmap.TraceOn("[gorp]", Logger)
 
 	dbMapper = Db{dbmap, path}
 	return dbMapper
@@ -83,12 +86,12 @@ func (d Db) Save(i Model) bool {
 
 	if i.GetId() == 0 {
 		if err := dbMapper.Connection.Insert(i); err != nil {
-			log.Println("create failed", err)
+			Logger.Printf("create failed", err)
 			return false
 		}
 	} else {
 		if _, errUpdate := dbMapper.Connection.Update(i); errUpdate != nil {
-			log.Println("update failed", errUpdate)
+			Logger.Printf("update failed", errUpdate)
 			return false
 		}
 	}
@@ -99,7 +102,7 @@ func GetById(i Model, id int) bool {
 	err := dbMapper.Connection.SelectOne(i, "select * from "+
 		i.TableName()+" where Id=?", id)
 	if err != nil {
-		log.Println("could not find model", err)
+		Logger.Printf("could not find model", err)
 		return false
 	}
 	return true
@@ -109,7 +112,7 @@ func GetByName(i Model, name string) bool {
 	err := dbMapper.Connection.SelectOne(i, "select * from "+
 		i.TableName()+" where Name=?", name)
 	if err != nil {
-		log.Println("could not find model", err)
+		Logger.Printf("could not find model", err)
 		return false
 	}
 	return true
@@ -120,7 +123,7 @@ func GetAll(i Models) bool {
 		Select(i, "select * from "+
 			i.TableName()+" order by id")
 	if err != nil {
-		log.Println("could not find model", err)
+		Logger.Printf("could not find model", err)
 		return false
 	}
 	return true
@@ -128,6 +131,6 @@ func GetAll(i Models) bool {
 
 func checkErr(err error, msg string) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		Logger.Printf(msg, err)
 	}
 }

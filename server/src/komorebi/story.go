@@ -1,9 +1,5 @@
 package komorebi
 
-import (
-	"log"
-)
-
 type Story struct {
 	DbModel
 	Desc         string `json:"desc"`
@@ -49,7 +45,7 @@ func GetStoriesByBoardName(board_name string) Stories {
 			"boards on boards.Id = stories.BoardId where "+
 			"boards.Name =?", board_name)
 	if err != nil {
-		log.Println("could not find boards")
+		Logger.Printf("could not find boards")
 	}
 	return stories
 }
@@ -61,7 +57,7 @@ func GetStoriesByBoardId(id int) Stories {
 		Select(&stories, "select * from stories "+
 			"where BoardId=? order by Id", id)
 	if err != nil {
-		log.Println("could not find stories")
+		Logger.Printf("could not find stories")
 	}
 	return stories
 }
@@ -71,7 +67,7 @@ func GetStoryById(id int) Story {
 	err := dbMapper.Connection.SelectOne(&story,
 		"select * from stories where Id=? ", id)
 	if err != nil {
-		log.Println("could not find story", id)
+		Logger.Printf("could not find story", id)
 	}
 	return story
 }
@@ -101,7 +97,7 @@ func (s Story) Destroy() bool {
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&s); errDelete != nil {
-		log.Println("delete of story failed.", errDelete)
+		Logger.Printf("delete of story failed.", errDelete)
 		return false
 	}
 
@@ -118,7 +114,7 @@ func GetTasksByStoryId(story_id int) Tasks {
 	_, err := dbMapper.Connection.Select(&tasks,
 		"select * from tasks where StoryId=? order by Id ", story_id)
 	if err != nil {
-		log.Println("Error while fetching tasks", story_id)
+		Logger.Printf("Error while fetching tasks", story_id)
 	}
 	return tasks
 }
@@ -128,17 +124,17 @@ func (s Story) Validate() (bool, map[string][]string) {
 	errors := map[string][]string{}
 
 	if len(s.Name) <= 0 {
-		log.Println("Story validation failed. Name not present")
+		Logger.Printf("Story validation failed. Name not present")
 		success = false
 		errors["name"] = append(errors["name"], "Name not present.")
 	}
 	if s.Points <= 0 {
-		log.Println("Story validation failed. Points out of range.")
+		Logger.Printf("Story validation failed. Points out of range.")
 		success = false
 		errors["points"] = append(errors["points"], "Points out of range.")
 	}
 	if s.BoardId <= 0 {
-		log.Println("Story validation failed. BoardId not set.")
+		Logger.Printf("Story validation failed. BoardId not set.")
 		success = false
 		errors["board_id"] = append(errors["board_id"], "BoardId not set.")
 	}

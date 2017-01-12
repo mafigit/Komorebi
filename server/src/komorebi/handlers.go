@@ -14,6 +14,9 @@ import (
 	"strings"
 )
 
+var PublicDir string
+var Logger *log.Logger
+
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -42,7 +45,7 @@ type UserIds struct {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	data, _ := ioutil.ReadFile(getPublicDir() + "/landing.html")
+	data, _ := ioutil.ReadFile(PublicDir + "/landing.html")
 	site := string(data)
 	fmt.Fprintln(w, site)
 }
@@ -382,7 +385,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	board_name := vars["board_name"]
 
 	if err != nil {
-		fmt.Println("could not open websocket connection: ", err)
+		Logger.Printf("could not open websocket connection: ", err)
 		return
 	}
 
@@ -397,22 +400,21 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer func() {
-		fmt.Println("connection closing ", board_name)
+		Logger.Printf("connection closing ", board_name)
 		con.Ws.Close()
 		delete_ws_from_connections(con.Ws, board_name)
 	}()
 
 	connections[board_name] = append(connections[board_name], con)
-	log.Println("connections: ", connections)
 	err = ws.WriteMessage(websocket.TextMessage, []byte("Connection established"))
 	if err != nil {
-		fmt.Println("error on write:", err)
+		Logger.Printf("error on write:", err)
 	}
 	ws.ReadMessage()
 }
 
 func UpdateWebsockets(board_name string, msg string) {
-	log.Println("Update Websockets for board", board_name)
+	Logger.Println("Update Websockets for board", board_name)
 
 	resp := &WsResponse{
 		Message: msg,
@@ -423,7 +425,7 @@ func UpdateWebsockets(board_name string, msg string) {
 		err := connections[board_name][i].Ws.WriteMessage(
 			websocket.TextMessage, []byte(json_resp))
 		if err != nil {
-			fmt.Println("err", err)
+			Logger.Printf("err", err)
 		}
 	}
 }
@@ -667,7 +669,7 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
-	file := getPublicDir() + r.URL.Path
+	file := PublicDir + r.URL.Path
 
 	_, err := os.Stat(file)
 	if err == nil {
@@ -678,14 +680,6 @@ func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func getIndex() string {
-	data, _ := ioutil.ReadFile(getPublicDir() + "/index.html")
+	data, _ := ioutil.ReadFile(PublicDir + "/index.html")
 	return string(data)
-}
-
-func getPublicDir() string {
-	if len(os.Args) >= 2 {
-		return os.Args[1]
-	} else {
-		return "public/"
-	}
 }
