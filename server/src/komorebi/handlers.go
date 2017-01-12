@@ -485,9 +485,9 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	modelDelete(task, w, r)
 }
 
-func AssignUsersToStory(w http.ResponseWriter, r *http.Request) {
+func AssignUsersToTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	story_id, _ := strconv.Atoi(vars["story_id"])
+	task_id, _ := strconv.Atoi(vars["task_id"])
 	var users UserIds
 
 	response := Response{
@@ -495,13 +495,13 @@ func AssignUsersToStory(w http.ResponseWriter, r *http.Request) {
 		Messages: make(map[string][]string),
 	}
 
-	var story Story
-	GetById(&story, story_id)
+	var task Task
+	GetById(&task, task_id)
 
-	if story.Id <= 0 {
+	if task.Id <= 0 {
 		response.Success = false
-		response.Messages["story_id"] = append(response.Messages["story_id"],
-			"StoryId does not exist.")
+		response.Messages["task_id"] = append(response.Messages["task_id"],
+			"TaskId does not exist.")
 		w.WriteHeader(200)
 		json.NewEncoder(w).Encode(response)
 		return
@@ -512,7 +512,7 @@ func AssignUsersToStory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := AddUsersToStory(story, users)
+	resp := AddUsersToTask(task, users)
 
 	if resp == false {
 		response.Success = false
@@ -524,28 +524,28 @@ func AssignUsersToStory(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func GetUsersFromStory(w http.ResponseWriter, r *http.Request) {
+func GetUsersFromTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	story_id, _ := strconv.Atoi(vars["story_id"])
+	task_id, _ := strconv.Atoi(vars["task_id"])
 
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
 
-	var story Story
-	GetById(&story, story_id)
+	var task Task
+	GetById(&task, task_id)
 
-	if story.Id <= 0 {
+	if task.Id <= 0 {
 		w.WriteHeader(200)
 		response.Success = false
-		response.Messages["story_id"] = append(response.Messages["story_id"],
-			"StoryId does not exist.")
+		response.Messages["task_id"] = append(response.Messages["task_id"],
+			"TaskId does not exist.")
 		json.NewEncoder(w).Encode(response)
 		return
 	}
 
-	users := GetUsersByStoryId(story_id)
+	users := GetUsersByTaskId(task_id)
 	json.NewEncoder(w).Encode(users)
 }
 
