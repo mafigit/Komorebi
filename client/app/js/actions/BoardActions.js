@@ -62,6 +62,16 @@ var BoardActions = {
       task_id: task_id
     });
   },
+  showChartDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_CHART_DIALOG"
+    });
+  },
+  closeChartDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_CHART_DIALOG",
+    });
+  },
   closeTaskDialog: (reload) =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_TASK_DIALOG",

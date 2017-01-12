@@ -18,12 +18,14 @@ var boards = [];
 var users = [];
 var selected_story_id = null;
 var selected_board_id = null;
+var burndown_data = null;
 
 var message = "";
 var menu_open = false;
 var show_user_assign = false;
 var show_board_list = false;
 var column_dialog_open = false;
+var chart_dialog_open = false;
 var story_edit_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
@@ -41,6 +43,12 @@ var task_edit_id = null;
 var CHANGE_EVENT = 'change';
 
 var BoardStore = assign({}, EventEmitter.prototype, {
+  getShowChartDialog: function () {
+    return chart_dialog_open;
+  },
+  getBurnDownData: function () {
+    return burndown_data;
+  },
   getShowUserAssign: function() {
     return show_user_assign;
   },
@@ -320,6 +328,15 @@ var fetchTasks = () => {
   });
 };
 
+var fetchBurnDownData = () => {
+  var url = `/boards/${board_id}/burndown`;
+  return Ajax.get(url, {"Accept": "application/json"}).then(response => {
+    if (response.status == 200) {
+      burndown_data = JSON.parse(response.responseText);
+    }
+  });
+};
+
 var fetchAll = () => {
   board_id = null;
   board_title = "";
@@ -587,6 +604,15 @@ AppDispatcher.register(function(action) {
       } else {
         BoardStore.emitChange();
       }
+      break;
+    case "SHOW_CHART_DIALOG":
+      chart_dialog_open = true;
+      fetchBurnDownData().then(() => {BoardStore.emitChange();});
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_CHART_DIALOG":
+      chart_dialog_open = false;
+      BoardStore.emitChange();
       break;
     case "SHOW_COLUMN_DIALOG":
       column_dialog_open = true;

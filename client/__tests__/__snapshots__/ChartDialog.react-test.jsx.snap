@@ -1,0 +1,45 @@
+exports[`<ChartDialog /> Should render ChartDialog 1`] = `
+<Dialog
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={true}
+  modal={false}
+  onRequestClose={[Function]}
+  open={true}
+  repositionOnUpdate={true}
+  title="Burndown">
+  <div>
+    <LineChart
+      data={
+        Object {
+          "datasets": Array [
+            Object {
+              "backgroundColor": "rgba(75,192,192,0.4)",
+              "borderCapStyle": "butt",
+              "borderColor": "rgba(75,192,192,1)",
+              "borderDash": Array [],
+              "borderDashOffset": 0,
+              "borderJoinStyle": "miter",
+              "data": Array [],
+              "fill": false,
+              "label": "Burndown",
+              "lineTension": 0.1,
+              "pointBackgroundColor": "#fff",
+              "pointBorderColor": "rgba(75,192,192,1)",
+              "pointBorderWidth": 1,
+              "pointHitRadius": 3,
+              "pointHoverBackgroundColor": "rgba(75,192,192,1)",
+              "pointHoverBorderColor": "rgba(220,220,220,1)",
+              "pointHoverBorderWidth": 2,
+              "pointHoverRadius": 5,
+              "pointRadius": 1,
+              "spanGaps": false,
+            },
+          ],
+          "labels": Array [],
+        }
+      }
+      height="350"
+      width="700" />
+  </div>
+</Dialog>
+`;

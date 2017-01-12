@@ -45,7 +45,12 @@ class MyMenu extends React.Component {
         {
           name: "Add Column",
           action: BoardActions.showColumnDialog
+        },
+        {
+          name: "Sprint Burndown",
+          action: BoardActions.showChartDialog
         }
+
       ];
     }
   }
