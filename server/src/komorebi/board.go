@@ -170,5 +170,6 @@ func AddUsersToBoard(board Board, users UserIds) bool {
 		log.Println("could not insert users", users)
 		return false
 	}
+	UpdateWebsockets(board.Name, "Users updated")
 	return true
 }

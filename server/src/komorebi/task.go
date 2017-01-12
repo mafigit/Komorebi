@@ -122,5 +122,11 @@ func AddUsersToTask(task Task, users UserIds) bool {
 		log.Println("could not insert users", users)
 		return false
 	}
+	var board Board
+	err = dbMapper.Connection.SelectOne(&board,
+		"select * from boards left join "+
+			"stories ON stories.BoardId = boards.Id left join "+
+			"tasks ON tasks.StoryId = stories.Id where tasks.Id = ?", task.Id)
+	UpdateWebsockets(board.Name, "Users updated")
 	return true
 }
