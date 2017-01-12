@@ -102,7 +102,7 @@ curl   localhost:8080/stories/1/tasks
 GET /tasks/{:task_id}
 curl   localhost:8080/tasks/1
 => get task with id 1
-=> {"id":1,"name":"foo","updated_at":0,"desc":"desc","story_id":1,"column_id":1,"archived":false}
+=> {"id":1,"name":"foo","updated_at":0,"desc":"desc","story_id":1,"column_id":1,"archived":false,"users":[{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]}
 
 GET /columns/{:column_id}/tasks
 curl   localhost:8080/columns/1/tasks
