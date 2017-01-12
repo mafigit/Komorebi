@@ -73,6 +73,12 @@ var routes = Routes{
 		GetUsersFromBoard,
 	},
 	Route{
+		"ClearDumpsFromBoard",
+		"GET",
+		"/boards/{board_id}/clear",
+		ClearDumpsFromBoard,
+	},
+	Route{
 		"BoardDelete",
 		"DELETE",
 		"/boards/{board_id}",

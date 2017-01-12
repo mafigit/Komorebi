@@ -597,6 +597,30 @@ func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func ClearDumpsFromBoard(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_id, _ := strconv.Atoi(vars["board_id"])
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	var board Board
+	GetById(&board, board_id)
+
+	if board.Id <= 0 {
+		response.Success = false
+		response.Messages["board_id"] = append(response.Messages["board_id"],
+			"BoardId does not exist.")
+	}
+
+	ClearDump(board.Name)
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(response)
+}
+
 func GetUsersFromBoard(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_id, _ := strconv.Atoi(vars["board_id"])

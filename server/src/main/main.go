@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 var (
@@ -59,6 +60,14 @@ func main() {
 		komorebi.ClearDump(*clear_board)
 		os.Exit(0)
 	}
+
+	ticker := time.NewTicker(time.Hour * 24)
+	go func() {
+		for _ = range ticker.C {
+			komorebi.DumpIt()
+		}
+	}()
+
 	router := komorebi.NewRouter()
 	log.Fatal(http.ListenAndServe(":"+*port, router))
 }

@@ -72,6 +72,14 @@ echo "Get board foo"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
 test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"private\":false,\"stories\":\[*\],\"columns\":\[*\]}" $resp
 
+echo "Get empty burndown data"
+resp=`curl localhost:8080/boards/1/burndown 2>/dev/null`
+test_equal "[]" $resp
+
+echo "Clear burndown data"
+resp=`curl localhost:8080/boards/1/clear 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
 
 
 ### Column routes
