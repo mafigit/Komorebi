@@ -53,8 +53,7 @@ export default class BoardLayout extends Layout  {
       <AppBar
         title={this.props.title}
         iconElementRight={
-          <FlatButton label="木漏れ日"
-            href={"https://github.com/mafigit/Komorebi"}
+          <FlatButton label="木漏れ日" href={"/"}
             style={{verticalAlign: "baseline"}}
             labelStyle={{fontSize: "30px", color: Colors.light_red,
               fontWeight: "bold"}}/>
