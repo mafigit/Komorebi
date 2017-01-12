@@ -92,7 +92,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     });
   },
   getBoards: function() {
-    return boards;
+    return boards.filter((board) => {
+      return !board.private;
+    });
   },
   getBoardsWithSelected: function() {
     return boards.map((board) => {
@@ -172,6 +174,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getUsersByTask: (task) => {
     return task.users;
+  },
+  getBoard: () => {
+    return null;
   },
   getTask: () => {
     if (task_edit_id) {
@@ -428,8 +433,8 @@ var updateTask = (data) => {
   });
 };
 
-var addBoard = (board_name) => {
-  return Ajax.postJson('/boards', {"name": board_name}).then(response => {
+var addBoard = (data) => {
+  return Ajax.postJson('/boards', data).then(response => {
     var response_obj = JSON.parse(response.responseText);
     if (response_obj.success) {
       ErrorActions.removeBoardErrors();
@@ -691,7 +696,7 @@ AppDispatcher.register(function(action) {
       fetchUsers().then(() => {BoardStore.emitChange();});
       break;
     case "ADD_BOARD":
-      addBoard(action.data.name);
+      addBoard(action.data);
       break;
     case "ADD_COLUMN":
       addColumn(action.data);
