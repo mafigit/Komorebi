@@ -19,6 +19,7 @@ type TaskNested struct {
 }
 
 type Tasks []Task
+type TasksNested []TaskNested
 
 func NewTask(name string, desc string, story_id int, column_id int) Task {
 	return Task{

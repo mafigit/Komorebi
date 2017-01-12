@@ -16,7 +16,7 @@ curl localhost:8080/gz
 GET /gz as json
 curl  -H "Accept: application/json" localhost:8080/gz
 => json response with board gz with columns, stories and tasks
-=> {"id":1,"name":"foo","updated_at":1471541456481743347,"columns":[{"id":3,"name":"WIP","updated_at":1471541504413505006,"position":1,"board_id":1}],"stories":[{"id":1,"name":"do_that","updated_at":1471541541313618700,"desc":"","points":5,"requirements":"Do_this!","board_id":3,"archived":false,"tasks":[{"id":3,"name":"asdfasdf","updated_at":1471541536411708346,"desc":"","story_id":1,"column_id":3,"archived":false}]}]}
+=> {"id":1,"name":"foo","updated_at":1471541456481743347,"columns":[{"id":3,"name":"WIP","updated_at":1471541504413505006,"position":1,"board_id":1}],"stories":[{"id":1,"name":"do_that","updated_at":1471541541313618700,"desc":"","points":5,"requirements":"Do_this!","board_id":3,"archived":false,"tasks":[{"id":3,"name":"asdfasdf","updated_at":1471541536411708346,"desc":"","story_id":1,"column_id":3,"archived":false},"users":[{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]]}]}
 
 POST /boards as json
 curl  -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boards

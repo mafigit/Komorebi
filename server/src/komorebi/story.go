@@ -15,7 +15,7 @@ type StoryNested struct {
 	Points       int    `json:"points"`
 	Requirements string `json:"requirements"`
 	BoardId      int    `json:"board_id"`
-	Tasks        `json:"tasks"`
+	TasksNested  `json:"tasks"`
 	Archived     bool `json:"archived"`
 }
 
