@@ -13,9 +13,15 @@ export default class BoardList extends React.Component {
     this.state = this.getState();
   }
   getState = () => {
-    return {
-      boards: BoardStore.getBoards()
-    };
+    if (this.props.assign) {
+      return {
+        boards: BoardStore.getBoardsWithSelected()
+      };
+    } else {
+      return {
+        boards: BoardStore.getBoards()
+      };
+    }
   };
 
   _onChange = () => {
@@ -31,8 +37,12 @@ export default class BoardList extends React.Component {
     BoardActions.fetchBoards();
   }
 
-  handleListClick = (event, name) => {
-    window.location.pathname = `/${name}`;
+  handleListClick = (event, board) => {
+    if (this.props.assign) {
+      BoardActions.selectBoard(board.id);
+    } else {
+      window.location.pathname = `/${board.name}`;
+    }
   }
 
   onIconClickHandler = (event, id) => {
@@ -41,15 +51,24 @@ export default class BoardList extends React.Component {
   }
 
   render() {
-    return <List>
-      {this.state.boards.map((board, key) => {
-        return <ListItem
-          onClick={event => {this.handleListClick(event, board.name);}}
-          key={key} primaryText={board.name}
-          rightIcon={ <DeleteForeverIcon onClick={event =>
-            {this.onIconClickHandler(event, board.id);}}/> }
+    var boards = this.state.boards.map((board, key) => {
+      var style =
+        board.selected ? {'backgroundColor': 'rgba(0, 0, 0, 0.2)'} : {};
+      var rightIcon = this.props.assign ? <div/> :
+        <DeleteForeverIcon
+          onClick={event => {this.onIconClickHandler(event, board.id);}}
         />;
-      })}
+
+      return <ListItem
+        onClick={event => {this.handleListClick(event, board);}}
+        key={key} primaryText={board.name}
+        rightIcon={rightIcon}
+        style={style}
+      />;
+    });
+
+    return <List>
+      {boards}
     </List>;
   }
 

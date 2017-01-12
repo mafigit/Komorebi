@@ -29,7 +29,8 @@ exports[`test Should render TaskDialog 1`] = `
   <br />
   <StorySelect
     errorText=""
-    onChange={[Function]} />
+    onChange={[Function]}
+    story_id={null} />
   <br />
   <br />
   Add a name
