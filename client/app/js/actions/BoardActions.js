@@ -222,10 +222,26 @@ var BoardActions = {
       actionType: "FETCH_USERS"
     });
   },
+  showUserAssign: () => {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_USER_ASSIGN"
+    });
+  },
+  showBoardList: () => {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_BOARD_LIST"
+    });
+  },
   toggleUserById: (user_id) => {
     AppDispatcher.dispatch({
       user_id: user_id,
       actionType: "TOGGLE_USER_BY_ID"
+    });
+  },
+  selectBoard: (board_id) => {
+    AppDispatcher.dispatch({
+      board_id: board_id,
+      actionType: "SELECT_BOARD"
     });
   }
 };

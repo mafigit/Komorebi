@@ -16,10 +16,13 @@ var tasks_to_display = {};
 var selected_stories = [];
 var boards = [];
 var users = [];
-var selected_story_id: null;
+var selected_story_id = null;
+var selected_board_id = null;
 
 var message = "";
 var menu_open = false;
+var show_user_assign = false;
+var show_board_list = false;
 var column_dialog_open = false;
 var story_edit_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
@@ -38,6 +41,12 @@ var task_edit_id = null;
 var CHANGE_EVENT = 'change';
 
 var BoardStore = assign({}, EventEmitter.prototype, {
+  getShowUserAssign: function() {
+    return show_user_assign;
+  },
+  getShowBoardList: function() {
+    return show_board_list;
+  },
   getUsers: function() {
     return users;
   },
@@ -66,6 +75,15 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getBoards: function() {
     return boards;
+  },
+  getBoardsWithSelected: function() {
+    return boards.map((board) => {
+      board.selected = false;
+      if (board.id === selected_board_id) {
+        board.selected = true;
+      }
+      return board;
+    });
   },
   getStories: function() {
     return stories;
@@ -168,6 +186,40 @@ var toggleUserById = (user_id) => {
       }
     }
     return user;
+  });
+};
+
+var toggleUserByIdAction = (user_id) => {
+  toggleUserById(user_id);
+  assignUsersToBoard();
+};
+
+var assignUsersToBoard = () => {
+  var selected_user_ids = users.reduce((acc, user) => {
+    if (user.selected) {
+      acc.push(user.id);
+    }
+    return acc;
+  }, []);
+  if (selected_board_id) {
+    let url = `/boards/${selected_board_id}/assign_users`;
+    let data = {"user_ids": selected_user_ids};
+    return Ajax.postJson(url, data);
+  }
+};
+
+var fetchUsersByBoardId = (board_id) => {
+  return Ajax.getJson('/boards/' + board_id + "/users").then(response => {
+    var users_by_board = JSON.parse(response.response);
+    users = users.map((user) => {
+      user.selected = false;
+      return user;
+    });
+    if (users_by_board.length > 0) {
+      users_by_board.forEach((user) => {
+        toggleUserById(user.id);
+      });
+    }
   });
 };
 
@@ -400,7 +452,9 @@ var addUser = (data) => {
     if (response_obj.success) {
       ErrorActions.removeUserErrors();
       user_dialog_open = false;
-      BoardStore.emitChange();
+      fetchUsers().then(fetchUsersByBoardId.bind(this, selected_board_id)).then(() => {
+        BoardStore.emitChange();
+      });
     } else {
       var obj_errors = response_obj.messages;
       var error_fields = ErrorFields.USER;
@@ -613,7 +667,27 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "TOGGLE_USER_BY_ID":
-      toggleUserById(action.user_id);
+      toggleUserByIdAction(action.user_id);
+      BoardStore.emitChange();
+      break;
+    case "SELECT_BOARD":
+      if (selected_board_id !== action.board_id) {
+        selected_board_id = action.board_id;
+        fetchUsersByBoardId(action.board_id).then(() => {
+          BoardStore.emitChange();
+        });
+      }
+      break;
+    case "SHOW_USER_ASSIGN":
+      show_user_assign = true;
+      show_board_list = false;
+      selected_board_id = null;
+      BoardStore.emitChange();
+      break;
+    case "SHOW_BOARD_LIST":
+      show_user_assign = false;
+      show_board_list = true;
+      selected_board_id = null;
       BoardStore.emitChange();
       break;
     default:

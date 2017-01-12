@@ -1,7 +1,6 @@
 /*jshint esversion: 6 */
 import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
-import MyMenu from './menu';
+import FlatButton from 'material-ui/FlatButton'; import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
 import UserDialog from './user_dialog';
@@ -12,6 +11,7 @@ import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MsgSnackbar from './msg_snackbar';
 import BoardList from './board_list';
+import UserAssgin from './user_assign';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -24,7 +24,8 @@ class LandingLayout extends Layout  {
       list_items: BoardStore.getBoards(),
       menu_open: false,
       board_open: BoardStore.getBoardDialogOpen(),
-      user_open: BoardStore.getUserDialogOpen()
+      user_open: BoardStore.getUserDialogOpen(),
+      show_user_assign: BoardStore.getShowUserAssign()
     };
   }
 
@@ -61,6 +62,7 @@ class LandingLayout extends Layout  {
   }
 
   render() {
+    var content =  this.state.show_user_assign ? <UserAssgin /> : <BoardList />;
     return <div>
       <AppBar
         title={this.props.title}
@@ -80,7 +82,7 @@ class LandingLayout extends Layout  {
       <UserDialog open={this.state.user_open}
         handleClose={this.handleUserDialogClose}
       />
-      <BoardList />
+      {content}
       {this.props.children}
       <MsgSnackbar/>
      </div>;
