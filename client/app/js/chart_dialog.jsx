@@ -1,5 +1,6 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -81,16 +82,32 @@ export default class ChartDialog extends React.Component {
     };
   };
 
+  handleClear = () => {
+    BoardActions.showConfirmation(() => {
+      BoardActions.clearBurndown();
+      BoardActions.closeChartDialog();
+    });
+  };
+
   showForm = () => {
+    const actions = [
+      <FlatButton
+        label="Clear"
+        primary={true}
+        keyboardFocused={true}
+        onTouchTap={this.handleClear}
+      />,
+    ];
     return <Dialog
         title={"Burndown"}
+        actions={actions}
         modal={false}
         open={this.state.open}
         onRequestClose={BoardActions.closeChartDialog}
         autoScrollBodyContent={true}
       >
        <div>
-         <Line data={this.getData()}  width="700" height="350" />
+         <Line data={this.getData()}  width="700" height="300" />
        </div>
       </Dialog>;
   }

@@ -363,6 +363,11 @@ var fetchBurnDownData = () => {
   });
 };
 
+var clearBurndown = () => {
+  var url = `/boards/${board_id}/clear`;
+  return Ajax.get(url, {"Accept": "application/json"});
+};
+
 var fetchAll = () => {
   board_id = null;
   board_title = "";
@@ -626,6 +631,9 @@ AppDispatcher.register(function(action) {
       } else {
         BoardStore.emitChange();
       }
+      break;
+    case "CLEAR_BURNDOWN":
+      clearBurndown();
       break;
     case "SHOW_TASK_DIALOG":
       task_dialog_open = true;
