@@ -168,7 +168,7 @@ func TestBoardNested(t *testing.T) {
 	stories[0].Name = "fooo"
 	stories[0].Save()
 
-	ta := res1.StoriesNested[1].Tasks[0]
+	ta := res1.StoriesNested[1].TasksNested[0]
 	if ta.Name != task.Name {
 		t.Error("Task in story 2 should be 'task for story2'. Is:", ta.Name)
 	}

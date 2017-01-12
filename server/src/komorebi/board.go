@@ -100,18 +100,22 @@ func GetBoardNestedByName(name string) BoardNested {
 	}
 	story_ids := strings.Join(story_id_array, ", ")
 
-	var tasks Tasks
+	var tasks TasksNested
 	_, err = dbMapper.Connection.Select(&tasks,
 		"select * from tasks where StoryId IN ("+story_ids+")")
 
 	for sto_index, sto := range board.StoriesNested {
-		sto_tasks := make([]Task, 0)
+		sto_tasks := make([]TaskNested, 0)
 		for _, t := range tasks {
 			if t.StoryId == sto.Id {
 				sto_tasks = append(sto_tasks, t)
 			}
 		}
-		board.StoriesNested[sto_index].Tasks = sto_tasks
+		board.StoriesNested[sto_index].TasksNested = sto_tasks
+		for t_idx, task := range board.StoriesNested[sto_index].TasksNested {
+			users := GetUsersByTaskId(task.Id)
+			board.StoriesNested[sto_index].TasksNested[t_idx].Users = users
+		}
 	}
 	return board
 }
