@@ -37,7 +37,10 @@ export default class TaskShowDialog extends React.Component {
   }
 
   onClickDestroy = () => {
-    BoardActions.deleteTask(this.props.task_id);
+    BoardActions.showConfirmation(() => {
+      BoardActions.deleteTask(this.props.task_id);
+      BoardActions.closeTaskShowDialog();
+    });
   }
 
   onClickEdit = () => {

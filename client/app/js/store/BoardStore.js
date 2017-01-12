@@ -34,6 +34,8 @@ var task_dialog_open = false;
 var board_dialog_open = false;
 var user_dialog_open = false;
 var show_message = false;
+var confirmation_open = false;
+var confirmation_callback = null;
 
 var story_show_id = null;
 var story_edit_id = null;
@@ -122,6 +124,12 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getMenuOpen: () => {
     return menu_open;
+  },
+  getConfirmationOpen: () => {
+    return confirmation_open;
+  },
+  getConfirmationCallback: () => {
+    return confirmation_callback;
   },
   getColumnDialogOpen: () => {
     return column_dialog_open;
@@ -686,6 +694,16 @@ AppDispatcher.register(function(action) {
       break;
     case "OPEN_USER_DIALOG":
       user_dialog_open = true;
+      BoardStore.emitChange();
+      break;
+    case "OPEN_CONFIRMATION":
+      confirmation_open = true;
+      confirmation_callback = action.callback;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_CONFIRMATION":
+      confirmation_open = false;
+      confirmation_callback = null;
       BoardStore.emitChange();
       break;
     case "CLOSE_USER_DIALOG":

@@ -20,7 +20,10 @@ export default class Column extends React.Component {
 
   onIconClickHandler = (event, id) => {
     event.stopPropagation();
-    BoardActions.deleteColumn(id);
+
+    BoardActions.showConfirmation(() => {
+      BoardActions.deleteColumn(id);
+    });
   }
 
   render() {

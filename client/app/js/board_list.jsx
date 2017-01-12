@@ -47,7 +47,9 @@ export default class BoardList extends React.Component {
 
   onIconClickHandler = (event, id) => {
     event.stopPropagation();
-    BoardActions.deleteBoard(id);
+    BoardActions.showConfirmation(() => {
+      BoardActions.deleteBoard(id);
+    });
   }
 
   render() {

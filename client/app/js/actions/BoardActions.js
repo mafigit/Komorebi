@@ -56,6 +56,17 @@ var BoardActions = {
       actionType: "FETCH_ALL",
     });
   },
+  showConfirmation: (callback) => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_CONFIRMATION",
+      callback: callback
+    });
+  },
+  closeConfirmation: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_CONFIRMATION"
+    });
+  },
   showTaskDialog: (task_id) =>  {
     AppDispatcher.dispatch({
       actionType: "SHOW_TASK_DIALOG",
