@@ -43,6 +43,12 @@ curl localhost:8080/boards/1/users
 => get users from board 1
 => [{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]
 
+GET /boards/{:board_id}/burndown
+curl localhost:8080/boards/1/burndown
+=> get burndown data from board 1
+=> [{"creation":1484242228544839480,"todo":2},{"creation":1484242278509896481,"todo":1},{"creation":1484242291715158436,"todo":0}]
+
+
 ### Columns
 
 GET /columns/{:column_id}

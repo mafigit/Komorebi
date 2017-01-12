@@ -79,6 +79,12 @@ var routes = Routes{
 		BoardDelete,
 	},
 	Route{
+		"GetBurndownFromBoard",
+		"GET",
+		"/boards/{board_id}/burndown",
+		GetBurndownFromBoard,
+	},
+	Route{
 		"ColumnGet",
 		"GET",
 		"/columns/{column_id}",

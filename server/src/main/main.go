@@ -18,6 +18,7 @@ func main() {
 	port := flag.String("port", "8080", "Listening port")
 	logfile := flag.String("logfile", "", "Logfile (default stdout)")
 	dump := flag.Bool("dump", false, "Dump stories, make a snapshot")
+	clear_board := flag.String("clear", "", "Clears dump from given board")
 	flag.StringVar(&komorebi.PublicDir, "publicdir", "public/", "Public directory")
 
 	flag.Parse()
@@ -49,10 +50,15 @@ func main() {
 	db.CreateTables()
 
 	if *dump {
-		komorebi.Logger.Printf("Dump cards")
+		komorebi.Logger.Printf("Dump tasks")
 		komorebi.DumpIt()
-	} else {
-		router := komorebi.NewRouter()
-		log.Fatal(http.ListenAndServe(":"+*port, router))
+		os.Exit(0)
 	}
+	if len(*clear_board) > 0 {
+		komorebi.Logger.Printf("Clear dump for board", *clear_board)
+		komorebi.ClearDump(*clear_board)
+		os.Exit(0)
+	}
+	router := komorebi.NewRouter()
+	log.Fatal(http.ListenAndServe(":"+*port, router))
 }

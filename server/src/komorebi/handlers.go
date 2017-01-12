@@ -75,6 +75,14 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GetBurndownFromBoard(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_id, _ := strconv.Atoi(vars["board_id"])
+
+	dumps := GetDumpsByBoardId(board_id)
+	json.NewEncoder(w).Encode(dumps)
+}
+
 func GetStories(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
