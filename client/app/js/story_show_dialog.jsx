@@ -58,7 +58,7 @@ export default class StoryShowDialog extends React.Component {
   }
 
   onClickEdit = () => {
-    BoardActions.showTaskDialog(this.props.story_id);
+    BoardActions.openStoryEditDialog(this.props.story_id);
   }
 
   showForm = () => {
