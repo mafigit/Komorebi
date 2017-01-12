@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	fmt.Println("created db " + file.Name())
 
 	//Fixtures
-	b := NewBoard("test1")
+	b := NewBoard("test1", false)
 	b.Save()
 	c1 := NewColumn("WIP", 0, 1)
 	c2 := NewColumn("TEST", 1, 1)
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestBoardDatabase(t *testing.T) {
-	b := NewBoard("test")
+	b := NewBoard("test", false)
 	if b.Name != "test" {
 		t.Error("Board should have name test")
 	}
@@ -109,27 +109,27 @@ func TestBoardDatabase(t *testing.T) {
 }
 
 func TestBoardValidation(t *testing.T) {
-	b := NewBoard("testValidation")
+	b := NewBoard("testValidation", false)
 	if success, _ := b.Validate(); success == false {
 		t.Error("Name 'testValidation' should be valid")
 	}
 
-	b = NewBoard("test foo")
+	b = NewBoard("test foo", true)
 	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'test foo' should not be valid")
 	}
 
-	b = NewBoard("gz")
+	b = NewBoard("gz", false)
 	b.Save()
 
-	b = NewBoard("gz")
+	b = NewBoard("gz", false)
 	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'gz' should be uniq")
 	}
 }
 
 func TestBoardNested(t *testing.T) {
-	b := NewBoard("testValidationFoobar")
+	b := NewBoard("testValidationFoobar", false)
 	b.Save()
 	var board Board
 	GetByName(&board, b.Name)
@@ -186,7 +186,7 @@ func TestBoardNested(t *testing.T) {
 }
 
 func TestBoardNestedDelete(t *testing.T) {
-	b := NewBoard("testNestedDelete")
+	b := NewBoard("testNestedDelete", false)
 	b.Save()
 	var board Board
 	GetByName(&board, b.Name)

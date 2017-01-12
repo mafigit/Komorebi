@@ -54,7 +54,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get all boards"
 resp=`curl  localhost:8080/boards 2>/dev/null`
-test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19}},{\"id\":2,\"name\":\"test\",\"updated_at\":[0-9]{19}}]" $resp
+test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false},{\"id\":2,\"name\":\"test\",\"updated_at\":[0-9]{19},\"private\":false}]" $resp
 
 echo "Delete board test"
 resp=`curl  -X DELETE localhost:8080/boards/2 2>/dev/null`
@@ -62,7 +62,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get all boards"
 resp=`curl  localhost:8080/boards 2>/dev/null`
-test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19}}]" $resp
+test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false}]" $resp
 
 echo "Update board gz with new name foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"foo","id":1}' localhost:8080/boards/1 2>/dev/null`
@@ -70,7 +70,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get board foo"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"stories\":\[*\],\"columns\":\[*\]}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"private\":false,\"stories\":\[*\],\"columns\":\[*\]}" $resp
 
 
 
@@ -90,7 +90,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get board with columns"
 resp=`curl  -H "Accept: application/json" localhost:8080/foo 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"stories\":\[*\],\"columns\":\[{\"id\":1,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":0}\]}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"private\":false,\"stories\":\[*\],\"columns\":\[{\"id\":1,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":0}\]}" $resp
 
 echo "Update board WIP with new name BACKLOG"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"BACKLOG", "position":0, "id":1}' localhost:8080/columns/1 2>/dev/null`
