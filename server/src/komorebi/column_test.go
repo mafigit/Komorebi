@@ -21,7 +21,7 @@ func TestNewColumn(t *testing.T) {
 }
 
 func TestColumnValidation(t *testing.T) {
-	b := NewBoard("testColumnValidation")
+	b := NewBoard("testColumnValidation", false)
 	b.Save()
 	var board Board
 	GetByName(&board, "testColumnValidation")
@@ -49,7 +49,7 @@ func TestColumnValidation(t *testing.T) {
 }
 
 func TestColumnReorder(t *testing.T) {
-	b := NewBoard("testColumnReorder")
+	b := NewBoard("testColumnReorder", false)
 	b.Save()
 	var board Board
 	GetByName(&board, "testColumnReorder")

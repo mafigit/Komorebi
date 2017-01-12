@@ -161,7 +161,7 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board = NewBoard(board.Name)
+	board = NewBoard(board.Name, board.Private)
 	modelCreate(board, w, r)
 }
 

@@ -8,21 +8,24 @@ import (
 
 type Board struct {
 	DbModel
+	Private bool `json:"private"`
 }
 
 type BoardNested struct {
 	DbModel
+	Private       bool `json:"private"`
 	StoriesNested `json:"stories"`
 	Columns       `json:"columns"`
 }
 
 type Boards []Board
 
-func NewBoard(name string) Board {
+func NewBoard(name string, private bool) Board {
 	return Board{
 		DbModel: DbModel{
 			Name: name,
 		},
+		Private: private,
 	}
 }
 

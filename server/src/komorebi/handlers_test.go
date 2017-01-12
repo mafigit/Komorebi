@@ -39,7 +39,7 @@ func TestBoardsGetHandler(t *testing.T) {
 }
 
 func TestBoardShowHandler(t *testing.T) {
-	b := NewBoard("testBoardShow")
+	b := NewBoard("testBoardShow", false)
 	b.Save()
 	req, _ := http.NewRequest("GET", "/testBoardShow", nil)
 	w := httptest.NewRecorder()
@@ -83,7 +83,7 @@ func TestBoardCreateHandler(t *testing.T) {
 }
 
 func TestColumnCreateHandler(t *testing.T) {
-	b := NewBoard("test123")
+	b := NewBoard("test123", false)
 	b.Save()
 	board := GetBoardNestedByName("test123")
 	data := fmt.Sprintf("{\"name\":\"testColumnCreate\",\"board_id\":%d}", board.Id)
@@ -118,7 +118,7 @@ func TestColumnCreateHandler(t *testing.T) {
 }
 
 func TestStoryCreateHandler(t *testing.T) {
-	b := NewBoard("testStoryCreate")
+	b := NewBoard("testStoryCreate", false)
 	b.Save()
 	var board Board
 	GetByName(&board, "testStoryCreate")
@@ -144,7 +144,7 @@ func TestStoryCreateHandler(t *testing.T) {
 }
 
 func TestTaskCreateHandler(t *testing.T) {
-	b := NewBoard("testTaskCreate")
+	b := NewBoard("testTaskCreate", false)
 	b.Save()
 	var board Board
 	GetByName(&board, "testTaskCreate")
