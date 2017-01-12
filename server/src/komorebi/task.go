@@ -13,6 +13,11 @@ type Task struct {
 	Archived bool   `json:"archived"`
 }
 
+type TaskNested struct {
+	Task
+	Users `json:"users"`
+}
+
 type Tasks []Task
 
 func NewTask(name string, desc string, story_id int, column_id int) Task {
@@ -79,6 +84,19 @@ func (t Task) Validate() (bool, map[string][]string) {
 	}
 
 	return success, errors
+}
+
+func GetTaskNested(task_id int) TaskNested {
+	var task TaskNested
+
+	err := dbMapper.Connection.SelectOne(&task,
+		"select * from tasks where Id=?", task_id)
+	if err != nil {
+		Logger.Printf("Error while fetching task", task_id)
+	}
+
+	task.Users = GetUsersByTaskId(task_id)
+	return task
 }
 
 func GetTasksByColumnId(column_id int) Tasks {

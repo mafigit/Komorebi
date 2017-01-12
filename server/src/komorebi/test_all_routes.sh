@@ -138,7 +138,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get task foo by Id"
 resp=`curl localhost:8080/tasks/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"column_id\":1,\"archived\":false}" $resp
+test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\",\"story_id\":1,\"column_id\":1,\"archived\":false,\"users\":\[*\]}" $resp
 
 echo "Create task test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test", "desc":"desc", "story_id":1, "column_id":1}' localhost:8080/tasks 2>/dev/null`

@@ -435,8 +435,7 @@ func TaskGet(w http.ResponseWriter, r *http.Request) {
 	task_id := vars["task_id"]
 	id, _ := strconv.Atoi(task_id)
 
-	var task Task
-	GetById(&task, id)
+	task := GetTaskNested(id)
 	json.NewEncoder(w).Encode(task)
 }
 
