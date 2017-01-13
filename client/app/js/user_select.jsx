@@ -13,8 +13,9 @@ export default class UserSelect extends React.Component {
   }
 
   menuItems = () => {
-    return this.props.users.map((user, key) => {
-      return <MenuItem key={key} value={user.id} primaryText={user.name} />;
+    var users = this.props.users;
+    return users.map((user, key) => {
+      return <MenuItem key={key+1} value={user.id} primaryText={user.name} />;
     });
   }
 
@@ -23,6 +24,7 @@ export default class UserSelect extends React.Component {
       <SelectField value={this.props.user_id}
         onChange={this.props.onChange}
         floatingLabelStyle={this.props.style}>
+        <MenuItem key={0} value={undefined} primaryText={"No user"} />
         {this.menuItems()}
       </SelectField>
       <div style={error_style}>{this.props.errorText}</div>

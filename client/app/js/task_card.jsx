@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardTitle, CardActions, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
 import OpenInNewIcon from 'material-ui/svg-icons/action/open-in-new';
 import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left';
@@ -38,6 +38,7 @@ export default class Column extends React.Component {
      * @property {string} desc description of task
      * @property {number} task_story_id story id of task
      * @property {number} column_id column id of the task
+     * @property {user} user user of the task
      */
     this.state={};
   }
@@ -121,9 +122,20 @@ export default class Column extends React.Component {
 
   render () {
     var story = BoardStore.getStoryById(this.props.task_story_id);
+
+    var img = undefined;
+    if (this.props.user) {
+      if (this.props.user.image_path) {
+        img = this.props.user.image_path;
+      } else {
+        img = "/images/users/" + this.props.user.name +  ".png";
+      }
+    }
+
     return <Card className="task">
-      <CardTitle titleStyle={{fontSize: 20}}
+      <CardHeader titleStyle={{fontSize: 20}}
         title={this.props.name}
+        avatar={img}
         subtitle={story.name}
       />
       <CardText className="task-text">

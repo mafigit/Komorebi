@@ -61,6 +61,12 @@ export default class TaskDialog extends React.Component {
     this.setState({form_values: form_values});
   }
 
+  onChangeUserSelect(component, key, opt, value) {
+    var form_values = this.state.form_values;
+    form_values[key] = value;
+    this.setState({form_values: form_values});
+  }
+
   componentWillUnmount = () => {
     ErrorStore.removeChangeListener(this._onError);
     BoardStore.removeChangeListener(this._onChange);
@@ -120,7 +126,9 @@ export default class TaskDialog extends React.Component {
           users={this.state.users}
           user_id={this.state.form_values.user_id}
           onChange={
-            (comp, val, val2) => { this.onChange(comp, "user_id", val, val2); }
+            (comp, opt, val) => {
+              this.onChangeUserSelect(comp, "user_id", opt, val);
+            }
           }
         />
         <br />
