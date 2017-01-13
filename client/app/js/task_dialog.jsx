@@ -87,11 +87,10 @@ export default class TaskDialog extends React.Component {
       form_data.story_id = BoardStore.getSelectedStoryId();
     }
 
-    form_data.column_id = BoardStore.getFirstColumn().id;
-
     if (this.state.task) {
       BoardActions.updateTask(form_data);
     } else {
+      form_data.column_id = BoardStore.getFirstColumn().id;
       BoardActions.addTask(form_data);
     }
   }
