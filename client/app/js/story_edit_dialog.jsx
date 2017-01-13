@@ -11,7 +11,7 @@ import ErrorStore from './store/ErrorStore';
 const default_form_values = {
   name: "",
   desc: "",
-  points: 0,
+  points: 1,
   requirements: "",
   board_id: ""
 };

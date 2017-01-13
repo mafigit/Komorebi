@@ -56,7 +56,7 @@ export default class TaskShowDialog extends React.Component {
       if (this.state.user.image_path) {
         img = this.state.user.image_path;
       } else {
-        img = "/images/users" + this.state.user.name +  ".png";
+        img = "/images/users/" + this.state.user.name +  ".png";
       }
     }
     return(
