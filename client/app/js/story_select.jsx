@@ -5,7 +5,7 @@ import BoardStore from './store/BoardStore';
 
 const error_style = {
   color: "rgb(244, 67, 54)",
-  'font-size': 12
+  fontSize: 12
 };
 
 export default class StorySelect extends React.Component {

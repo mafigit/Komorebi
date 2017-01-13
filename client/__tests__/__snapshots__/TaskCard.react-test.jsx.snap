@@ -4,7 +4,8 @@ exports[`test Should update position of task after clicking on next button 1`] =
   expandable={false}
   expanded={null}
   initiallyExpanded={false}>
-  <CardTitle
+  <CardHeader
+    avatar={null}
     subtitle="foo"
     title="test"
     titleStyle={

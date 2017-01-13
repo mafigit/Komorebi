@@ -120,11 +120,22 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     return tasks_to_display;
   },
   getTaskById: function(id) {
-    return tasks.find((task) => { return task.id === id; });
+    var _task = tasks.find((task) => { return task.id === id; });
+    if (_task) {
+      var _users = BoardStore.getUsersByTask(_task);
+      if (_users.length > 0) {
+        _task.user = _users[0];
+      }
+    }
+    return _task;
   },
   getTaskByStoryId: function(story_id) {
     return tasks.reduce((acc, task) => {
       if (task.story_id == story_id) {
+        var _users = BoardStore.getUsersByTask(task);
+        if (_users.length > 0) {
+          task.user = _users[0];
+        }
         acc.push(task);
       }
       return acc;
@@ -407,7 +418,11 @@ var initWebsocket = () => {
 
 var assignUserToTask = (user_id, task) => {
   let url = `/tasks/${task.id}/assign_users`;
-  let data = {"user_ids": [user_id]};
+  let user_ids = [];
+  if (user_id) {
+    user_ids.push(user_id);
+  }
+  let data = {"user_ids": user_ids};
   return Ajax.postJson(url, data);
 };
 
