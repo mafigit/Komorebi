@@ -6,7 +6,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
   initiallyExpanded={false}>
   <CardHeader
     avatar={null}
-    subtitle="foo"
+    subtitle=""
     title="test"
     titleStyle={
       Object {
