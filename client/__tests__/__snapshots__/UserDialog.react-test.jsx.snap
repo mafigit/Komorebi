@@ -33,9 +33,27 @@ exports[`test Should render UserDialog 1`] = `
     fullWidth={false}
     hintText="Board Name"
     multiLine={false}
+    onChange={[Function]}
     rows={1}
     type="text"
-    underlineShow={true} />
+    underlineShow={true}
+    value="" />
   <br />
+  <br />
+  Public or Private?
+  <br />
+  <Checkbox
+    checked={false}
+    checkedIcon={<ActionVisibilityOff />}
+    disabled={false}
+    label="Public"
+    labelPosition="right"
+    labelStyle={
+      Object {
+        "fontWeight": "normal",
+      }
+    }
+    onCheck={[Function]}
+    uncheckedIcon={<ActionVisibility />} />
 </Dialog>
 `;
