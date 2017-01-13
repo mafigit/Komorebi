@@ -10,13 +10,8 @@ type Story struct {
 }
 
 type StoryNested struct {
-	DbModel
-	Desc         string `json:"desc"`
-	Points       int    `json:"points"`
-	Requirements string `json:"requirements"`
-	BoardId      int    `json:"board_id"`
-	TasksNested  `json:"tasks"`
-	Archived     bool `json:"archived"`
+	Story
+	TasksNested `json:"tasks"`
 }
 
 type Stories []Story

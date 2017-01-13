@@ -12,8 +12,7 @@ type Board struct {
 }
 
 type BoardNested struct {
-	DbModel
-	Private       bool `json:"private"`
+	Board
 	StoriesNested `json:"stories"`
 	Columns       `json:"columns"`
 }

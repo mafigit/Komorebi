@@ -7,10 +7,8 @@ type Column struct {
 }
 
 type ColumnNested struct {
-	DbModel
-	Tasks    `json:"tasks"`
-	Position int `json:"position"`
-	BoardId  int `json:"board_id"`
+	Column
+	Tasks `json:"tasks"`
 }
 
 type ColumnsNested []ColumnNested
