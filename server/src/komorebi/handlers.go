@@ -701,8 +701,14 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 	file := PublicDir + r.URL.Path
-
 	_, err := os.Stat(file)
+	default_pic := PublicDir + "/images/users/default.png"
+
+	if strings.Contains(r.URL.Path, "images/users/") && err != nil {
+		http.ServeFile(w, r, default_pic)
+		return
+	}
+
 	if err == nil {
 		http.ServeFile(w, r, file)
 	} else {
