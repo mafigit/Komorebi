@@ -121,10 +121,10 @@ export default class Column extends React.Component {
   }
 
   render () {
-    var story = BoardStore.getStoryById(this.props.task_story_id);
-
     var img = undefined;
+    var user_name = "";
     if (this.props.user) {
+      user_name = this.props.user.name;
       if (this.props.user.image_path) {
         img = this.props.user.image_path;
       } else {
@@ -136,7 +136,7 @@ export default class Column extends React.Component {
       <CardHeader titleStyle={{fontSize: 20}}
         title={this.props.name}
         avatar={img}
-        subtitle={story.name}
+        subtitle={user_name}
       />
       <CardText className="task-text">
         <ReactMarkdown source={this.props.desc}/>
