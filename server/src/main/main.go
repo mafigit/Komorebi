@@ -66,8 +66,10 @@ func main() {
 		for _ = range ticker.C {
 			weekday := time.Now().Weekday().String()
 			if weekday == "Sunday" || weekday == "Saturday" {
+				komorebi.Logger.Printf("Skip periodic task dump")
 				continue
 			}
+			komorebi.Logger.Printf("Periodic task dump")
 			komorebi.DumpIt()
 		}
 	}()
