@@ -36,6 +36,11 @@ var BoardActions = {
       actionType: "CLOSE_TASK_SHOW_DIALOG",
     });
   },
+  clearBurndown: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLEAR_BURNDOWN",
+    });
+  },
   fetchBoards: () => {
     AppDispatcher.dispatch({
       actionType: "FETCH_BOARDS",

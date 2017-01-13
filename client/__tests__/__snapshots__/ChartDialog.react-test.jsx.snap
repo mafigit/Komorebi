@@ -1,5 +1,22 @@
 exports[`<ChartDialog /> Should render ChartDialog 1`] = `
 <Dialog
+  actions={
+    Array [
+      <FlatButton
+        disabled={false}
+        keyboardFocused={true}
+        label="Clear"
+        labelPosition="after"
+        labelStyle={Object {}}
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onTouchStart={[Function]}
+        onTouchTap={[Function]}
+        primary={true}
+        secondary={false} />,
+    ]
+  }
   autoDetectWindowHeight={true}
   autoScrollBodyContent={true}
   modal={false}
@@ -38,7 +55,7 @@ exports[`<ChartDialog /> Should render ChartDialog 1`] = `
           "labels": Array [],
         }
       }
-      height="350"
+      height="300"
       width="700" />
   </div>
 </Dialog>
