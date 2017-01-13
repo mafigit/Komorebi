@@ -57,16 +57,6 @@ func GetStoriesByBoardId(id int) Stories {
 	return stories
 }
 
-func GetStoryById(id int) Story {
-	var story Story
-	err := dbMapper.Connection.SelectOne(&story,
-		"select * from stories where Id=? ", id)
-	if err != nil {
-		Logger.Printf("could not find story", id)
-	}
-	return story
-}
-
 func (s Story) TableName() string {
 	return "stories"
 }
@@ -101,17 +91,6 @@ func (s Story) Destroy() bool {
 	UpdateWebsockets(board.Name, "Story deleted")
 
 	return true
-}
-
-func GetTasksByStoryId(story_id int) Tasks {
-	var tasks Tasks
-
-	_, err := dbMapper.Connection.Select(&tasks,
-		"select * from tasks where StoryId=? order by Id ", story_id)
-	if err != nil {
-		Logger.Printf("Error while fetching tasks", story_id)
-	}
-	return tasks
 }
 
 func (s Story) Validate() (bool, map[string][]string) {

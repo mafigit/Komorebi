@@ -122,16 +122,6 @@ func GetBoardNestedByName(name string) BoardNested {
 	return board
 }
 
-func GetBoardByName(name string) Board {
-	var board Board
-	err := dbMapper.Connection.
-		SelectOne(&board, "select * from boards where Name=?", name)
-	if err != nil {
-		Logger.Printf("could not find board with name", name)
-	}
-	return board
-}
-
 func GetBoardByColumnId(c_id int) Board {
 	var board Board
 

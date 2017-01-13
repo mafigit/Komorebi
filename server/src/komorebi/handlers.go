@@ -366,7 +366,8 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board := GetBoardByName(board_name)
+	var board Board
+	GetByName(&board, board_name)
 
 	if board.Name == "" {
 		return
