@@ -112,13 +112,15 @@ func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func modelUpdate(old_m Model, update_m Model, var_id int, w http.ResponseWriter, r *http.Request) {
+func modelUpdate(old_m Model, update_m Model, req_id string, w http.ResponseWriter, r *http.Request) {
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
 
-	if var_id != update_m.GetId() {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars[req_id])
+	if id != update_m.GetId() {
 		w.WriteHeader(400)
 		return
 	}
@@ -167,18 +169,15 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 
 func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_board Board
-	vars := mux.Vars(r)
-	board_id := vars["board_id"]
+	var old_board Board
+	getObjectByReqId("board_id", r, &old_board)
 
 	if err := json.NewDecoder(r.Body).Decode(&update_board); err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	id, _ := strconv.Atoi(board_id)
-	var old_board Board
-	GetById(&old_board, id)
-	modelUpdate(old_board, update_board, id, w, r)
+	modelUpdate(old_board, update_board, "board_id", w, r)
 }
 
 func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
@@ -190,22 +189,14 @@ func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
 }
 
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	board_id := vars["board_id"]
-
-	id, _ := strconv.Atoi(board_id)
 	var board Board
-	GetById(&board, id)
+	getObjectByReqId("board_id", r, &board)
 	modelDelete(board, w, r)
 }
 
 func ColumnGet(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	column_id := vars["column_id"]
-
-	id, _ := strconv.Atoi(column_id)
 	var column Column
-	GetById(&column, id)
+	getObjectByReqId("column_id", r, &column)
 
 	if column.Id == 0 {
 		w.WriteHeader(400)
@@ -247,55 +238,39 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 
 func UserUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_user User
-	vars := mux.Vars(r)
-	user_id := vars["user_id"]
+	var old_user User
+	getObjectByReqId("user_id", r, &old_user)
 
 	if err := json.NewDecoder(r.Body).Decode(&update_user); err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	id, _ := strconv.Atoi(user_id)
-	var old_user User
-	GetById(&old_user, id)
-	modelUpdate(old_user, update_user, id, w, r)
+	modelUpdate(old_user, update_user, "user_id", w, r)
 }
 
 func UserDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	user_id := vars["user_id"]
-
-	id, _ := strconv.Atoi(user_id)
 	var user User
-	GetById(&user, id)
+	getObjectByReqId("user_id", r, &user)
 	modelDelete(user, w, r)
 }
 
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_column Column
-	vars := mux.Vars(r)
-	column_id := vars["column_id"]
+	var old_column Column
+	getObjectByReqId("column_id", r, &old_column)
 
 	if err := json.NewDecoder(r.Body).Decode(&update_column); err != nil {
 		w.WriteHeader(400)
 		return
 	}
-
-	id, _ := strconv.Atoi(column_id)
-	var old_column Column
-	GetById(&old_column, id)
 	update_column.BoardId = old_column.BoardId
-	modelUpdate(old_column, update_column, id, w, r)
+	modelUpdate(old_column, update_column, "column_id", w, r)
 }
 
 func ColumnDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	column_id := vars["column_id"]
-
-	id, _ := strconv.Atoi(column_id)
 	var column Column
-	GetById(&column, id)
-
+	getObjectByReqId("column_id", r, &column)
 	modelDelete(column, w, r)
 }
 
@@ -323,12 +298,8 @@ func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
 }
 
 func StoryGet(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	story_id := vars["story_id"]
-
-	id, _ := strconv.Atoi(story_id)
 	var story Story
-	GetById(&story, id)
+	getObjectByReqId("story_id", r, &story)
 
 	if story.Id == 0 {
 		w.WriteHeader(400)
@@ -352,17 +323,15 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 
 func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_story Story
-	vars := mux.Vars(r)
-	story_id := vars["story_id"]
+	var old_story Story
+	getObjectByReqId("story_id", r, &old_story)
 
 	if err := json.NewDecoder(r.Body).Decode(&update_story); err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	id, _ := strconv.Atoi(story_id)
-	old_story := GetStoryById(id)
-	modelUpdate(old_story, update_story, id, w, r)
+	modelUpdate(old_story, update_story, "story_id", w, r)
 }
 
 func StoryDelete(w http.ResponseWriter, r *http.Request) {
@@ -397,7 +366,8 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	board := GetBoardByName(board_name)
+	var board Board
+	GetByName(&board, board_name)
 
 	if board.Name == "" {
 		return
@@ -470,42 +440,32 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 
 func TaskUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_task Task
-	vars := mux.Vars(r)
-	task_id := vars["task_id"]
+	var old_task Task
+	getObjectByReqId("task_id", r, &old_task)
 
 	if err := json.NewDecoder(r.Body).Decode(&update_task); err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	id, _ := strconv.Atoi(task_id)
-	var old_task Task
-	GetById(&old_task, id)
-	modelUpdate(old_task, update_task, id, w, r)
+	modelUpdate(old_task, update_task, "task_id", w, r)
 }
 
 func TaskDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	task_id := vars["task_id"]
-
-	id, _ := strconv.Atoi(task_id)
 	var task Task
-	GetById(&task, id)
+	getObjectByReqId("task_id", r, &task)
 	modelDelete(task, w, r)
 }
 
 func AssignUsersToTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	task_id, _ := strconv.Atoi(vars["task_id"])
 	var users UserIds
+	var task Task
+	getObjectByReqId("task_id", r, &task)
 
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
-
-	var task Task
-	GetById(&task, task_id)
 
 	if task.Id <= 0 {
 		response.Success = false
@@ -534,16 +494,13 @@ func AssignUsersToTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUsersFromTask(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	task_id, _ := strconv.Atoi(vars["task_id"])
+	var task Task
+	getObjectByReqId("task_id", r, &task)
 
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
-
-	var task Task
-	GetById(&task, task_id)
 
 	if task.Id <= 0 {
 		w.WriteHeader(200)
@@ -554,22 +511,19 @@ func GetUsersFromTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := GetUsersByTaskId(task_id)
+	users := GetUsersByTaskId(task.Id)
 	json.NewEncoder(w).Encode(users)
 }
 
 func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	board_id, _ := strconv.Atoi(vars["board_id"])
 	var users UserIds
+	var board Board
+	getObjectByReqId("board_id", r, &board)
 
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
-
-	var board Board
-	GetById(&board, board_id)
 
 	if board.Id <= 0 {
 		response.Success = false
@@ -598,16 +552,13 @@ func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 }
 
 func ClearDumpsFromBoard(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	board_id, _ := strconv.Atoi(vars["board_id"])
+	var board Board
+	getObjectByReqId("board_id", r, &board)
 
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
-
-	var board Board
-	GetById(&board, board_id)
 
 	if board.Id <= 0 {
 		response.Success = false
@@ -622,16 +573,13 @@ func ClearDumpsFromBoard(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUsersFromBoard(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	board_id, _ := strconv.Atoi(vars["board_id"])
+	var board Board
+	getObjectByReqId("board_id", r, &board)
 
 	response := Response{
 		Success:  true,
 		Messages: make(map[string][]string),
 	}
-
-	var board Board
-	GetById(&board, board_id)
 
 	if board.Id <= 0 {
 		w.WriteHeader(200)
@@ -642,7 +590,7 @@ func GetUsersFromBoard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := GetUsersByBoardId(board_id)
+	users := GetUsersByBoardId(board.Id)
 	json.NewEncoder(w).Encode(users)
 }
 
@@ -719,4 +667,10 @@ func OwnNotFound(w http.ResponseWriter, r *http.Request) {
 func getIndex() string {
 	data, _ := ioutil.ReadFile(PublicDir + "/index.html")
 	return string(data)
+}
+
+func getObjectByReqId(req_var string, r *http.Request, model Model) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars[req_var])
+	GetById(model, id)
 }

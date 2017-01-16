@@ -110,6 +110,17 @@ func GetTasksByColumnId(column_id int) Tasks {
 	return tasks
 }
 
+func GetTasksByStoryId(story_id int) Tasks {
+	var tasks Tasks
+
+	_, err := dbMapper.Connection.Select(&tasks,
+		"select * from tasks where StoryId=? order by Id ", story_id)
+	if err != nil {
+		Logger.Printf("Error while fetching tasks", story_id)
+	}
+	return tasks
+}
+
 func AddUsersToTask(task Task, users UserIds) bool {
 	user_id_array := []string{}
 	for _, user_id := range users.UserIds {

@@ -12,8 +12,7 @@ type Board struct {
 }
 
 type BoardNested struct {
-	DbModel
-	Private       bool `json:"private"`
+	Board
 	StoriesNested `json:"stories"`
 	Columns       `json:"columns"`
 }
@@ -119,16 +118,6 @@ func GetBoardNestedByName(name string) BoardNested {
 			users := GetUsersByTaskId(task.Id)
 			board.StoriesNested[sto_index].TasksNested[t_idx].Users = users
 		}
-	}
-	return board
-}
-
-func GetBoardByName(name string) Board {
-	var board Board
-	err := dbMapper.Connection.
-		SelectOne(&board, "select * from boards where Name=?", name)
-	if err != nil {
-		Logger.Printf("could not find board with name", name)
 	}
 	return board
 }
