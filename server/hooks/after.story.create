@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#id=$1
+#name=$2
+#echo "after story create"
+#echo "story id: ${id}"
+#echo "story name: ${name}"

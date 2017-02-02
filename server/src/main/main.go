@@ -21,6 +21,7 @@ func main() {
 	dump := flag.Bool("dump", false, "Dump stories, make a snapshot")
 	clear_board := flag.String("clear", "", "Clears dump from given board")
 	flag.StringVar(&komorebi.PublicDir, "publicdir", "public/", "Public directory")
+	flag.StringVar(&komorebi.HookDir, "hookdir", "hooks/", "Directory for hooks")
 
 	flag.Parse()
 

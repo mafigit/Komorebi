@@ -1,6 +1,9 @@
 #!/bin/sh
 
 
+hookdir="mytesthooks"
+hookfile=$hookdir/after.story.create
+
 function test_equal() {
     exp="$1"
     got="$2"
@@ -16,9 +19,27 @@ function test_match() {
 }
 
 function fatal() {
+    echo
+    echo "#########"
+    echo "FAIL"
+    echo "#########"
     echo $1
+    clean_up_hooks
     kill -9 $komorebi_pid
     exit 1
+}
+
+function clean_up_hooks() {
+    [ -f $hookfile ] && rm  $hookfile
+    [ -d $hookdir ] && rmdir $hookdir
+}
+
+function create_hooks() {
+    mkdir $hookdir
+    echo "#!/bin/sh" > $hookfile
+    echo "touch \$2" >> $hookfile
+    echo "exit 0" >> $hookfile
+    chmod +x $hookfile
 }
 
 if [ ! -x ../../bin/komorebi ]; then
@@ -33,8 +54,10 @@ if [ -f komorebi.db ]; then
     rm komorebi.db
 fi
 
+
+
 echo "Starting komorebi..."
-./../../bin/komorebi > /dev/null 2>&1 &
+./../../bin/komorebi --hookdir $hookdir/ > /dev/null 2>&1 &
 komorebi_pid=$!
 
 sleep 5
@@ -281,8 +304,21 @@ resp=`curl localhost:8080/stories/1/dods 2>/dev/null`
 test_match "[{\"id\":1,\"name\":\"HA testen\",\"updated_at\":[0-9]{19},\"comment\":\"genubox HA\",\"state\":1,\"story_id\":1},{\"id\":2,\"name\":\"global search\",\"updated_at\":[0-9]{19},\"comment\":\"nicht relevant\",\"state\":2,\"story_id\":1}]" "$resp"
 
 
+
+### Test hooks
+
+create_hooks
+echo "Create story to test hook"
+resp=`curl -H "Content-Type: application/json" -d '{"name":"story_name","desc":"after_create","points":5,"requirements":"","board_id":1 }' localhost:8080/stories 2>/dev/null`
+sleep 2
+[ -f story_name ] || fatal "after create hook script did not execute"
+rm story_name
+
+
+
 echo 
 echo "#############"
 echo "all tests passed"
+clean_up_hooks
 kill -9 $komorebi_pid
 exit 0
