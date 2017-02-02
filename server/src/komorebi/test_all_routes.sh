@@ -252,6 +252,35 @@ echo "Assign wrong user to task 1"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localhost:8080/tasks/1/assign_users 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
 
+
+
+### Definiton of Done routes
+
+echo "Get (empty) Definition of dones for board foo"
+resp=`curl localhost:8080/foo/dods 2>/dev/null`
+test_equal "{\"dods\":[]}" $resp
+
+echo "Create Definition of dones for board foo"
+resp=`curl -H "Content-Type: application/json" -d '{"dods":["HA testen", "global search"]}' localhost:8080/foo/dods 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get Definition of dones for board foo"
+resp=`curl localhost:8080/foo/dods 2>/dev/null`
+test_equal "{\"dods\":[\"HA testen\",\"global search\"]}" "$resp"
+
+echo "Get Definition of dones for story 1"
+resp=`curl localhost:8080/stories/1/dods 2>/dev/null`
+test_match "\[{\"id\":1,\"name\":\"HA testen\",\"updated_at\":[0-9]{19},\"comment\":\"\",\"state\":0,\"story_id\":1},{\"id\":2,\"name\":\"global search\",\"updated_at\":[0-9]{19},\"comment\":\"\",\"state\":0,\"story_id\":1}\]" "$resp"
+
+echo "Update Definition of dones for story 1"
+resp=`curl -H "Content-Type: application/json" -d '[{"id":1,"name":"HA testen","comment":"genubox HA","state":1,"story_id":1},{"id":2,"name":"global search","comment":"nicht relevant","state":2,"story_id":1}]' localhost:8080/stories/1/dods 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get Definition of dones for story 1"
+resp=`curl localhost:8080/stories/1/dods 2>/dev/null`
+test_match "[{\"id\":1,\"name\":\"HA testen\",\"updated_at\":[0-9]{19},\"comment\":\"genubox HA\",\"state\":1,\"story_id\":1},{\"id\":2,\"name\":\"global search\",\"updated_at\":[0-9]{19},\"comment\":\"nicht relevant\",\"state\":2,\"story_id\":1}]" "$resp"
+
+
 echo 
 echo "#############"
 echo "all tests passed"

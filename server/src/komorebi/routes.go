@@ -133,6 +133,18 @@ var routes = Routes{
 		StoryGet,
 	},
 	Route{
+		"StoryDodGet",
+		"GET",
+		"/stories/{story_id}/dods",
+		StoryDodGet,
+	},
+	Route{
+		"StoryDodUpdate",
+		"POST",
+		"/stories/{story_id}/dods",
+		StoryDodUpdate,
+	},
+	Route{
 		"StoryUpdate",
 		"POST",
 		"/stories/{story_id}",
@@ -215,6 +227,18 @@ var routes = Routes{
 		"GET",
 		"/tasks/{task_id}",
 		TaskGet,
+	},
+	Route{
+		"BoardDodGet",
+		"GET",
+		"/{board_name}/dods",
+		BoardDodGet,
+	},
+	Route{
+		"BoardDodUpdate",
+		"POST",
+		"/{board_name}/dods",
+		BoardDodUpdate,
 	},
 	Route{
 		"BoardShow",

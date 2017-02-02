@@ -167,3 +167,28 @@ DELETE /users/{:id}
 curl  -X DELETE localhost:8080/users/4
 => delete user with id 4, json response
 => {"success":true,"messages":{}}
+
+
+
+### Definition of done's
+
+GET /{:board_name}/dods
+curl localhost:8080/foo/dods
+=> get dods from board foo
+=> {"dods":["HA testen","global search"]}
+
+POST /{:board_name}/dods
+curl -H "Content-Type: application/json" -d '{"dods":["HA testen", "global search"]}' localhost:8080/foo/dods
+=> Create Definition of dones for board foo
+=> {"success":true,"messages":{}}
+
+GET /stories/{:id}/dods
+curl localhost:8080/stories/1/dods
+=> Get Definition of dones for story 1
+=> State 0 : TODO  |  State 1 : DONE  |  State 2 : IRRELEVANT
+=> [{"id":1,"name":"HA testen","updated_at":0,"comment":"","state":0,"story_id":1},{"id":2,"name":"global search","updated_at":0,"comment":"","state":0,"story_id":1}]
+
+POST /stories/{:id}/dods
+curl -H "Content-Type: application/json" -d '[{"id":1,"name":"HA testen","comment":"genubox HA","state":1,"story_id":1}]' localhost:8080/stories/1/dods
+=> Update Definition of dones for story 1
+=> {"success":true,"messages":{}}"

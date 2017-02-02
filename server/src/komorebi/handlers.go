@@ -43,6 +43,9 @@ type WsResponse struct {
 type UserIds struct {
 	UserIds []int `json:"user_ids"`
 }
+type DodNames struct {
+	DodNames []string `json:"dods"`
+}
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	data, _ := ioutil.ReadFile(PublicDir + "/landing.html")
@@ -645,6 +648,93 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	story = NewStory(resp_json.Issue.Subject,
 		resp_json.Issue.Description, "", 3, board_id)
 	return true, story
+}
+
+func BoardDodGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_name := vars["board_name"]
+	dods := GetDodsTemplatesByBoardName(board_name)
+	json.NewEncoder(w).Encode(dods)
+}
+
+func StoryDodGet(w http.ResponseWriter, r *http.Request) {
+	var story Story
+	getObjectByReqId("story_id", r, &story)
+	dods := GetDodsByStory(story)
+	json.NewEncoder(w).Encode(dods)
+}
+
+func StoryDodUpdate(w http.ResponseWriter, r *http.Request) {
+	var dods Dods
+	var story Story
+	getObjectByReqId("story_id", r, &story)
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	if story.Id <= 0 {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["story_id"] = append(response.Messages["story_id"],
+			"Story does not exist.")
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	if err := json.NewDecoder(r.Body).Decode(&dods); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	if resp := UpdateDods(dods); resp == true {
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+	} else {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["dods"] = append(response.Messages["dods"],
+			"Definition of Dones not valid.")
+		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func BoardDodUpdate(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_name := vars["board_name"]
+	var board Board
+	GetByName(&board, board_name)
+
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	if board.Id <= 0 {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["board_name"] = append(response.Messages["board_name"],
+			"Board does not exist.")
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	var dods DodNames
+	if err := json.NewDecoder(r.Body).Decode(&dods); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	resp := UpdateDodsFromBoard(dods, board)
+
+	if resp == false {
+		response.Success = false
+		response.Messages["dods"] = append(response.Messages["dods"],
+			"Dods not valid.")
+	}
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(response)
 }
 
 func OwnNotFound(w http.ResponseWriter, r *http.Request) {
