@@ -317,7 +317,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
-		story.BoardId)
+		story.BoardId, story.Color)
 	modelCreate(story, w, r)
 }
 
@@ -643,7 +643,7 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	}
 
 	story = NewStory(resp_json.Issue.Subject,
-		resp_json.Issue.Description, "", 3, board_id)
+		resp_json.Issue.Description, "", 3, board_id, "")
 	return true, story
 }
 

@@ -126,14 +126,14 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get Story by ID"
 resp=`curl  localhost:8080/stories/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}" $resp
+test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false,\"color\":\"\"}" $resp
 
 echo "Get Stories by board name"
 resp=`curl  localhost:8080/foo/stories 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false,\"color\":\"\"}\]" $resp
 
 echo "Update Story doit with new name do_that"
-resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"requirements":"Do_this!","board_id":1}' localhost:8080/stories/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"requirements":"Do_this!","board_id":1,"color":"blue"}' localhost:8080/stories/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 
