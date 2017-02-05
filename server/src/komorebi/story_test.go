@@ -14,17 +14,20 @@ func contains(s []string, e string) bool {
 }
 
 func TestNewStory(t *testing.T) {
-	s := NewStory("haensel", "gretel", "requirements", 5, 1)
+	s := NewStory("haensel", "gretel", "requirements", 5, 1, "black")
 	if s.Name != "haensel" {
 		t.Error("Should have instanciate a story:", s.Name)
 	}
 	if s.Archived != false {
 		t.Error("A new Story schould not be archived:", s.Archived)
 	}
+	if s.Color != "black" {
+		t.Error("The Story schould be black:", s.Color)
+	}
 }
 
 func TestStoryCreate(t *testing.T) {
-	s := NewStory("haensel", "gretel", "requirements", 5, 1)
+	s := NewStory("haensel", "gretel", "requirements", 5, 1, "blue")
 	if !s.Save() {
 		t.Error("Should have created the story")
 	}
@@ -36,7 +39,7 @@ func TestStoryCreate(t *testing.T) {
 
 func TestStoryValidation(t *testing.T) {
 	s := NewStory("About a boy", "A meaningful description",
-		"Do this and that", 5, 1)
+		"Do this and that", 5, 1, "blue")
 	success, msg := s.Validate()
 	if success == false {
 		t.Error("Should be valid")
@@ -67,6 +70,7 @@ func TestStoryDelete(t *testing.T) {
 		"a lot of requirements",
 		5,
 		1,
+		"green",
 	)
 	s.Save()
 

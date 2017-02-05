@@ -7,6 +7,7 @@ type Story struct {
 	Requirements string `json:"requirements"`
 	BoardId      int    `json:"board_id"`
 	Archived     bool   `json:"archived"`
+	Color        string `json:"color"`
 }
 
 type StoryNested struct {
@@ -18,7 +19,7 @@ type Stories []Story
 type StoriesNested []StoryNested
 
 func NewStory(name string, desc string, requirements string, points int,
-	boardId int) Story {
+	boardId int, color string) Story {
 
 	return Story{
 		DbModel: DbModel{
@@ -29,6 +30,7 @@ func NewStory(name string, desc string, requirements string, points int,
 		BoardId:      boardId,
 		Desc:         desc,
 		Archived:     false,
+		Color:        color,
 	}
 }
 
