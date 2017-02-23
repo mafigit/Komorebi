@@ -624,9 +624,8 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	var story Story
 	uri := "http://features.genua.de/issues/"
 	uri += issue
-	uri += ".json"
 
-	resp, err := resty.R().Get(uri)
+	resp, err := resty.R().Get(uri + ".json")
 
 	if err != nil || resp.StatusCode() != 200 {
 		return false, story
@@ -644,9 +643,15 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	if err != nil {
 		return false, story
 	}
+	desc := "[redmine #"
+	desc += issue
+	desc += "]("
+	desc += uri
+	desc += ") <br>"
+	desc += resp_json.Issue.Description
 
 	story = NewStory(resp_json.Issue.Subject,
-		resp_json.Issue.Description, "", 3, board_id, "")
+		desc, "", 3, board_id, "")
 	return true, story
 }
 
