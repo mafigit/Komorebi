@@ -1,5 +1,9 @@
 package komorebi
 
+import (
+	"strconv"
+)
+
 type Story struct {
 	DbModel
 	Desc         string `json:"desc"`
@@ -64,12 +68,26 @@ func (s Story) TableName() string {
 }
 
 func (s Story) Save() bool {
+	create := false
+	if s.Id == 0 {
+		create = true
+		Exe("before.story.create", s.Name)
+	} else {
+		Exe("before.story.update", strconv.Itoa(s.Id), s.Name)
+	}
+
 	if !dbMapper.Save(&s) {
 		return false
 	}
 	var board Board
 	GetById(&board, s.BoardId)
 	UpdateWebsockets(board.Name, "Story updated")
+
+	if create {
+		Exe("after.story.create", strconv.Itoa(s.Id), s.Name)
+	} else {
+		Exe("after.story.update", strconv.Itoa(s.Id), s.Name)
+	}
 	return true
 }
 
@@ -83,6 +101,7 @@ func (s Story) Destroy() bool {
 		task.Destroy()
 	}
 
+	Exe("before.story.delete", strconv.Itoa(s.Id), s.Name)
 	if _, errDelete := dbMapper.Connection.Delete(&s); errDelete != nil {
 		Logger.Printf("delete of story failed.", errDelete)
 		return false
@@ -92,6 +111,7 @@ func (s Story) Destroy() bool {
 	GetById(&board, s.BoardId)
 	UpdateWebsockets(board.Name, "Story deleted")
 
+	Exe("after.story.delete", strconv.Itoa(s.Id), s.Name)
 	return true
 }
 

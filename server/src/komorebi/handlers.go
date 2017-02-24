@@ -10,11 +10,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 )
 
 var PublicDir string
+var HookDir string
 var Logger *log.Logger
 
 var upgrader = websocket.Upgrader{
@@ -768,4 +770,20 @@ func getObjectByReqId(req_var string, r *http.Request, model Model) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars[req_var])
 	GetById(model, id)
+}
+
+func Exe(file string, args ...string) {
+	file = HookDir + file
+	if _, err := os.Stat(file); err != nil {
+		Logger.Printf("file does not exist: ", file, err)
+		return
+	}
+
+	go func() {
+		out, err := exec.Command(file, args...).Output()
+		if err != nil {
+			Logger.Printf("could not exec command: ", file, err)
+		}
+		Logger.Printf("output of command: ", file, fmt.Sprintf("%s", out))
+	}()
 }

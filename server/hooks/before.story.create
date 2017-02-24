@@ -1,0 +1,5 @@
+#!/bin/sh
+
+#name=$1
+#echo "before story create"
+#echo "story name: ${name}"
