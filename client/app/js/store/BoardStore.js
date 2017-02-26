@@ -17,6 +17,7 @@ var selected_stories = [];
 var boards = [];
 var users = [];
 var selected_story_id = null;
+var selected_color = null;
 var selected_board_id = null;
 var burndown_data = null;
 
@@ -70,6 +71,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getSelectedStoryId: function () {
     return selected_story_id;
+  },
+  getSelectedColor: function () {
+    return selected_color;
   },
   getBoardId: function () {
     return board_id;
@@ -729,6 +733,9 @@ AppDispatcher.register(function(action) {
       break;
     case "UPDATE_SELECTED_STORY_ID":
       selected_story_id = action.id;
+      break;
+    case "UPDATE_SELECTED_COLOR":
+      selected_color = action.color;
       break;
     case "ADD_STORY":
       addStory(action.data);

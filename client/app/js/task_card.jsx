@@ -8,6 +8,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import ReactMarkdown from 'react-markdown';
+import LabelIcon from 'material-ui/svg-icons/action/label';
 
 const styles = {
   small_icon: {
@@ -131,10 +132,14 @@ export default class Column extends React.Component {
         img = "/images/users/" + this.props.user.name +  ".png";
       }
     }
+    var story = BoardStore.getStoryById(this.props.task_story_id);
+    var iconName = <span><LabelIcon color={story.color}/>
+      <span>this.props.name</span>
+    </span>;
 
     return <Card className="task">
       <CardHeader titleStyle={{fontSize: 20}}
-        title={this.props.name}
+        title={iconName}
         avatar={img}
         subtitle={user_name}
       />

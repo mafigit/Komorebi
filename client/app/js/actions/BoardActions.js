@@ -205,6 +205,12 @@ var BoardActions = {
       id: story_id
     });
   },
+  updateSelectedColor: (color) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_SELECTED_COLOR",
+      color: color
+    });
+  },
   addStory: (data) => {
     AppDispatcher.dispatch({
       actionType: "ADD_STORY",
