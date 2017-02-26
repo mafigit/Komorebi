@@ -4,6 +4,7 @@ const ErrorFields = {
   BOARD: {'name': ''},
   STORY: {'name': '', 'desc': '', 'req': ''},
   USER: {'name': '', 'image_path': ''},
+  DOD: {'dods': ''},
   STORY_ISSUE: {'issue': ''}
 };
 export default ErrorFields;

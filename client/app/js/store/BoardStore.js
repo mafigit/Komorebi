@@ -19,6 +19,7 @@ var users = [];
 var selected_story_id = null;
 var selected_board_id = null;
 var burndown_data = null;
+var dod_data = null;
 
 var message = "";
 var menu_open = false;
@@ -26,6 +27,7 @@ var show_user_assign = false;
 var show_board_list = false;
 var column_dialog_open = false;
 var chart_dialog_open = false;
+var dod_dialog_open = false;
 var story_edit_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
@@ -48,8 +50,14 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getShowChartDialog: function () {
     return chart_dialog_open;
   },
+  getShowDodDialog: function () {
+    return dod_dialog_open;
+  },
   getBurnDownData: function () {
     return burndown_data;
+  },
+  getDodData: function () {
+    return dod_data;
   },
   getShowUserAssign: function() {
     return show_user_assign;
@@ -379,6 +387,15 @@ var fetchBurnDownData = () => {
   });
 };
 
+var fetchDodData = () => {
+  var url = window.location.pathname + "/dods";
+  return Ajax.get(url, {"Accept": "application/json"}).then(response => {
+    if (response.status == 200) {
+      dod_data = JSON.parse(response.responseText);
+    }
+  });
+};
+
 var clearBurndown = () => {
   var url = `/boards/${board_id}/clear`;
   return Ajax.get(url, {"Accept": "application/json"});
@@ -448,6 +465,25 @@ var updateTask = (data) => {
         var error_fields = ErrorFields.TASK;
         var errors = genErrors(error_fields, obj_errors);
         ErrorActions.addTaskErrors(errors);
+      }
+    });
+  });
+};
+
+var updateDods = (dods) => {
+  return new Promise((resolve) => {
+    var url = window.location.pathname + "/dods";
+    var data = {dods: dods};
+    Ajax.postJson(url, data).then(response => {
+      var response_obj = JSON.parse(response.responseText);
+      if (response_obj.success) {
+        ErrorActions.removeDodErrors();
+        resolve(data);
+      } else {
+        var obj_errors = response_obj.messages;
+        var error_fields = ErrorFields.TASK;
+        var errors = genErrors(error_fields, obj_errors);
+        ErrorActions.addDodErrors(errors);
       }
     });
   });
@@ -675,8 +711,17 @@ AppDispatcher.register(function(action) {
       fetchBurnDownData().then(() => {BoardStore.emitChange();});
       BoardStore.emitChange();
       break;
+    case "SHOW_DOD_DIALOG":
+      dod_dialog_open = true;
+      fetchDodData().then(() => {BoardStore.emitChange();});
+      BoardStore.emitChange();
+      break;
     case "CLOSE_CHART_DIALOG":
       chart_dialog_open = false;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_DOD_DIALOG":
+      dod_dialog_open = false;
       BoardStore.emitChange();
       break;
     case "SHOW_COLUMN_DIALOG":
@@ -700,6 +745,9 @@ AppDispatcher.register(function(action) {
     case "UPDATE_TASK":
       assignUserToTask(action.data.user_id, action.data).then(updateTask.bind(this, action.data));
       task_dialog_open = false;
+      break;
+    case "UPDATE_DODS":
+      updateDods(action.data).then(fetchDodData());
       break;
     case "UPDATE_TASK_POSITION":
       updateTask(action.data);
