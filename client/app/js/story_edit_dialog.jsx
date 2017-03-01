@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import ReactDOM from 'react-dom';
 import StoryPointPicker from './story_point_picker';
+import ColorSelect from './color_select';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import ErrorStore from './store/ErrorStore';
@@ -13,7 +14,8 @@ const default_form_values = {
   desc: "",
   points: 1,
   requirements: "",
-  board_id: ""
+  board_id: "",
+  color: ""
 };
 
 export default class StoryEditDialog extends React.Component {
@@ -109,6 +111,13 @@ export default class StoryEditDialog extends React.Component {
           value={this.state.form_values.name}
           onChange={(comp, val) => {this.onChange(comp, "name", val);}}
         />
+        <br />
+        Select a color
+        <br />
+        <ColorSelect ref="story_color"
+          value={this.state.form_values.color}
+          onChange={(comp, index, val) => {this.onChange(comp, "color", val);}}
+          errorText={this.state.error.color} />
         <br />
         <br />
         Add a Description

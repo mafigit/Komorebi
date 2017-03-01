@@ -7,7 +7,14 @@ exports[`test Should update position of task after clicking on next button 1`] =
   <CardHeader
     avatar={null}
     subtitle=""
-    title="test"
+    title={
+      <span>
+        <ActionLabel />
+        <span>
+          this.props.name
+        </span>
+      </span>
+    }
     titleStyle={
       Object {
         "fontSize": 20,
