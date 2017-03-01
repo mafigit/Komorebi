@@ -9,6 +9,7 @@ var column_errors = ErrorFields.COLUMN;
 var task_errors = ErrorFields.TASK;
 var story_errors = ErrorFields.STORY;
 var user_errors = ErrorFields.USER;
+var dod_errors = ErrorFields.DOD;
 var story_issue_errors = ErrorFields.STORY_ISSUE;
 
 var ERROR_EVENT = 'error';
@@ -18,6 +19,9 @@ var ErrorStore = assign({}, EventEmitter.prototype, {
   },
   getColumnErrors: () => {
     return column_errors;
+  },
+  getDodErrors: () => {
+    return dod_errors;
   },
   getTaskErrors: () => {
     return task_errors;
@@ -88,6 +92,14 @@ AppDispatcher.register(function(action) {
       break;
     case "REMOVE_USER_ERRORS":
       user_errors = ErrorFields.USER;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "ADD_DOD_ERRORS":
+      dod_errors = action.errors;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "REMOVE_DOD_ERRORS":
+      dod_errors = ErrorFields.DOD;
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     default:

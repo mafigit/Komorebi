@@ -83,9 +83,19 @@ var BoardActions = {
       actionType: "SHOW_CHART_DIALOG"
     });
   },
+  showDodDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_DOD_DIALOG"
+    });
+  },
   closeChartDialog: () =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_CHART_DIALOG",
+    });
+  },
+  closeDodDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_DOD_DIALOG",
     });
   },
   closeTaskDialog: (reload) =>  {
@@ -162,6 +172,12 @@ var BoardActions = {
   updateTask: (data) => {
     AppDispatcher.dispatch({
       actionType: "UPDATE_TASK",
+      data: data
+    });
+  },
+  updateDods: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_DODS",
       data: data
     });
   },

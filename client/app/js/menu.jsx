@@ -49,6 +49,10 @@ class MyMenu extends React.Component {
         {
           name: "Sprint Burndown",
           action: BoardActions.showChartDialog
+        },
+        {
+          name: "Definition of Done",
+          action: BoardActions.showDodDialog
         }
 
       ];

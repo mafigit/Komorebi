@@ -7,6 +7,7 @@ import Layout from './layout';
 import ColumnDialog from './column_dialog';
 import StoryEditDialog from './story_edit_dialog';
 import ChartDialog from './chart_dialog';
+import DodDialog from './dod_dialog';
 import StoryFromIssueEditDialog from './story_from_issue_edit_dialog';
 import TaskDialog from './task_dialog';
 import Colors from './color';
@@ -66,6 +67,7 @@ export default class BoardLayout extends Layout  {
       <ColumnDialog open={this.state.column_open} />
       <StoryEditDialog open={this.state.story_edit_open} />
       <ChartDialog />
+      <DodDialog />
       <StoryFromIssueEditDialog open={this.state.story_from_issue_edit_open} />
       <TaskDialog open={this.state.task_open} />
       {this.props.children}

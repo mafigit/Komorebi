@@ -56,6 +56,17 @@ var ErrorActions = {
       actionType: "REMOVE_USER_ERRORS"
     });
   },
+  addDodErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_DOD_ERRORS",
+      errors: errors
+    });
+  },
+  removeDodErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_DOD_ERRORS"
+    });
+  },
   addStoryIssueErrors: (errors) => {
     AppDispatcher.dispatch({
       actionType: "ADD_STORY_ISSUE_ERRORS",
