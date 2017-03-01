@@ -21,6 +21,7 @@ var selected_color = null;
 var selected_board_id = null;
 var burndown_data = null;
 var dod_data = null;
+var story_dod_data = null;
 
 var message = "";
 var menu_open = false;
@@ -30,6 +31,7 @@ var column_dialog_open = false;
 var chart_dialog_open = false;
 var dod_dialog_open = false;
 var story_edit_dialog_open = false;
+var dod_check_dialog_open = false;
 var story_from_issue_edit_dialog_open = false;
 var story_show_dialog_open = false;
 var task_show_dialog_open = false;
@@ -59,6 +61,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getDodData: function () {
     return dod_data;
+  },
+  getStoryDodData: function () {
+    return story_dod_data;
   },
   getShowUserAssign: function() {
     return show_user_assign;
@@ -169,6 +174,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getStoryEditDialogOpen: () => {
     return story_edit_dialog_open;
+  },
+  getDodCheckDialogOpen: () => {
+    return dod_check_dialog_open;
   },
   getStoryFromIssueEditDialogOpen: () => {
     return story_from_issue_edit_dialog_open;
@@ -400,6 +408,15 @@ var fetchDodData = () => {
   });
 };
 
+var fetchStoryDodData = (story_id) => {
+  var url = `/stories/${story_id}/dods`;
+  return Ajax.get(url, {"Accept": "application/json"}).then(response => {
+    if (response.status == 200) {
+      story_dod_data = JSON.parse(response.responseText);
+    }
+  });
+};
+
 var clearBurndown = () => {
   var url = `/boards/${board_id}/clear`;
   return Ajax.get(url, {"Accept": "application/json"});
@@ -488,6 +505,27 @@ var updateDods = (dods) => {
         var error_fields = ErrorFields.TASK;
         var errors = genErrors(error_fields, obj_errors);
         ErrorActions.addDodErrors(errors);
+      }
+    });
+  });
+};
+
+var updateStoryDod = (dods) => {
+  return new Promise((resolve) => {
+    var url = `/stories/${story_edit_id}/dods`;
+    var data = dods;
+    Ajax.postJson(url, data).then(response => {
+      var response_obj = JSON.parse(response.responseText);
+      if (response_obj.success) {
+        dod_check_dialog_open = true;
+        BoardStore.emitChange();
+        ErrorActions.removeCheckDodErrors();
+        resolve(data);
+      } else {
+        var obj_errors = response_obj.messages;
+        var error_fields = ErrorFields.TASK;
+        var errors = genErrors(error_fields, obj_errors);
+        ErrorActions.addCheckDodErrors(errors);
       }
     });
   });
@@ -671,6 +709,13 @@ AppDispatcher.register(function(action) {
       story_edit_dialog_open = true;
       BoardStore.emitChange();
       break;
+    case "OPEN_DOD_CHECK_DIALOG":
+      story_edit_id = action.story_id;
+      fetchStoryDodData(story_edit_id).then(() => {BoardStore.emitChange();});
+      story_show_dialog_open = false;
+      dod_check_dialog_open = true;
+      BoardStore.emitChange();
+      break;
     case "OPEN_STORY_FROM_ISSUE_EDIT_DIALOG":
       story_from_issue_edit_dialog_open = true;
       BoardStore.emitChange();
@@ -683,6 +728,11 @@ AppDispatcher.register(function(action) {
       } else {
         BoardStore.emitChange();
       }
+      break;
+    case "CLOSE_DOD_CHECK_DIALOG":
+      story_edit_id = null;
+      dod_check_dialog_open = false;
+      BoardStore.emitChange();
       break;
     case "CLOSE_STORY_FROM_ISSUE_EDIT_DIALOG":
       story_from_issue_edit_dialog_open = false;
@@ -752,6 +802,9 @@ AppDispatcher.register(function(action) {
       break;
     case "UPDATE_DODS":
       updateDods(action.data).then(fetchDodData());
+      break;
+    case "UPDATE_STORY_DOD":
+      updateStoryDod(action.data);
       break;
     case "UPDATE_TASK_POSITION":
       updateTask(action.data);

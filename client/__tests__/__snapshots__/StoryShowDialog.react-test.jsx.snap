@@ -65,6 +65,17 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
       }
       label="Edit"
       onTouchTap={[Function]} />
+    <BottomNavigationItem
+      icon={
+        <AvPlaylistAddCheck
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="DoD Check"
+      onTouchTap={[Function]} />
   </BottomNavigation>
 </Dialog>
 `;

@@ -9,6 +9,7 @@ import {BottomNavigation, BottomNavigationItem} from
   'material-ui/BottomNavigation';
 import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
 import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
+import CheckIcon from 'material-ui/svg-icons/av/playlist-add-check';
 
 const icon_style = {
   display: "initial"
@@ -61,6 +62,10 @@ export default class StoryShowDialog extends React.Component {
     BoardActions.openStoryEditDialog(this.props.story_id);
   }
 
+  onClickDod = () => {
+    BoardActions.openDodCheckDialog(this.props.story_id);
+  }
+
   showForm = () => {
     return(
       <Dialog
@@ -92,6 +97,9 @@ export default class StoryShowDialog extends React.Component {
           <BottomNavigationItem label="Edit"
             icon={<EditIcon style={icon_style} />}
             onTouchTap={this.onClickEdit} />
+          <BottomNavigationItem label="DoD Check"
+            icon={<CheckIcon style={icon_style} />}
+            onTouchTap={this.onClickDod} />
         </BottomNavigation>
       </Dialog>
     );

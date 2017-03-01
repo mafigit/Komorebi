@@ -135,6 +135,17 @@ var BoardActions = {
       story_id: story_id
     });
   },
+  openDodCheckDialog: (story_id) =>  {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_DOD_CHECK_DIALOG",
+      story_id: story_id
+    });
+  },
+  closeDodCheckDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_DOD_CHECK_DIALOG",
+    });
+  },
   openStoryFromIssueEditDialog: () =>  {
     AppDispatcher.dispatch({
       actionType: "OPEN_STORY_FROM_ISSUE_EDIT_DIALOG"
@@ -178,6 +189,12 @@ var BoardActions = {
   updateDods: (data) => {
     AppDispatcher.dispatch({
       actionType: "UPDATE_DODS",
+      data: data
+    });
+  },
+  updateStoryDod: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_STORY_DOD",
       data: data
     });
   },
