@@ -305,6 +305,51 @@ test_match "[{\"id\":1,\"name\":\"HA testen\",\"updated_at\":[0-9]{19},\"comment
 
 
 
+### Column move route
+echo "Create column WIP for board foo"
+resp=`curl  -H "Content-Type: application/json" -d '{"name":"WIP", "position":1, "board_id":1}' localhost:8080/columns 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Create column DONE for board foo"
+resp=`curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":2, "board_id":1}' localhost:8080/columns 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get column WIP"
+resp=`curl  localhost:8080/columns/3 2>/dev/null`
+test_match "{\"id\":3,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
+
+echo "Get column DONE"
+resp=`curl  localhost:8080/columns/4 2>/dev/null`
+test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
+
+echo "Move column DONE to left"
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"left"}' localhost:8080/columns/4/move 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get column DONE"
+resp=`curl  localhost:8080/columns/4 2>/dev/null`
+test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
+
+echo "Get column WIP"
+resp=`curl  localhost:8080/columns/3 2>/dev/null`
+test_match "{\"id\":3,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
+
+echo "Move column DONE to right"
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"right"}' localhost:8080/columns/4/move 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get column WIP"
+resp=`curl  localhost:8080/columns/3 2>/dev/null`
+test_match "{\"id\":3,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
+
+echo "Get column DONE"
+resp=`curl  localhost:8080/columns/4 2>/dev/null`
+test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
+
+
+
+
+
 ### Test hooks
 
 create_hooks

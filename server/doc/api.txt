@@ -70,6 +70,11 @@ curl  -H "Content-Type: application/json" -d '{"name":"WIPNEW", "position":99, "
 => Update column, json response
 => {"success":true,"messages":{}}
 
+POST /columns/{:id}/move
+curl  -H "Content-Type: application/json" -d '{"direction":"left"}' localhost:8080/columns/3/move
+=> Move column one position to left
+=> {"success":true,"messages":{}}
+
 DELETE /columns/{:id}
 curl  -X DELETE localhost:8080/columns/4
 => delete column with id 4, json response

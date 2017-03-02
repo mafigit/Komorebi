@@ -273,6 +273,59 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 	modelUpdate(old_column, update_column, "column_id", w, r)
 }
 
+func ColumnMove(w http.ResponseWriter, r *http.Request) {
+	var column Column
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+	getObjectByReqId("column_id", r, &column)
+	if column.Id <= 0 {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["column_id"] = append(response.Messages["column_id"],
+			"Column does not exist.")
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+	type Direction struct {
+		Direction string `json:"direction"`
+	}
+	var d Direction
+
+	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+
+	if d.Direction != "right" && d.Direction != "left" {
+		w.WriteHeader(400)
+		return
+	}
+	if d.Direction == "right" {
+		column.Position = column.Position + 1
+	} else {
+		column.Position = column.Position - 1
+	}
+	if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
+		Logger.Printf("save of column failed", errUpdate)
+	}
+	for _, c := range GetColumnsByBoardId(column.BoardId) {
+		if c.Position == column.Position && c.Id != column.Id {
+			if d.Direction == "right" {
+				c.Position = c.Position - 1
+			} else {
+				c.Position = c.Position + 1
+			}
+			if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
+				Logger.Printf("save of column failed", errUpdate)
+			}
+		}
+	}
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
+}
+
 func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	var column Column
 	getObjectByReqId("column_id", r, &column)
