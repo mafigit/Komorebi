@@ -103,6 +103,12 @@ var routes = Routes{
 		ColumnUpdate,
 	},
 	Route{
+		"ColumnMove",
+		"POST",
+		"/columns/{column_id}/move",
+		ColumnMove,
+	},
+	Route{
 		"TasksGetByColumn",
 		"GET",
 		"/columns/{column_id}/tasks",
