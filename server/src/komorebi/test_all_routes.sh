@@ -346,6 +346,13 @@ echo "Get column DONE"
 resp=`curl  localhost:8080/columns/4 2>/dev/null`
 test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
 
+echo "Get error when moving right column to right"
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"right"}' localhost:8080/columns/4/move 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"direction\":[\"Direction not valid.\"]}}" "${resp}"
+
+echo "Get error when moving left column to left"
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"left"}' localhost:8080/columns/1/move 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"direction\":[\"Direction not valid.\"]}}" "${resp}"
 
 
 

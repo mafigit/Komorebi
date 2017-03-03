@@ -302,25 +302,13 @@ func ColumnMove(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-	if d.Direction == "right" {
-		column.Position = column.Position + 1
-	} else {
-		column.Position = column.Position - 1
-	}
-	if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
-		Logger.Printf("save of column failed", errUpdate)
-	}
-	for _, c := range GetColumnsByBoardId(column.BoardId) {
-		if c.Position == column.Position && c.Id != column.Id {
-			if d.Direction == "right" {
-				c.Position = c.Position - 1
-			} else {
-				c.Position = c.Position + 1
-			}
-			if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
-				Logger.Printf("save of column failed", errUpdate)
-			}
-		}
+	if MoveColumn(column, d.Direction) == false {
+		w.WriteHeader(200)
+		response.Success = false
+		response.Messages["direction"] = append(response.Messages["direction"],
+			"Direction not valid.")
+		json.NewEncoder(w).Encode(response)
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(response)
