@@ -10,6 +10,7 @@ var task_errors = ErrorFields.TASK;
 var story_errors = ErrorFields.STORY;
 var user_errors = ErrorFields.USER;
 var dod_errors = ErrorFields.DOD;
+var check_dod_errors = ErrorFields.CHECK_DOD;
 var story_issue_errors = ErrorFields.STORY_ISSUE;
 
 var ERROR_EVENT = 'error';
@@ -22,6 +23,9 @@ var ErrorStore = assign({}, EventEmitter.prototype, {
   },
   getDodErrors: () => {
     return dod_errors;
+  },
+  getCheckDodErrors: () => {
+    return check_dod_errors;
   },
   getTaskErrors: () => {
     return task_errors;
@@ -100,6 +104,14 @@ AppDispatcher.register(function(action) {
       break;
     case "REMOVE_DOD_ERRORS":
       dod_errors = ErrorFields.DOD;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "ADD_CHECK_DOD_ERRORS":
+      check_dod_errors = action.errors;
+      ErrorStore.emitChange(ERROR_EVENT);
+      break;
+    case "REMOVE_CHECK_DOD_ERRORS":
+      dod_errors = ErrorFields.CHECK_DOD;
       ErrorStore.emitChange(ERROR_EVENT);
       break;
     default:
