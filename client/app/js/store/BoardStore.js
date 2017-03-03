@@ -491,6 +491,18 @@ var updateTask = (data) => {
   });
 };
 
+var moveColumn = (id, direction) => {
+  return new Promise((resolve) => {
+    var data = {"direction": direction};
+    Ajax.postJson('/columns/' + id + "/move", data).then(response => {
+      var response_obj = JSON.parse(response.responseText);
+      if (response_obj.success) {
+        resolve(data);
+      }
+    });
+  });
+};
+
 var updateDods = (dods) => {
   return new Promise((resolve) => {
     var url = window.location.pathname + "/dods";
@@ -802,6 +814,12 @@ AppDispatcher.register(function(action) {
       break;
     case "UPDATE_DODS":
       updateDods(action.data).then(fetchDodData());
+      break;
+    case "MOVE_COLUMN":
+      moveColumn(action.id, action.direction).then(
+        fetchAll().then(() => {
+          BoardStore.emitChange();
+        }));
       break;
     case "UPDATE_STORY_DOD":
       updateStoryDod(action.data);

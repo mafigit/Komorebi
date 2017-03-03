@@ -61,6 +61,13 @@ var BoardActions = {
       actionType: "FETCH_ALL",
     });
   },
+  moveColumn: (id, direction) => {
+    AppDispatcher.dispatch({
+      actionType: "MOVE_COLUMN",
+      id: id,
+      direction: direction
+    });
+  },
   showConfirmation: (callback) => {
     AppDispatcher.dispatch({
       actionType: "OPEN_CONFIRMATION",

@@ -33,6 +33,7 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
   </h4>
   <ReactMarkdown
     containerTagName="div"
+    parserOptions={Object {}}
     source="" />
   <br />
   <h4>
@@ -40,6 +41,7 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
   </h4>
   <ReactMarkdown
     containerTagName="div"
+    parserOptions={Object {}}
     source="" />
   <br />
   <BottomNavigation>
