@@ -11,7 +11,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
       <span>
         <ActionLabel />
         <span>
-          this.props.name
+          test
         </span>
       </span>
     }

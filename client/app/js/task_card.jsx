@@ -134,7 +134,7 @@ export default class Column extends React.Component {
     }
     var story = BoardStore.getStoryById(this.props.task_story_id);
     var iconName = <span><LabelIcon color={story.color}/>
-      <span>this.props.name</span>
+      <span>{this.props.name}</span>
     </span>;
 
     return <Card className="task">
