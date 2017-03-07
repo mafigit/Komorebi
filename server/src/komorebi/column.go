@@ -143,3 +143,35 @@ func GetColumnsByBoardId(board_id int) Columns {
 	}
 	return cols
 }
+
+func MoveColumn(column Column, dir string) bool {
+	if dir == "right" {
+		max_pos, _ := dbMapper.Connection.SelectInt(
+			"select MAX(Position) from columns where BoardId=?", column.BoardId)
+		if max_pos == int64(column.Position) {
+			return false
+		}
+		column.Position = column.Position + 1
+	} else {
+		if column.Position == 0 {
+			return false
+		}
+		column.Position = column.Position - 1
+	}
+	if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
+		Logger.Printf("save of column failed", errUpdate)
+	}
+	for _, c := range GetColumnsByBoardId(column.BoardId) {
+		if c.Position == column.Position && c.Id != column.Id {
+			if dir == "right" {
+				c.Position = c.Position - 1
+			} else {
+				c.Position = c.Position + 1
+			}
+			if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
+				Logger.Printf("save of column failed", errUpdate)
+			}
+		}
+	}
+	return true
+}
