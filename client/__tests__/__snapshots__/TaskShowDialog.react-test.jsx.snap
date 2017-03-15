@@ -23,6 +23,7 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
       className="task-text">
       <ReactMarkdown
         containerTagName="div"
+        parserOptions={Object {}}
         source="" />
     </CardText>
   </Card>

@@ -35,6 +35,7 @@ export default class StorySelect extends React.Component {
     return <div>
       <SelectField value={this.state.select_value}
         onChange={this.handleStoryChange}
+        fullWidth={true}
         floatingLabelStyle={this.props.style}>
         {this.menuItems()}
       </SelectField>

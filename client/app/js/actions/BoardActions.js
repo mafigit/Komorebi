@@ -174,9 +174,9 @@ var BoardActions = {
       reload: reload
     });
   },
-  showTasksForStoryId: (story_id) =>  {
+  toggleTasksForStoryId: (story_id) =>  {
     AppDispatcher.dispatch({
-      actionType: "SHOW_TASKS_FOR_STORY_ID",
+      actionType: "TOGGLE_TASKS_FOR_STORY_ID",
       story_id: story_id
     });
   },

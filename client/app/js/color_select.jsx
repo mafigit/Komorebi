@@ -55,6 +55,7 @@ export default class ColorSelect extends React.Component {
     return <div>
       <SelectField value={this.state.select_value}
         onChange={this.handleColorChange}
+        fullWidth={true}
         floatingLabelStyle={this.props.style}>
         {this.menuItems()}
       </SelectField>

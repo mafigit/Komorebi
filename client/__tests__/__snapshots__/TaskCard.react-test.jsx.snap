@@ -4,26 +4,29 @@ exports[`test Should update position of task after clicking on next button 1`] =
   expandable={false}
   expanded={null}
   initiallyExpanded={false}>
-  <CardHeader
-    avatar={null}
-    subtitle=""
-    title={
-      <span>
-        <ActionLabel />
+  <Badge
+    badgeContent={<ActionBookmark />}
+    primary={false}
+    secondary={false}>
+    <CardHeader
+      avatar={null}
+      subtitle=""
+      title={
         <span>
           test
         </span>
-      </span>
-    }
-    titleStyle={
-      Object {
-        "fontSize": 20,
       }
-    } />
+      titleStyle={
+        Object {
+          "fontSize": 16,
+        }
+      } />
+  </Badge>
   <CardText
     className="task-text">
     <ReactMarkdown
       containerTagName="div"
+      parserOptions={Object {}}
       source="test desc" />
   </CardText>
   <CardActions>

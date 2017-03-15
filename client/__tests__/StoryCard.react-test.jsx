@@ -10,7 +10,7 @@ test('Render Html with Name', () => {
   );
   let tree = toJson(component);
   expect(tree).toMatchSnapshot();
-  expect(tree.children.includes('test')).toBeTruthy();
+  expect(tree.props.primaryText).toEqual("test");
 });
 
 test('Click on Story to showTasksForStoryId', () => {
@@ -28,5 +28,5 @@ test('Click on Story to showTasksForStoryId', () => {
   let tree2 = toJson(component2);
   expect(tree2).toMatchSnapshot();
   tree2.props.onClick();
-  expect(BoardStore.getSelectedStories()).toEqual(['2']);
+  expect(BoardStore.getSelectedStories()).toEqual(["1", "2"]);
 });
