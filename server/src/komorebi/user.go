@@ -66,7 +66,7 @@ func (u User) Validate() (bool, map[string][]string) {
 }
 
 func GetUsersByBoardId(board_id int) Users {
-	var users Users
+	users := make([]User, 0)
 	var ids []string
 
 	_, err := dbMapper.Connection.Select(&ids,
@@ -76,6 +76,9 @@ func GetUsersByBoardId(board_id int) Users {
 	}
 	user_ids := strings.Join(ids, ", ")
 
+	if len(user_ids) <= 0 {
+		return users
+	}
 	_, err = dbMapper.Connection.Select(&users,
 		"select * from users where Id IN ("+user_ids+")")
 	if err != nil {
@@ -86,7 +89,7 @@ func GetUsersByBoardId(board_id int) Users {
 }
 
 func GetUsersByTaskId(task_id int) Users {
-	var users Users
+	users := make([]User, 0)
 	var ids []string
 
 	_, err := dbMapper.Connection.Select(&ids,
@@ -95,6 +98,10 @@ func GetUsersByTaskId(task_id int) Users {
 		Logger.Println("Could not get user_ids by task id", task_id)
 	}
 	user_ids := strings.Join(ids, ", ")
+
+	if len(user_ids) <= 0 {
+		return users
+	}
 
 	_, err = dbMapper.Connection.Select(&users,
 		"select * from users where Id IN ("+user_ids+")")
