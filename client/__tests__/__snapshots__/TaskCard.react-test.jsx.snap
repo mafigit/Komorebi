@@ -24,6 +24,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
     className="task-text">
     <ReactMarkdown
       containerTagName="div"
+      parserOptions={Object {}}
       source="test desc" />
   </CardText>
   <CardActions>

@@ -65,7 +65,8 @@ export default class Board extends React.Component {
         return acc;
       }, []);
 
-      return <Column key={key} name={col.name} id={col.id} >
+      return <Column key={key} name={col.name} id={col.id}
+        position={col.position} max={this.state.columns.length-1} >
         {tasks_for_column}
       </Column>;
     });
