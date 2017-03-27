@@ -108,6 +108,7 @@ export default class StoryEditDialog extends React.Component {
         <TextField ref="story_name"
           hintText="Story Name"
           errorText={this.state.error.name}
+          fullWidth={true}
           value={this.state.form_values.name}
           onChange={(comp, val) => {this.onChange(comp, "name", val);}}
         />

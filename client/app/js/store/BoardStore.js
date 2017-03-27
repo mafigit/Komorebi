@@ -802,10 +802,13 @@ AppDispatcher.register(function(action) {
         BoardStore.emitChange();
       }
       break;
-    case "SHOW_TASKS_FOR_STORY_ID":
-      //XXX has to be a merge into existing array
-      selected_stories = [];
-      selected_stories.push(action.story_id);
+    case "TOGGLE_TASKS_FOR_STORY_ID":
+      var index = selected_stories.indexOf(action.story_id);
+      if (index >= 0) {
+        selected_stories.splice(index, 1);
+      } else {
+        selected_stories.push(action.story_id);
+      }
       BoardStore.emitChange();
       break;
     case "UPDATE_TASK":

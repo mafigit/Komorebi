@@ -144,6 +144,7 @@ export default class TaskDialog extends React.Component {
         <br />
         <TextField ref="task_name"
           hintText="Task Name"
+          fullWidth={true}
           errorText={this.state.error.name}
           value={this.state.form_values.name}
           onChange={(comp, val) => {this.onChange(comp, "name", val);}}

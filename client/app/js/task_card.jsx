@@ -8,7 +8,8 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import ReactMarkdown from 'react-markdown';
-import LabelIcon from 'material-ui/svg-icons/action/label';
+import BookMarkIcon from 'material-ui/svg-icons/action/bookmark';
+import Badge from 'material-ui/Badge';
 
 const styles = {
   small_icon: {
@@ -19,7 +20,7 @@ const styles = {
     width: 20,
     height: 20,
     padding: 0
-  }
+  },
 };
 
 /**
@@ -122,27 +123,28 @@ export default class Column extends React.Component {
   }
 
   render () {
-    var img = undefined;
+    var story = BoardStore.getStoryById(this.props.task_story_id);
+    var name = <span>{this.props.name}</span>;
+    var icon = <BookMarkIcon color={story.color}/>;
     var user_name = "";
+    var img = undefined;
     if (this.props.user) {
-      user_name = this.props.user.name;
+      user_name = <span>{this.props.user.name}</span>;
       if (this.props.user.image_path) {
         img = this.props.user.image_path;
       } else {
         img = "/images/users/" + this.props.user.name +  ".png";
       }
     }
-    var story = BoardStore.getStoryById(this.props.task_story_id);
-    var iconName = <span><LabelIcon color={story.color}/>
-      <span>{this.props.name}</span>
-    </span>;
 
     return <Card className="task">
-      <CardHeader titleStyle={{fontSize: 20}}
-        title={iconName}
-        avatar={img}
-        subtitle={user_name}
-      />
+      <Badge badgeContent={icon}>
+        <CardHeader titleStyle={{fontSize: 16}}
+          title={name}
+          avatar={img}
+          subtitle={user_name}
+        />
+      </Badge>
       <CardText className="task-text">
         <ReactMarkdown source={this.props.desc}/>
       </CardText>
