@@ -481,6 +481,7 @@ var updateTask = (data) => {
       if (response_obj.success) {
         resolve(data);
         task_dialog_open = false;
+        selected_story_id = null;
       } else {
         var obj_errors = response_obj.messages;
         var error_fields = ErrorFields.TASK;

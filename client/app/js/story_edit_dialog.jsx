@@ -23,7 +23,8 @@ const default_form_values = {
 export default class StoryEditDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.getState(default_form_values);
+    var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+    this.state = this.getState(new_form_values);
   }
 
   getState = (form_values) => {
@@ -53,13 +54,19 @@ export default class StoryEditDialog extends React.Component {
     var story = BoardStore.getStory();
     if (story && story !== this.state.story) {
       this.setState(this.getState(story));
-    } else if (!story && this.state.story) {
-      this.setDefaultFormValues();
+    }
+  }
+
+  componentWillUpdate = (nextProps) => {
+    if (!this.props.open && nextProps.open) {
+      var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+      this.setState(this.getState(new_form_values));
     }
   }
 
   setDefaultFormValues = () => {
-    this.setState({story: null, form_values: default_form_values, });
+    var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+    this.setState({story: null, form_values: new_form_values});
   }
 
   handleFormSubmit = () => {
