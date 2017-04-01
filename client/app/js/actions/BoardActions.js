@@ -120,6 +120,11 @@ var BoardActions = {
       story_id: story_id
     });
   },
+  toggleBoardMenu: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "TOGGLE_MENU"
+    });
+  },
   closeStoryShowDialog: () =>  {
     AppDispatcher.dispatch({
       actionType: "CLOSE_STORY_SHOW_DIALOG",

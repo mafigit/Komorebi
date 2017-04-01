@@ -30,7 +30,7 @@ describe('<Sidebar />', () => {
       <Sidebar />
     );
     expect(wrapper.state().selected_stories).toEqual([]);
-    BoardActions.showTasksForStoryId(1);
+    BoardActions.toggleTasksForStoryId(1);
     expect(wrapper.state().selected_stories).toEqual([1]);
   });
 });

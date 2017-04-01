@@ -13,6 +13,7 @@ import StoryFromIssueEditDialog from './story_from_issue_edit_dialog';
 import TaskDialog from './task_dialog';
 import Colors from './color';
 import BoardStore from './store/BoardStore';
+import BoardActions from './actions/BoardActions';
 
 export default class BoardLayout extends Layout  {
   constructor(props) {
@@ -43,12 +44,14 @@ export default class BoardLayout extends Layout  {
 
   handleTouchTapMenuBtn = (event) => {
     event.preventDefault();
-    this.setState({menu_open: true, menu_achor: event.currentTarget});
+    BoardActions.toggleBoardMenu();
+    this.setState({menu_achor: event.currentTarget});
   }
 
   handleTouchTapCloseMenu = () => {
     var achor_element = this.state.menu_achor;
-    this.setState({menu_open: false, menu_achor: achor_element});
+    BoardActions.toggleBoardMenu();
+    this.setState({menu_achor: achor_element});
   }
 
   render() {
