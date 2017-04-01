@@ -58,6 +58,17 @@ exports[`<StoryShowdialog /> Should render TaskDialog 1`] = `
       onTouchTap={[Function]} />
     <BottomNavigationItem
       icon={
+        <ContentArchive
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Archive"
+      onTouchTap={[Function]} />
+    <BottomNavigationItem
+      icon={
         <EditorModeEdit
           style={
             Object {

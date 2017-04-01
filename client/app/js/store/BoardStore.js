@@ -649,6 +649,13 @@ var updateStory = (form_values) => {
   });
 };
 
+var archiveStory = (story_id) => {
+  var story = BoardStore.getStoryById(story_id);
+  story.archived = true;
+  var url = `/stories/${story_id}`;
+  return Ajax.postJson(url, story);
+};
+
 var addStoryFromIssue = (issue) => {
   var board_id = BoardStore.getBoardId();
   return Ajax.getJson(`/create_story_by_issue/${board_id}/${issue}`).then(
@@ -685,6 +692,9 @@ AppDispatcher.register(function(action) {
       break;
     case "DELETE_STORY":
       deleteStory(action.id);
+      break;
+    case "ARCHIVE_STORY":
+      archiveStory(action.id);
       break;
     case "DELETE_TASK":
       deleteTask(action.id);

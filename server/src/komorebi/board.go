@@ -94,7 +94,7 @@ func GetBoardNestedByName(name string) BoardNested {
 		"select * from columns where BoardId=? order by Position", board.Id)
 
 	_, err = dbMapper.Connection.Select(&board.StoriesNested,
-		"select * from stories where BoardId=?", board.Id)
+		"select * from stories where BoardId=? AND Archived = 0", board.Id)
 
 	story_id_array := []string{}
 	for _, story := range board.StoriesNested {
