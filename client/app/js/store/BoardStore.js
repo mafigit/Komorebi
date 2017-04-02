@@ -772,6 +772,14 @@ AppDispatcher.register(function(action) {
         BoardStore.emitChange();
       }
       break;
+    case "TOGGLE_MENU":
+      if (menu_open) {
+        menu_open = false;
+      } else {
+        menu_open = true;
+      }
+      BoardStore.emitChange();
+      break;
     case "SHOW_CHART_DIALOG":
       chart_dialog_open = true;
       fetchBurnDownData().then(() => {BoardStore.emitChange();});
