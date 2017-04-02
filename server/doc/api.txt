@@ -21,7 +21,7 @@ curl  -H "Accept: application/json" localhost:8080/gz
 POST /boards as json
 curl  -H "Content-Type: application/json" -d '{"name":"gz","private":true}' localhost:8080/boards
 => create board with name "gz", json response
-=> {"success":true,"messages":{}}
+=> {"success":true,"messages":{},"id":1}
 
 POST /boards/{:id}
 curl  -H "Content-Type: application/json" -d '{"name":"foobar","id":1}' localhost:8080/boards/1
@@ -63,7 +63,7 @@ curl  localhost:8080/columns/4
 POST /columns
 curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":4, "board_id":3}' localhost:8080/columns
 => create columns for board boardId, json response
-=> {"success":true,"messages":{}}
+=> {"success":true,"messages":{},"id":1}
 
 POST /columns/{:id}
 curl  -H "Content-Type: application/json" -d '{"name":"WIPNEW", "position":99, "id":3}' localhost:8080/columns/3
@@ -96,7 +96,7 @@ curl  localhost:8080/gz/stories
 POST /stories as json
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","board_id":1 }' localhost:8080/stories
 => Create a user story
-=> {"success":true,"messages":{}}
+=> {"success":true,"messages":{},"id":1}
 
 POST /stories/{:id}
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","board_id":1,"id":3}' localhost:8080/stories/3
@@ -127,7 +127,7 @@ curl   localhost:8080/columns/1/tasks
 POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2}' localhost:8080/tasks
 => create a task
-=> {"success":true,"messages":{}}
+=> {"success":true,"messages":{},"id":1}
 
 POST /tasks
 curl  -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":2, "id":2}' localhost:8080/tasks/2
@@ -161,7 +161,7 @@ curl   localhost:8080/users
 POST /users
 curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg"}' localhost:8080/users
 => create a user
-=> {"success":true,"messages":{}}
+=> {"success":true,"messages":{},"id":1}
 
 POST /users/2
 curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg", "id":2 }' localhost:8080/users/2
@@ -185,7 +185,7 @@ curl localhost:8080/foo/dods
 POST /{:board_name}/dods
 curl -H "Content-Type: application/json" -d '{"dods":["HA testen", "global search"]}' localhost:8080/foo/dods
 => Create Definition of dones for board foo
-=> {"success":true,"messages":{}}
+=> {"success":true,"messages":{},"id":1}
 
 GET /stories/{:id}/dods
 curl localhost:8080/stories/1/dods

@@ -38,6 +38,12 @@ type Response struct {
 	Messages map[string][]string `json:"messages"`
 }
 
+type CreateResponse struct {
+	Success  bool                `json:"success"`
+	Messages map[string][]string `json:"messages"`
+	Id       int                 `json:"id"`
+}
+
 type WsResponse struct {
 	Message string `json:"message"`
 }
@@ -98,9 +104,10 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 	success, msg := m.Validate()
 
-	response := Response{
+	response := CreateResponse{
 		Success:  success,
 		Messages: msg,
+		Id:       0,
 	}
 	if response.Success == false {
 		w.WriteHeader(200)
@@ -109,6 +116,7 @@ func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if m.Save() {
+		response.Id = m.GetId()
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(response)
 	} else {
@@ -169,7 +177,7 @@ func BoardCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	board = NewBoard(board.Name, board.Private)
-	modelCreate(board, w, r)
+	modelCreate(&board, w, r)
 }
 
 func BoardUpdate(w http.ResponseWriter, r *http.Request) {
@@ -182,7 +190,7 @@ func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(old_board, update_board, "board_id", w, r)
+	modelUpdate(&old_board, &update_board, "board_id", w, r)
 }
 
 func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
@@ -196,7 +204,7 @@ func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	var board Board
 	getObjectByReqId("board_id", r, &board)
-	modelDelete(board, w, r)
+	modelDelete(&board, w, r)
 }
 
 func ColumnGet(w http.ResponseWriter, r *http.Request) {
@@ -220,7 +228,7 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	column = NewColumn(column.Name, column.Position, column.BoardId)
-	modelCreate(column, w, r)
+	modelCreate(&column, w, r)
 }
 
 func UsersGet(w http.ResponseWriter, r *http.Request) {
@@ -238,7 +246,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user = NewUser(user.Name, user.ImagePath)
-	modelCreate(user, w, r)
+	modelCreate(&user, w, r)
 }
 
 func UserUpdate(w http.ResponseWriter, r *http.Request) {
@@ -251,13 +259,13 @@ func UserUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(old_user, update_user, "user_id", w, r)
+	modelUpdate(&old_user, &update_user, "user_id", w, r)
 }
 
 func UserDelete(w http.ResponseWriter, r *http.Request) {
 	var user User
 	getObjectByReqId("user_id", r, &user)
-	modelDelete(user, w, r)
+	modelDelete(&user, w, r)
 }
 
 func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
@@ -270,7 +278,7 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	update_column.BoardId = old_column.BoardId
-	modelUpdate(old_column, update_column, "column_id", w, r)
+	modelUpdate(&old_column, &update_column, "column_id", w, r)
 }
 
 func ColumnMove(w http.ResponseWriter, r *http.Request) {
@@ -317,7 +325,7 @@ func ColumnMove(w http.ResponseWriter, r *http.Request) {
 func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	var column Column
 	getObjectByReqId("column_id", r, &column)
-	modelDelete(column, w, r)
+	modelDelete(&column, w, r)
 }
 
 func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
@@ -364,7 +372,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
 		story.BoardId, story.Color)
-	modelCreate(story, w, r)
+	modelCreate(&story, w, r)
 }
 
 func StoryUpdate(w http.ResponseWriter, r *http.Request) {
@@ -377,7 +385,7 @@ func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(old_story, update_story, "story_id", w, r)
+	modelUpdate(&old_story, &update_story, "story_id", w, r)
 }
 
 func StoryDelete(w http.ResponseWriter, r *http.Request) {
@@ -387,7 +395,7 @@ func StoryDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(story_id)
 	var story Story
 	GetById(&story, id)
-	modelDelete(story, w, r)
+	modelDelete(&story, w, r)
 }
 
 func delete_ws_from_connections(ws *websocket.Conn, board_name string) {
@@ -481,7 +489,7 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
-	modelCreate(task, w, r)
+	modelCreate(&task, w, r)
 }
 
 func TaskUpdate(w http.ResponseWriter, r *http.Request) {
@@ -494,13 +502,13 @@ func TaskUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(old_task, update_task, "task_id", w, r)
+	modelUpdate(&old_task, &update_task, "task_id", w, r)
 }
 
 func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	getObjectByReqId("task_id", r, &task)
-	modelDelete(task, w, r)
+	modelDelete(&task, w, r)
 }
 
 func AssignUsersToTask(w http.ResponseWriter, r *http.Request) {
@@ -648,7 +656,7 @@ func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 	ret, story := getStoryFromIssue(issue, board_id)
 
 	if ret == true {
-		modelCreate(story, w, r)
+		modelCreate(&story, w, r)
 		return
 	} else {
 		w.WriteHeader(200)

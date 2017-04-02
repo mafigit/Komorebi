@@ -69,11 +69,11 @@ echo "Starting tests..."
 
 echo "Create board gz"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"gz"}' localhost:8080/boards 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Create board test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test"}' localhost:8080/boards 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
 echo "Get all boards"
 resp=`curl  localhost:8080/boards 2>/dev/null`
@@ -109,11 +109,11 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Create column WIP for board foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"WIP", "position":0, "board_id":1}' localhost:8080/columns 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Create column DONE for board foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":1, "board_id":1}' localhost:8080/columns 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
 echo "Delete column DONE"
 resp=`curl  -X DELETE localhost:8080/columns/2 2>/dev/null`
@@ -137,11 +137,11 @@ test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"board_id\"
 
 echo "Create story doit"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","board_id":1 }' localhost:8080/stories 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Create story test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test","desc":"desc","points":3,"requirements":"Do this!","board_id":1 }' localhost:8080/stories 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
 echo "Delete Story test"
 resp=`curl  -X DELETE localhost:8080/stories/2 2>/dev/null`
@@ -165,7 +165,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Create task foo"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":1, "column_id":1}' localhost:8080/tasks 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Get task foo by Id"
 resp=`curl localhost:8080/tasks/1 2>/dev/null`
@@ -173,7 +173,7 @@ test_match "{\"id\":1,\"name\":\"foo\",\"updated_at\":[0-9]{19},\"desc\":\"desc\
 
 echo "Create task test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test", "desc":"desc", "story_id":1, "column_id":1}' localhost:8080/tasks 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
 echo "Delete task test"
 resp=`curl -X DELETE localhost:8080/tasks/2 2>/dev/null`
@@ -209,11 +209,11 @@ test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"des
 
 echo "Create user franz"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/franz.jpg"}' localhost:8080/users 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Create user hans-peter"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"hans-peter", "image_path":"/public/franz.jpg"}' localhost:8080/users 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
 echo "Delete user hans-peter"
 resp=`curl  -X DELETE localhost:8080/users/2 2>/dev/null`
@@ -308,11 +308,11 @@ test_match "[{\"id\":1,\"name\":\"HA testen\",\"updated_at\":[0-9]{19},\"comment
 ### Column move route
 echo "Create column WIP for board foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"WIP", "position":1, "board_id":1}' localhost:8080/columns 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
 
 echo "Create column DONE for board foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":2, "board_id":1}' localhost:8080/columns 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":4}" $resp
 
 echo "Get column WIP"
 resp=`curl  localhost:8080/columns/3 2>/dev/null`

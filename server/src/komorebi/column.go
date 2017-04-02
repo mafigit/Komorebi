@@ -28,7 +28,7 @@ func (c Column) TableName() string {
 	return "columns"
 }
 
-func (c Column) Save() bool {
+func (c *Column) Save() bool {
 	if c.Id == 0 {
 		if c.Position == 0 {
 			var column Column
@@ -38,12 +38,12 @@ func (c Column) Save() bool {
 				c.Position = column.Position + 1
 			}
 		}
-		if errInsert := dbMapper.Connection.Insert(&c); errInsert != nil {
+		if errInsert := dbMapper.Connection.Insert(c); errInsert != nil {
 			Logger.Printf("save of column failed", errInsert)
 			return false
 		}
 	} else {
-		if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
+		if _, errUpdate := dbMapper.Connection.Update(c); errUpdate != nil {
 			Logger.Printf("save of column failed", errUpdate)
 			return false
 		}

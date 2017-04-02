@@ -20,8 +20,8 @@ func NewUser(name string, image_path string) User {
 	}
 }
 
-func (u User) Save() bool {
-	return dbMapper.Save(&u)
+func (u *User) Save() bool {
+	return dbMapper.Save(u)
 }
 
 func (u User) TableName() string {

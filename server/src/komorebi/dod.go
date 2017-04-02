@@ -25,8 +25,8 @@ func NewDod(name string, story_id int) Dod {
 	}
 }
 
-func (d Dod) Save() bool {
-	return dbMapper.Save(&d)
+func (d *Dod) Save() bool {
+	return dbMapper.Save(d)
 }
 
 func (d Dod) TableName() string {
