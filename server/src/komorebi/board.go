@@ -60,8 +60,8 @@ func (b Boards) TableName() string {
 	return "boards"
 }
 
-func (b Board) Save() bool {
-	return dbMapper.Save(&b)
+func (b *Board) Save() bool {
+	return dbMapper.Save(b)
 }
 
 func (b Board) Destroy() bool {

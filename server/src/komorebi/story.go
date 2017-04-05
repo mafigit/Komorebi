@@ -67,7 +67,7 @@ func (s Story) TableName() string {
 	return "stories"
 }
 
-func (s Story) Save() bool {
+func (s *Story) Save() bool {
 	create := false
 	if s.Id == 0 {
 		create = true
@@ -76,7 +76,7 @@ func (s Story) Save() bool {
 		Exe("before.story.update", strconv.Itoa(s.Id), s.Name)
 	}
 
-	if !dbMapper.Save(&s) {
+	if !dbMapper.Save(s) {
 		return false
 	}
 	var board Board

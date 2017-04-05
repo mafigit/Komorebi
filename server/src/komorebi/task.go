@@ -37,8 +37,8 @@ func (t Task) TableName() string {
 	return "tasks"
 }
 
-func (t Task) Save() bool {
-	if !dbMapper.Save(&t) {
+func (t *Task) Save() bool {
+	if !dbMapper.Save(t) {
 		return false
 	}
 	board := GetBoardByColumnId(t.ColumnId)
