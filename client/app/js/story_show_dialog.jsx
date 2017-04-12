@@ -9,6 +9,7 @@ import {BottomNavigation, BottomNavigationItem} from
   'material-ui/BottomNavigation';
 import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
 import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
+import ArchiveIcon from 'material-ui/svg-icons/content/archive';
 import CheckIcon from 'material-ui/svg-icons/av/playlist-add-check';
 
 const icon_style = {
@@ -58,6 +59,10 @@ export default class StoryShowDialog extends React.Component {
     });
   }
 
+  onClickArchive = () => {
+    BoardActions.archiveStory(this.props.story_id);
+  }
+
   onClickEdit = () => {
     BoardActions.openStoryEditDialog(this.props.story_id);
   }
@@ -94,6 +99,9 @@ export default class StoryShowDialog extends React.Component {
           <BottomNavigationItem label="Delete"
             icon={<DeleteForeverIcon style={icon_style} />}
             onTouchTap={this.onClickDestroy} />
+          <BottomNavigationItem label="Archive"
+            icon={<ArchiveIcon style={icon_style} />}
+            onTouchTap={this.onClickArchive} />
           <BottomNavigationItem label="Edit"
             icon={<EditIcon style={icon_style} />}
             onTouchTap={this.onClickEdit} />

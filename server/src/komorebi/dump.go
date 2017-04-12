@@ -46,7 +46,7 @@ func CountAllTasks(board Board) int64 {
 		"select count(tasks.Id) from tasks left join "+
 			"stories ON stories.Id = tasks.StoryId left join "+
 			"boards ON boards.Id = stories.BoardId "+
-			"where boards.Id=?", board.Id)
+			"where boards.Id=? AND stories.Archived = 0", board.Id)
 	if err != nil {
 		log.Println("Cound not count all tasks from board", board.Name)
 	}

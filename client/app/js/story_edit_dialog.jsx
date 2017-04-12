@@ -8,6 +8,7 @@ import ColorSelect from './color_select';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
 import ErrorStore from './store/ErrorStore';
+import Checkbox from 'material-ui/Checkbox';
 
 const default_form_values = {
   name: "",
@@ -15,6 +16,7 @@ const default_form_values = {
   points: 1,
   requirements: "",
   board_id: "",
+  archived: false,
   color: ""
 };
 
@@ -144,6 +146,12 @@ export default class StoryEditDialog extends React.Component {
           onChange={(comp, val) => {this.onChange(comp, "requirements", val);}}
         />
         <br />
+        <br />
+        Archived
+        <br />
+        <Checkbox ref="archived" onCheck={
+          (comp, val) => {this.onChange(comp, "archived", val);}}
+          checked={this.state.form_values.archived} />
       </Dialog>
     );
   }

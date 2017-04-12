@@ -27,6 +27,15 @@ var BoardActions = {
       actionType: "CLOSE_STORY_SHOW_DIALOG",
     });
   },
+  archiveStory: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "ARCHIVE_STORY",
+      id: id
+    });
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_STORY_SHOW_DIALOG",
+    });
+  },
   deleteTask: (id) => {
     AppDispatcher.dispatch({
       actionType: "DELETE_TASK",
