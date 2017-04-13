@@ -591,6 +591,14 @@ var addTask = (data) => {
     var response_obj = JSON.parse(response.responseText);
     if (response_obj.success) {
       task_dialog_open = false;
+      if (data.user_id) {
+        data.id = response_obj.id;
+        assignUserToTask(data.user_id, data).then(() => {
+          fetchAll().then(() => {
+            BoardStore.emitChange();
+          });
+        });
+      }
     } else {
       var obj_errors = response_obj.messages;
       var error_fields = ErrorFields.TASK;
