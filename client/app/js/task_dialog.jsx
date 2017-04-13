@@ -20,7 +20,8 @@ const default_form_values = {
 export default class TaskDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.getState(default_form_values);
+    var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+    this.state = this.getState(new_form_values);
   }
 
   getState = (form_values) => {
@@ -36,6 +37,7 @@ export default class TaskDialog extends React.Component {
       new_state.last_sel_story_id = new_state.task.story_id;
     } else if (form_values) {
       new_state.form_values = form_values;
+      new_state.last_sel_story_id = null;
     }
 
     return new_state;
@@ -77,8 +79,16 @@ export default class TaskDialog extends React.Component {
     BoardStore.addChangeListener(this._onChange);
   }
 
+  componentWillUpdate = (nextProps) => {
+    if (!this.props.open && nextProps.open) {
+      var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+      this.setState(this.getState(new_form_values));
+    }
+  }
+
   setDefaultFormValues = () => {
-    this.setState({form_values: default_form_values});
+    var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+    this.setState({form_values: new_form_values});
   }
 
   handleFormSubmit = () => {
