@@ -7,7 +7,12 @@ exports[`test Should update position of task after clicking on next button 1`] =
   <Badge
     badgeContent={<ActionBookmark />}
     primary={false}
-    secondary={false}>
+    secondary={false}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }>
     <CardHeader
       avatar={null}
       subtitle=""
