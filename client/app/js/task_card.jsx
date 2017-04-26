@@ -138,7 +138,7 @@ export default class Column extends React.Component {
     }
 
     return <Card className="task">
-      <Badge badgeContent={icon}>
+      <Badge badgeContent={icon} style={{width: "100%"}}>
         <CardHeader titleStyle={{fontSize: 16}}
           title={name}
           avatar={img}
