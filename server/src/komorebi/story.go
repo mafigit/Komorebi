@@ -51,6 +51,20 @@ func GetStoriesByBoardName(board_name string) Stories {
 	return stories
 }
 
+func GetArchivedStoriesByBoardName(board_name string) Stories {
+	var stories Stories
+
+	_, err := dbMapper.Connection.
+		Select(&stories, "select stories.* from stories left join "+
+			"boards on boards.Id = stories.BoardId WHERE "+
+			"(stories.Archived=1 AND "+
+			"boards.Name =?)", board_name)
+	if err != nil {
+		Logger.Printf("could not find boards")
+	}
+	return stories
+}
+
 func GetStoriesByBoardId(id int) Stories {
 	var stories Stories
 
