@@ -1,6 +1,11 @@
 SOURCEDIR=.
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
 GOPATH := $(shell git rev-parse --show-toplevel)/server
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Darwin)
+    LDFLAGS =  -ldflags -s
+endif
 
 BINARY=bin/komorebi
 
@@ -14,7 +19,7 @@ install:
 	GOPATH=${GOPATH} go install ./...
 
 test:
-	GOPATH=${GOPATH} go test komorebi && cd src/komorebi && bash ./test_all_routes.sh
+	GOPATH=${GOPATH} go test ${LDFLAGS} komorebi && cd src/komorebi && bash ./test_all_routes.sh
 
 .PHONY: clean
 clean:

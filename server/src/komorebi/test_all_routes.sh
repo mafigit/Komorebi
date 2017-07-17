@@ -136,7 +136,7 @@ test_match "{\"id\":1,\"name\":\"BACKLOG\",\"updated_at\":[0-9]{19},\"board_id\"
 ### Story routes
 
 echo "Create story doit"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","board_id":1 }' localhost:8080/stories 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"name":"doit","desc":"a_description","points":5,"requirements":"Do_this!","board_id":1,"color":"blue","issue_nr":222 }' localhost:8080/stories 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Create story test"
@@ -149,7 +149,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get Archived Story 2"
 resp=`curl  localhost:8080/foo/archived_stories 2>/dev/null`
-test_match "\[{\"id\":2,\"name\":\"test\",\"updated_at\":[0-9]{19},\"desc\":\"\",\"points\":3,\"requirements\":\"Dothis!\",\"board_id\":1,\"archived\":true,\"color\":\"\"}\]" $resp
+test_match "\[{\"id\":2,\"name\":\"test\",\"updated_at\":[0-9]{19},\"desc\":\"\",\"points\":3,\"requirements\":\"Dothis!\",\"board_id\":1,\"archived\":true,\"color\":\"\",\"issue_nr\":0}\]" $resp
 
 echo "Delete Story test"
 resp=`curl  -X DELETE localhost:8080/stories/2 2>/dev/null`
@@ -157,14 +157,14 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get Story by ID"
 resp=`curl  localhost:8080/stories/1 2>/dev/null`
-test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false,\"color\":\"\"}" $resp
+test_match "{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false,\"color\":\"blue\",\"issue_nr\":222}" $resp
 
 echo "Get Stories by board name"
 resp=`curl  localhost:8080/foo/stories 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false,\"color\":\"\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"doit\",\"updated_at\":[0-9]{19},\"desc\":\"a_description\",\"points\":5,\"requirements\":\"Do_this!\",\"board_id\":1,\"archived\":false,\"color\":\"blue\",\"issue_nr\":222}\]" $resp
 
 echo "Update Story doit with new name do_that"
-resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"requirements":"Do_this!","board_id":1,"color":"blue"}' localhost:8080/stories/1 2>/dev/null`
+resp=`curl -H "Content-Type: application/json" -d '{"id":1,"name":"do_that","points":5,"requirements":"Do_this!","board_id":1,"color":"blue","issue_nr":1}' localhost:8080/stories/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 

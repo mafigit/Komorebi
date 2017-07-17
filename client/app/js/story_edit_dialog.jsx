@@ -17,7 +17,8 @@ const default_form_values = {
   requirements: "",
   board_id: "",
   archived: false,
-  color: ""
+  color: "",
+  issue_nr: 0
 };
 
 export default class StoryEditDialog extends React.Component {
