@@ -8,10 +8,6 @@ defmodule Krcli.Board do
       IO.puts "Board is called: " <> board.name
     end
 
-    def board_inline(board) do
-      :io.format("~3B : ~-15s\n", [board["id"], board["name"]])
-    end
-
     def _expand_acc_match(task, col, story, acc) do
       with task_column_id = task.column_id,
         col_id = col.id,
@@ -122,7 +118,13 @@ defmodule Krcli.Board do
   def show_boards(arg) do
     case arg do
       {:ok, boards} ->
-        Enum.map(boards, fn(b) -> Print.board_inline(b) end) |> Util.good
+        Krcli.Table.p_base_table(
+          Krcli.Table.create(%{columns: 2, width: 30,
+            lines: length(boards),
+            headers: ["Board Id", "Board name"],
+            data: Enum.map(boards, fn(x) -> [Integer.to_string(x["id"]), x["name"]] end)
+          })
+        ) |> Util.good
       {:error, err} -> raise err
     end
   end
