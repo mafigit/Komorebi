@@ -1,5 +1,5 @@
 defmodule Krcli.Story do
-  defstruct [:id, :name, :desc, :points, :requirements, :board_id, :priority]
+  defstruct [:id, :name, :desc, :points, :requirements, :board_id, :priority, :tasks]
   use FN, url: "/stories", name: "Story", json_name: "stories"
 
   def stories_json(board, column) do
@@ -62,14 +62,16 @@ defmodule Krcli.Story do
   end
 
   def from_hash(item) do
-    %Krcli.Story{
+    with tasks = Enum.map(item["tasks"] || [], &Krcli.Task.from_hash/1),
+    do: %Krcli.Story{
        id: item["id"],
       desc: item["desc"],
       points: item["points"],
       requirements: item["requirements"],
       board_id: item["board_id"],
       name: item["name"],
-      priority: item["priority"]
+      priority: item["priority"],
+      tasks: tasks
     }
   end
 

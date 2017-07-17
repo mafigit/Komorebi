@@ -19,6 +19,10 @@ defmodule Krcli.Task do
     do: all_fun(fn() -> tasks_json(board, column) end)
 
   def parse(col) do
+    from_hash(col) |> Util.wrap
+  end
+
+  def from_hash(col) do
     %Krcli.Task{
       id: col["id"],
       name: col["name"],
@@ -26,7 +30,7 @@ defmodule Krcli.Task do
       story_id: col["story_id"],
       column_id: col["column_id"],
       priority: col["priority"]
-    } |> Util.wrap
+    }
   end
 
   def by_name(item) do
