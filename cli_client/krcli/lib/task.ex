@@ -55,14 +55,6 @@ defmodule Krcli.Task do
     Krcli.Board.with_column(board, item, &destroy_item/1)
   end
 
-  def by_column(column) do
-    SbServer.get_json("/columns/" <> Integer.to_string(column.id) <> "/tasks")
-    |> Util.unwrap
-    |> JSX.decode
-    |> Util.unwrap
-    |> parse_batch
-  end
-
   def create_from_file do
     with {:ok, data} <- File.read("/tmp/krcli.task"),
       lines = String.split(data, ["\n"]),

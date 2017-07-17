@@ -16,7 +16,7 @@ defmodule KrOpts do
       krcli board <boardid> show -> show a boards contents
       krcli board <boardid> column <columid> new -> new column
       krcli board <boardid> column <columnid> destroy -> destroy column
-      krcli board <boardid> column <columnid> story new -> new story
+      krcli board <boardid> story new -> new story
       krcli story <storyid> destroy -> destroy story
       krcli story <storyid> show -> show story
       krcli story <storyid> move <boardid> <columnid> -> move story to board / column
@@ -36,8 +36,7 @@ defmodule KrOpts do
         Krcli.Board.create_column(column, board)
       ["board", board, "column", column, "destroy"] ->
         Krcli.Board.destroy_column(column, board)
-      ["board", board, "column", column, "story", "new"] ->
-        Krcli.Board.create_story(board, column)
+      ["board", board, "story", "new"] -> Krcli.Board.create_story(board)
       ["story", story_id, "destroy"] -> Krcli.Story.destroy(story_id)
       ["story", story_id, "show"] -> Krcli.Story.show(story_id)
       ["story", story_id, "move", board, column] -> Krcli.Story.move(board, column, story_id)

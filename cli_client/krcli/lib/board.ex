@@ -12,30 +12,6 @@ defmodule Krcli.Board do
       :io.format("~3B : ~-15s\n", [board["id"], board["name"]])
     end
 
-    def print_story_at(stories, colid, cnt) do
-      if x=Enum.at(stories[colid], cnt) do
-        case x do
-          %Krcli.Task{} -> :io.format(IO.ANSI.cyan() <> "TA: ~-20s (~3B)"<>IO.ANSI.reset()<>"|",
-            [x.name || "", x.id])
-          _ -> :io.format(IO.ANSI.green() <> "ST: ~-20s (~3B)"<>IO.ANSI.reset()<>"|",
-            [x.name || "", x.id])
-        end
-      else
-        :io.format("~30s|", [""])
-      end
-    end
-
-    def max_depth_in_stories(stories) do
-      Enum.reduce(stories, 0, fn(val, acc) ->
-        if (length(elem(val, 1)) > acc), do: length(elem(val, 1)) , else: acc end)
-    end
-
-    def story_line_by_column(cnt, board, stories) do
-      :io.format("|")
-      Enum.each(board.columns,
-        fn(col) -> print_story_at(stories, col.id, cnt) end) |> Util.no_args(&IO.puts/1, "")
-    end
-
     def _expand_acc_match(task, col, story, acc) do
       with task_column_id = task.column_id,
         col_id = col.id,
@@ -128,27 +104,15 @@ defmodule Krcli.Board do
     with_structure(board, &(Krcli.Column.create(nname, &1.id)))
   end
 
-  def create_story(board, column) do
-    with_structure(board, column, &(Krcli.Story.create(&1, &2)))
+  def create_story(board) do
+    with_structure(board, &(Krcli.Story.create(&1)))
   end
 
   def create_task(board, column, story) do
     with_structure(board, column, story, &(Krcli.Task.create(&1, &2, &3)))
   end
 
-  def story_tasks_by_column(col) do
-    (Krcli.Story.by_column(col) |> Util.unwrap) ++
-    (Krcli.Task.by_column(col) |> Util.unwrap)
-  end
-
-  def stories_for_board(board) do
-    Enum.reduce(board.columns, %{},
-      fn(col, acc) ->
-        Map.put_new(acc, col.id, story_tasks_by_column(col))
-      end)
-  end
-
-   defp show_board(input) do
+  defp show_board(input) do
     with {:ok, board} <- input,
       :ok <- Print.board(board),
       :ok <- Print.stories_by_column(board),

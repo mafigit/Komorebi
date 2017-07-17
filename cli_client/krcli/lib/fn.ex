@@ -21,6 +21,15 @@ defmodule FN do
 
       def by_name(name), do: by_name(name, all())
 
+      def by_id(id, data) do
+        with {:ok, items} <- data,
+          item = Enum.find(items, :error, Util.ln_cmp(id, &(&1.id))),
+        do:
+          if item == :error, do: {:error, "could not find " <> type_name()},
+          else: Util.wrap(item)
+      end
+      def by_id(id), do: by_id(id, all())
+
       def all_json do
         SbServer.get_json(type_url()) |> Util.unwrap |> JSX.decode
       end
@@ -54,7 +63,7 @@ defmodule FN do
         items |> Util.unwrap |> Enum.map(&(parse(&1) |> Util.unwrap)) |> Util.wrap
       end
 
-      defoverridable [from_hash: 1, by_name: 1]
+      defoverridable [from_hash: 1, by_name: 1, by_id: 1]
     end
   end
 

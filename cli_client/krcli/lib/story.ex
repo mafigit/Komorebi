@@ -87,13 +87,6 @@ defmodule Krcli.Story do
     }
   end
 
-  # XXX [mh] FIXME (broken by no longer having columns in stories)
-  # def by_column(col) do
-  #   SbServer.get_json("/columns/" <> Integer.to_string(col.id) <> "/stories")
-  #   |> Util.unwrap_fn(&JSX.decode/1)
-  #   |> parse_batch
-  # end
-
   def show_story(story) do
     with story_id = Integer.to_string(story.id),
     pad_desc = Util.split_indent_wrap(story.desc, "  "),
