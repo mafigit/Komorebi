@@ -1,5 +1,5 @@
 defmodule Krcli.Board do
-  defstruct [:id, :name, :columns]
+  defstruct [:id, :name, :columns, :stories]
 
   use FN, url: "/boards", name: "Board"
 
@@ -36,14 +36,33 @@ defmodule Krcli.Board do
         fn(col) -> print_story_at(stories, col.id, cnt) end) |> Util.no_args(&IO.puts/1, "")
     end
 
+    def story_tasks_by_column(board) do
+      # Enum.reduce(board.stories, [], fn(story, acc) ->
+      #   with nacc <- [story.name <> " " <> story.id],
+      #        nline <- Enum.reduce(board.columns, nacc, fn(col, acc_1) ->
+      #           Enum.reduce(board.tasks, acc_1, fn(task, acc_2) ->
+      #             if task.column_id == col.id and task.story_id = story.id,
+      #             do: acc_2 ++ [task.name]
+      #           end)
+      #         end),
+      #   do: acc ++ [nline]
+      # end)
+    end
+
     def stories_by_column(stories, board) do
-      IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
-      :io.format("|"<> String.duplicate("~-30s|", length(board.columns)) <> "\n",
-        Enum.map(board.columns, fn(x) -> x.name end))
-      IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
-      Enum.map(0..max_depth_in_stories(stories)-1,
-        fn(cnt) -> story_line_by_column(cnt, board, stories) end) |> Util.good
-      IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
+      # with len, cols <- story_and_tasks_per_column(board),
+      # do:
+      # Krcli.Table.p_base_table(
+      #   Krcli.Table.create(%{columns: length(board.columns), width: 20, lines: cols,
+      #     headers: board.columns, data: tasks_and_stories(board) })
+      # )
+      # IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
+      # :io.format("|"<> String.duplicate("~-30s|", length(board.columns)) <> "\n",
+      #   Enum.map(board.columns, fn(x) -> x.name end))
+      # IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
+      # Enum.map(0..max_depth_in_stories(stories)-1,
+      #   fn(cnt) -> story_line_by_column(cnt, board, stories) end) |> Util.good
+      # IO.puts("-" <> String.duplicate("-", length(board.columns)*31))
     end
   end
 
@@ -55,7 +74,8 @@ defmodule Krcli.Board do
   def from_hash(brd) do
     with cols = Enum.map(brd["columns"] || [], &Krcli.Column.parse/1)
       |> Krcli.Column.sort,
-    do: %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols}
+      stories = Enum.map(brd["stories"] || [], &Krcli.Story.parse/1),
+    do: %Krcli.Board{id: brd["id"], name: brd["name"], columns: cols, stories: stories}
   end
 
   def with_column(board, item, fun) do

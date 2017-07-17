@@ -16,7 +16,7 @@ defmodule FN do
         item = Enum.find(items, :error, Util.ln_cmp(name, &(&1.name))),
         do:
           if item == :error, do: {:error, "could not find " <> type_name},
-        else: Util.wrap(item)
+          else: Util.wrap(item)
       end
 
       def by_name(name), do: by_name(name, all)
