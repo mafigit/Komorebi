@@ -60,12 +60,13 @@ export default class Board extends React.Component {
           acc.push(<TaskCard key={key} column_id={task.column_id}
             task_id={task.id} name={task.name} desc={task.desc}
             task_name={task.name} task_story_id={task.story_id}
-            task_priority={task.priority} />);
+            user={task.user} />);
         }
         return acc;
       }, []);
 
-      return <Column key={key} name={col.name} id={col.id} >
+      return <Column key={key} name={col.name} id={col.id}
+        position={col.position} max={this.state.columns.length-1} >
         {tasks_for_column}
       </Column>;
     });

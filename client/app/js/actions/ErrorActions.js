@@ -44,6 +44,50 @@ var ErrorActions = {
     AppDispatcher.dispatch({
       actionType: "REMOVE_STORY_ERRORS"
     });
+  },
+  addUserErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_USER_ERRORS",
+      errors: errors
+    });
+  },
+  removeUserErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_USER_ERRORS"
+    });
+  },
+  addDodErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_DOD_ERRORS",
+      errors: errors
+    });
+  },
+  removeDodErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_DOD_ERRORS"
+    });
+  },
+  addCheckDodErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_CHECK_DOD_ERRORS",
+      errors: errors
+    });
+  },
+  removeCheckDodErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_CHECK_DOD_ERRORS"
+    });
+  },
+  addStoryIssueErrors: (errors) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY_ISSUE_ERRORS",
+      errors: errors
+    });
+  },
+  removeStoryIssueErrors: () => {
+    AppDispatcher.dispatch({
+      actionType: "REMOVE_STORY_ISSUE_ERRORS"
+    });
   }
 };
 module.exports = ErrorActions;

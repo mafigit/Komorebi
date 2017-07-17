@@ -39,7 +39,7 @@ func TestBoardsGetHandler(t *testing.T) {
 }
 
 func TestBoardShowHandler(t *testing.T) {
-	b := NewBoard("testBoardShow")
+	b := NewBoard("testBoardShow", false)
 	b.Save()
 	req, _ := http.NewRequest("GET", "/testBoardShow", nil)
 	w := httptest.NewRecorder()
@@ -83,7 +83,7 @@ func TestBoardCreateHandler(t *testing.T) {
 }
 
 func TestColumnCreateHandler(t *testing.T) {
-	b := NewBoard("test123")
+	b := NewBoard("test123", false)
 	b.Save()
 	board := GetBoardNestedByName("test123")
 	data := fmt.Sprintf("{\"name\":\"testColumnCreate\",\"board_id\":%d}", board.Id)
@@ -118,14 +118,14 @@ func TestColumnCreateHandler(t *testing.T) {
 }
 
 func TestStoryCreateHandler(t *testing.T) {
-	b := NewBoard("testStoryCreate")
+	b := NewBoard("testStoryCreate", false)
 	b.Save()
 	var board Board
 	GetByName(&board, "testStoryCreate")
 	c := NewColumn("testColumn", 0, board.Id)
 	c.Save()
 
-	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"board_id\":%d, \"priority\":4}",
+	data := fmt.Sprintf("{\"name\":\"testStory\",\"points\":5,\"board_id\":%d}",
 		board.Id)
 
 	req, _ := http.NewRequest("POST", "/stories",
@@ -144,7 +144,7 @@ func TestStoryCreateHandler(t *testing.T) {
 }
 
 func TestTaskCreateHandler(t *testing.T) {
-	b := NewBoard("testTaskCreate")
+	b := NewBoard("testTaskCreate", false)
 	b.Save()
 	var board Board
 	GetByName(&board, "testTaskCreate")
@@ -157,7 +157,7 @@ func TestTaskCreateHandler(t *testing.T) {
 			column = col
 		}
 	}
-	s := NewStory("testStory", "desc", "req", 0, 4, board.Id)
+	s := NewStory("testStory", "desc", "req", 4, board.Id, "green")
 	s.Save()
 
 	stories := GetStoriesByBoardName(board.Name)
@@ -169,7 +169,7 @@ func TestTaskCreateHandler(t *testing.T) {
 	}
 
 	data := fmt.Sprintf("{\"name\":\"testTask\",\"desc\":\"foo desc\","+
-		"\"column_id\":%d,\"story_id\":%d, \"priority\": 5}",
+		"\"column_id\":%d,\"story_id\":%d}",
 		column.Id, story.Id)
 
 	req, _ := http.NewRequest("POST", "/task",

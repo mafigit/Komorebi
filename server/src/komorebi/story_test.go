@@ -14,17 +14,20 @@ func contains(s []string, e string) bool {
 }
 
 func TestNewStory(t *testing.T) {
-	s := NewStory("haensel", "gretel", "requirements", 5, 4, 1)
+	s := NewStory("haensel", "gretel", "requirements", 5, 1, "black")
 	if s.Name != "haensel" {
 		t.Error("Should have instanciate a story:", s.Name)
 	}
 	if s.Archived != false {
 		t.Error("A new Story schould not be archived:", s.Archived)
 	}
+	if s.Color != "black" {
+		t.Error("The Story schould be black:", s.Color)
+	}
 }
 
 func TestStoryCreate(t *testing.T) {
-	s := NewStory("haensel", "gretel", "requirements", 5, 4, 1)
+	s := NewStory("haensel", "gretel", "requirements", 5, 1, "blue")
 	if !s.Save() {
 		t.Error("Should have created the story")
 	}
@@ -36,7 +39,7 @@ func TestStoryCreate(t *testing.T) {
 
 func TestStoryValidation(t *testing.T) {
 	s := NewStory("About a boy", "A meaningful description",
-		"Do this and that", 5, 4, 1)
+		"Do this and that", 5, 1, "blue")
 	success, msg := s.Validate()
 	if success == false {
 		t.Error("Should be valid")
@@ -58,19 +61,6 @@ func TestStoryValidation(t *testing.T) {
 	if success == true || !contains(msg["board_id"], "BoardId not set.") {
 		t.Error("Should be invalid by missing board id")
 	}
-	s.BoardId = 5
-	s.Priority = 0
-	success, msg = s.Validate()
-	if success == true ||
-		!contains(msg["priority"], "Priority out of range.") {
-		t.Error("Should be invalid by priority")
-	}
-	s.Points = 11
-	success, msg = s.Validate()
-	if success == true ||
-		!contains(msg["priority"], "Priority out of range.") {
-		t.Error("Should be invalid by priority")
-	}
 }
 
 func TestStoryDelete(t *testing.T) {
@@ -79,8 +69,8 @@ func TestStoryDelete(t *testing.T) {
 		"A description",
 		"a lot of requirements",
 		5,
-		3,
 		1,
+		"green",
 	)
 	s.Save()
 

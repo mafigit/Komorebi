@@ -10,9 +10,11 @@ import BoardStore  from '../app/js/store/BoardStore';
 
 
 beforeEach(function() {
+  var story1 = {"id":1, "name":"foo"};
   var column1 = {"id":1,"name":"Col1","updated_at":1471541504413505006,"stories":[],"position":1,"board_id":1};
   var column2 = {"id":2,"name":"Col2","updated_at":1471541504413505007,"stories":[],"position":2,"board_id":1};
   BoardStore.__Rewire__('columns', [column1, column2]);
+  BoardStore.__Rewire__('stories', [story1]);
 });
 
 it('Should update position of task after clicking on next button', () => {
@@ -38,7 +40,7 @@ it('Should update position of task after clicking on next button', () => {
     });
   });
 
-  var next_button = wrapper.find(IconButton).find({className: 'nextButton'}).first()
+  var next_button = wrapper.find(IconButton).find({className: 'nextButton'}).first();
   next_button.simulate('click');
   expect(updated_task.column_id).toEqual(new_column_id);
 });

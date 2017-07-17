@@ -6,10 +6,14 @@ import MyMenu from './menu';
 import Layout from './layout';
 import ColumnDialog from './column_dialog';
 import StoryEditDialog from './story_edit_dialog';
+import ChartDialog from './chart_dialog';
+import DodDialog from './dod_dialog';
+import DodCheckDialog from './dod_check_dialog';
 import StoryFromIssueEditDialog from './story_from_issue_edit_dialog';
 import TaskDialog from './task_dialog';
 import Colors from './color';
 import BoardStore from './store/BoardStore';
+import BoardActions from './actions/BoardActions';
 
 export default class BoardLayout extends Layout  {
   constructor(props) {
@@ -40,12 +44,14 @@ export default class BoardLayout extends Layout  {
 
   handleTouchTapMenuBtn = (event) => {
     event.preventDefault();
-    this.setState({menu_open: true, menu_achor: event.currentTarget});
+    BoardActions.toggleBoardMenu();
+    this.setState({menu_achor: event.currentTarget});
   }
 
   handleTouchTapCloseMenu = () => {
     var achor_element = this.state.menu_achor;
-    this.setState({menu_open: false, menu_achor: achor_element});
+    BoardActions.toggleBoardMenu();
+    this.setState({menu_achor: achor_element});
   }
 
   render() {
@@ -53,8 +59,7 @@ export default class BoardLayout extends Layout  {
       <AppBar
         title={this.props.title}
         iconElementRight={
-          <FlatButton label="木漏れ日"
-            href={"https://github.com/mafigit/Komorebi"}
+          <FlatButton label="木漏れ日" href={"/"}
             style={{verticalAlign: "baseline"}}
             labelStyle={{fontSize: "30px", color: Colors.light_red,
               fontWeight: "bold"}}/>
@@ -65,6 +70,9 @@ export default class BoardLayout extends Layout  {
         touchAwayHandler={this.handleTouchTapCloseMenu} />
       <ColumnDialog open={this.state.column_open} />
       <StoryEditDialog open={this.state.story_edit_open} />
+      <ChartDialog />
+      <DodDialog />
+      <DodCheckDialog />
       <StoryFromIssueEditDialog open={this.state.story_from_issue_edit_open} />
       <TaskDialog open={this.state.task_open} />
       {this.props.children}

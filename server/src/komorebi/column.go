@@ -1,9 +1,5 @@
 package komorebi
 
-import (
-	"log"
-)
-
 type Column struct {
 	DbModel
 	BoardId  int `json:"board_id"`
@@ -11,10 +7,8 @@ type Column struct {
 }
 
 type ColumnNested struct {
-	DbModel
-	Tasks    `json:"tasks"`
-	Position int `json:"position"`
-	BoardId  int `json:"board_id"`
+	Column
+	Tasks `json:"tasks"`
 }
 
 type ColumnsNested []ColumnNested
@@ -34,7 +28,7 @@ func (c Column) TableName() string {
 	return "columns"
 }
 
-func (c Column) Save() bool {
+func (c *Column) Save() bool {
 	if c.Id == 0 {
 		if c.Position == 0 {
 			var column Column
@@ -44,13 +38,13 @@ func (c Column) Save() bool {
 				c.Position = column.Position + 1
 			}
 		}
-		if errInsert := dbMapper.Connection.Insert(&c); errInsert != nil {
-			log.Println("save of column failed", errInsert)
+		if errInsert := dbMapper.Connection.Insert(c); errInsert != nil {
+			Logger.Printf("save of column failed", errInsert)
 			return false
 		}
 	} else {
-		if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
-			log.Println("save of column failed", errUpdate)
+		if _, errUpdate := dbMapper.Connection.Update(c); errUpdate != nil {
+			Logger.Printf("save of column failed", errUpdate)
 			return false
 		}
 	}
@@ -72,7 +66,7 @@ func (c Column) Destroy() bool {
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&c); errDelete != nil {
-		log.Println("delete of column failed.", errDelete)
+		Logger.Printf("delete of column failed.", errDelete)
 		return false
 	}
 	reorderColumns(c.BoardId)
@@ -88,7 +82,7 @@ func reorderColumns(board_id int) {
 	for index, column := range GetColumnsByBoardId(board_id) {
 		column.Position = index
 		if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
-			log.Println("save of column failed", errUpdate)
+			Logger.Printf("save of column failed", errUpdate)
 		}
 	}
 }
@@ -98,7 +92,7 @@ func (c Column) Validate() (bool, map[string][]string) {
 	errors := map[string][]string{}
 
 	if len(c.Name) <= 0 {
-		log.Println("Column validation failed. Name not present")
+		Logger.Printf("Column validation failed. Name not present")
 		success = false
 		errors["name"] = append(errors["name"], "Name not present.")
 	}
@@ -106,14 +100,14 @@ func (c Column) Validate() (bool, map[string][]string) {
 	var board Board
 	GetById(&board, c.BoardId)
 	if board.Id == 0 {
-		log.Println("Column validation failed. BoardId does not exist:", c.BoardId)
+		Logger.Printf("Column validation failed. BoardId does not exist:", c.BoardId)
 		success = false
 		errors["board_id"] = append(errors["board_id"], "Board does not exist.")
 	}
 
 	for _, column := range GetColumnsByBoardId(board.Id) {
 		if column.Name == c.Name && column.Id != c.Id {
-			log.Println("Column validation failed. Name not uniq")
+			Logger.Printf("Column validation failed. Name not uniq")
 			success = false
 			errors["name"] = append(errors["name"], "Name not uniq.")
 		}
@@ -128,7 +122,7 @@ func GetNestedColumnByColumnId(id int) ColumnNested {
 		"select * from columns where Id=?", id)
 
 	if err != nil {
-		log.Println("could not find column", err)
+		Logger.Printf("could not find column", err)
 		return column
 	}
 
@@ -145,7 +139,39 @@ func GetColumnsByBoardId(board_id int) Columns {
 	_, err := dbMapper.Connection.Select(&cols,
 		"select * from columns where BoardId=? order by Position, Id ", board_id)
 	if err != nil {
-		log.Println("Error while fetching columns", board_id)
+		Logger.Printf("Error while fetching columns", board_id)
 	}
 	return cols
+}
+
+func MoveColumn(column Column, dir string) bool {
+	if dir == "right" {
+		max_pos, _ := dbMapper.Connection.SelectInt(
+			"select MAX(Position) from columns where BoardId=?", column.BoardId)
+		if max_pos == int64(column.Position) {
+			return false
+		}
+		column.Position = column.Position + 1
+	} else {
+		if column.Position == 0 {
+			return false
+		}
+		column.Position = column.Position - 1
+	}
+	if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
+		Logger.Printf("save of column failed", errUpdate)
+	}
+	for _, c := range GetColumnsByBoardId(column.BoardId) {
+		if c.Position == column.Position && c.Id != column.Id {
+			if dir == "right" {
+				c.Position = c.Position - 1
+			} else {
+				c.Position = c.Position + 1
+			}
+			if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
+				Logger.Printf("save of column failed", errUpdate)
+			}
+		}
+	}
+	return true
 }

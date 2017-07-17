@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardTitle, CardActions, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardActions, CardText} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
 import OpenInNewIcon from 'material-ui/svg-icons/action/open-in-new';
 import PrevIcon from 'material-ui/svg-icons/navigation/chevron-left';
@@ -7,6 +7,9 @@ import NextIcon from 'material-ui/svg-icons/navigation/chevron-right';
 import { Grid, Row, Col } from 'react-bootstrap';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
+import ReactMarkdown from 'react-markdown';
+import BookMarkIcon from 'material-ui/svg-icons/action/bookmark';
+import Badge from 'material-ui/Badge';
 
 const styles = {
   small_icon: {
@@ -17,7 +20,7 @@ const styles = {
     width: 20,
     height: 20,
     padding: 0
-  }
+  },
 };
 
 /**
@@ -35,9 +38,9 @@ export default class Column extends React.Component {
      * @property {number} task_id id of task
      * @property {string} name name of task
      * @property {string} desc description of task
-     * @property {string} task_priority prority of task,
      * @property {number} task_story_id story id of task
      * @property {number} column_id column id of the task
+     * @property {user} user user of the task
      */
     this.state={};
   }
@@ -73,11 +76,10 @@ export default class Column extends React.Component {
    * @param {number} column_id id of the new column for task
    */
   updateTask = (column_id) => {
-    BoardActions.updateTask({
+    BoardActions.updateTaskPosition({
       "id": this.props.task_id,
       "name": this.props.name,
       "desc": this.props.desc,
-      "priority": this.props.task_priority,
       "story_id": this.props.task_story_id,
       "column_id": column_id
     });
@@ -102,11 +104,49 @@ export default class Column extends React.Component {
     }
   }
 
+  disablePrevBtn = () => {
+    var cols = BoardStore.getColumnsInOrder();
+    if (cols.length > 0) {
+      var first_col = cols[0];
+      return first_col.id === this.props.column_id;
+    }
+    return true;
+  }
+
+  disableNextBtn = () => {
+    var cols = BoardStore.getColumnsInOrder();
+    if (cols.length > 0) {
+      var last_col = cols[cols.length-1];
+      return last_col.id === this.props.column_id;
+    }
+    return true;
+  }
+
   render () {
+    var story = BoardStore.getStoryById(this.props.task_story_id);
+    var name = <span>{this.props.name}</span>;
+    var icon = <BookMarkIcon color={story.color}/>;
+    var user_name = "";
+    var img = undefined;
+    if (this.props.user) {
+      user_name = <span>{this.props.user.name}</span>;
+      if (this.props.user.image_path) {
+        img = this.props.user.image_path;
+      } else {
+        img = "/images/users/" + this.props.user.name +  ".png";
+      }
+    }
+
     return <Card className="task">
-      <CardTitle title={this.props.name} subtitle="Story tag" />
+      <Badge badgeContent={icon} style={{width: "100%"}}>
+        <CardHeader titleStyle={{fontSize: 16}}
+          title={name}
+          avatar={img}
+          subtitle={user_name}
+        />
+      </Badge>
       <CardText className="task-text">
-       {this.props.desc}
+        <ReactMarkdown source={this.props.desc}/>
       </CardText>
       <CardActions>
         <Grid fluid={true}>
@@ -122,6 +162,7 @@ export default class Column extends React.Component {
               <div className="pull-right">
                 <IconButton
                   style={styles.small_button}
+                  disabled={this.disablePrevBtn()}
                   iconStyle={styles.small_icon}
                   onClick={this.onPrevButton}
                   className="prevButton">
@@ -129,6 +170,7 @@ export default class Column extends React.Component {
                 </IconButton>
                 <IconButton
                   style={styles.small_button}
+                  disabled={this.disableNextBtn()}
                   iconStyle={styles.small_icon}
                   onClick={this.onNextButton}
                   className="nextButton">

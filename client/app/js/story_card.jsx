@@ -1,53 +1,12 @@
 import React from 'react';
-import { ListGroupItem } from 'react-bootstrap';
+import {ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
-import OpenInNewIcon from 'material-ui/svg-icons/action/open-in-new';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-
-const styles = {
-  small_button: {
-    width: 20,
-    height: 20,
-    padding: 0,
-    position: 'absolute',
-    right: '4px'
-  },
-  small_icon: {
-    width: 20,
-    height: 20
-  }
-};
-
-class OpenIcon extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state={};
-  }
-
-  onClickHandler = (event) => {
-    event.stopPropagation();
-    BoardActions.openStoryShowDialog(this.props.story_id);
-  }
-
-  // This is needed for testing the a component without the whole app context
-  static childContextTypes = {
-    muiTheme: React.PropTypes.object
-  }
-
-  getChildContext() {
-    return {
-      muiTheme: getMuiTheme()
-    };
-  }
-
-  render() {
-    return <IconButton tooltip="Show story" style={styles.small_button}
-      iconStyle={styles.small_icon} onClick={this.onClickHandler}>
-      <OpenInNewIcon />
-    </IconButton>;
-  }
-}
+import LabelIcon from 'material-ui/svg-icons/action/label';
+import LabelOutlineIcon from 'material-ui/svg-icons/action/label-outline';
+import {grey400} from 'material-ui/styles/colors';
 
 export default class StoryCard extends React.Component {
   constructor(props) {
@@ -56,8 +15,14 @@ export default class StoryCard extends React.Component {
   }
 
   onClickHandler = () => {
-    BoardActions.showTasksForStoryId(this.props.story_id);
+    BoardActions.toggleTasksForStoryId(this.props.story_id);
   }
+
+  onClickIconHandler = (event) => {
+    event.stopPropagation();
+    BoardActions.openStoryShowDialog(this.props.story_id);
+  }
+
 
   // This is needed for testing the a component without the whole app context
   static childContextTypes = {
@@ -71,15 +36,20 @@ export default class StoryCard extends React.Component {
   }
 
   render() {
-    return <ListGroupItem
+    var leftIcon = <LabelOutlineIcon color={this.props.color} />;
+    if (this.props.active) {
+      leftIcon = <LabelIcon color={this.props.color}/>;
+    }
+    var rightIcon = (<IconButton tooltip="Show story" onClick={this.onClickIconHandler}>
+        <MoreVertIcon color={grey400} />
+      </IconButton>);
+
+    return <ListItem
+      primaryText={this.props.name}
       onClick={this.onClickHandler}
-      className="story_card"
-      href="#"
-      active={this.props.active}
-    >
-      {this.props.name}
-      <OpenIcon story_id={this.props.story_id} />
-    </ListGroupItem>;
+      leftIcon={leftIcon}
+      rightIconButton={rightIcon}
+    />;
   }
 
 }

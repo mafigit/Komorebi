@@ -1,0 +1,278 @@
+exports[`<UserList /> Should render UserList 1`] = `
+<UserList>
+  <List>
+    <div
+      style={
+        Object {
+          "muiPrepared": true,
+          "padding": 0,
+          "paddingBottom": 8,
+          "paddingTop": 8,
+        }
+      }>
+      <ListItem
+        autoGenerateNestedIndicator={true}
+        className="user_0"
+        disableKeyboardFocus={false}
+        disabled={false}
+        initiallyOpen={false}
+        insetChildren={false}
+        nestedItems={Array []}
+        nestedLevel={0}
+        onClick={[Function]}
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onNestedListToggle={[Function]}
+        onTouchStart={[Function]}
+        open={null}
+        primaryText="Franz"
+        primaryTogglesNestedList={false}
+        secondaryTextLines={1}
+        style={Object {}}>
+        <div>
+          <EnhancedButton
+            className="user_0"
+            containerElement="span"
+            disableKeyboardFocus={false}
+            disabled={false}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onKeyboardFocus={[Function]}
+            onMouseDown={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchStart={[Function]}
+            onTouchTap={[Function]}
+            open={null}
+            style={
+              Object {
+                "backgroundColor": null,
+                "color": "rgba(0, 0, 0, 0.87)",
+                "display": "block",
+                "fontSize": 16,
+                "lineHeight": "16px",
+                "position": "relative",
+                "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
+              }
+            }
+            tabIndex={0}
+            type="button">
+            <span
+              className="user_0"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              onTouchTap={[Function]}
+              open={null}
+              style={
+                Object {
+                  "WebkitTapHighlightColor": "rgba(0, 0, 0, 0)",
+                  "background": "none",
+                  "backgroundColor": null,
+                  "border": 10,
+                  "boxSizing": "border-box",
+                  "color": "rgba(0, 0, 0, 0.87)",
+                  "cursor": "pointer",
+                  "display": "block",
+                  "fontFamily": "Roboto, sans-serif",
+                  "fontSize": 16,
+                  "fontWeight": "inherit",
+                  "lineHeight": "16px",
+                  "margin": 0,
+                  "muiPrepared": true,
+                  "outline": "none",
+                  "padding": 0,
+                  "position": "relative",
+                  "textDecoration": "none",
+                  "transform": "translate(0, 0)",
+                  "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
+                  "verticalAlign": null,
+                }
+              }
+              tabIndex={0}
+              type="button">
+              <TouchRipple
+                abortOnScroll={true}>
+                <div
+                  onMouseDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseUp={[Function]}
+                  onTouchEnd={[Function]}
+                  onTouchStart={[Function]}>
+                  <div
+                    style={
+                      Object {
+                        "marginLeft": 0,
+                        "muiPrepared": true,
+                        "paddingBottom": 16,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                        "position": "relative",
+                      }
+                    }>
+                    <div
+                      style={
+                        Object {
+                          "muiPrepared": true,
+                        }
+                      }>
+                      Franz
+                    </div>
+                  </div>
+                </div>
+              </TouchRipple>
+            </span>
+          </EnhancedButton>
+        </div>
+      </ListItem>
+      <ListItem
+        autoGenerateNestedIndicator={true}
+        className="user_1"
+        disableKeyboardFocus={false}
+        disabled={false}
+        initiallyOpen={false}
+        insetChildren={false}
+        nestedItems={Array []}
+        nestedLevel={0}
+        onClick={[Function]}
+        onKeyboardFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onNestedListToggle={[Function]}
+        onTouchStart={[Function]}
+        open={null}
+        primaryText="Peter"
+        primaryTogglesNestedList={false}
+        secondaryTextLines={1}
+        style={Object {}}>
+        <div>
+          <EnhancedButton
+            className="user_1"
+            containerElement="span"
+            disableKeyboardFocus={false}
+            disabled={false}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onKeyboardFocus={[Function]}
+            onMouseDown={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchStart={[Function]}
+            onTouchTap={[Function]}
+            open={null}
+            style={
+              Object {
+                "backgroundColor": null,
+                "color": "rgba(0, 0, 0, 0.87)",
+                "display": "block",
+                "fontSize": 16,
+                "lineHeight": "16px",
+                "position": "relative",
+                "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
+              }
+            }
+            tabIndex={0}
+            type="button">
+            <span
+              className="user_1"
+              disabled={false}
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              onTouchTap={[Function]}
+              open={null}
+              style={
+                Object {
+                  "WebkitTapHighlightColor": "rgba(0, 0, 0, 0)",
+                  "background": "none",
+                  "backgroundColor": null,
+                  "border": 10,
+                  "boxSizing": "border-box",
+                  "color": "rgba(0, 0, 0, 0.87)",
+                  "cursor": "pointer",
+                  "display": "block",
+                  "fontFamily": "Roboto, sans-serif",
+                  "fontSize": 16,
+                  "fontWeight": "inherit",
+                  "lineHeight": "16px",
+                  "margin": 0,
+                  "muiPrepared": true,
+                  "outline": "none",
+                  "padding": 0,
+                  "position": "relative",
+                  "textDecoration": "none",
+                  "transform": "translate(0, 0)",
+                  "transition": "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms",
+                  "verticalAlign": null,
+                }
+              }
+              tabIndex={0}
+              type="button">
+              <TouchRipple
+                abortOnScroll={true}>
+                <div
+                  onMouseDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseUp={[Function]}
+                  onTouchEnd={[Function]}
+                  onTouchStart={[Function]}>
+                  <div
+                    style={
+                      Object {
+                        "marginLeft": 0,
+                        "muiPrepared": true,
+                        "paddingBottom": 16,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                        "position": "relative",
+                      }
+                    }>
+                    <div
+                      style={
+                        Object {
+                          "muiPrepared": true,
+                        }
+                      }>
+                      Peter
+                    </div>
+                  </div>
+                </div>
+              </TouchRipple>
+            </span>
+          </EnhancedButton>
+        </div>
+      </ListItem>
+    </div>
+  </List>
+</UserList>
+`;

@@ -12,8 +12,10 @@ injectTapEventPlugin();
 
 describe('<TaskShowdialog />', () => {
   BoardStore.__Rewire__("tasks", [
-    {"id":1,"name":"task1","updated_at":1471541536411708346,"desc":"","story_id":1,"priority":1,"column_id":1,"archived":false},
-    {"id":2,"name":"task2","updated_at":1471541536411708346,"desc":"","story_id":2,"priority":1,"column_id":1,"archived":false},
+    {"id":1,"name":"task1","updated_at":1471541536411708346,"desc":"","story_id":1,"priority":1,"column_id":1,"archived":false,
+      "users":[]},
+    {"id":2,"name":"task2","updated_at":1471541536411708346,"desc":"","story_id":2,"priority":1,"column_id":1,"archived":false,
+      "users":[]},
   ]);
 
   it('Should render TaskDialog', () => {

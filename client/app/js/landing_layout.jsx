@@ -1,17 +1,17 @@
 /*jshint esversion: 6 */
 import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
-import MyMenu from './menu';
+import FlatButton from 'material-ui/FlatButton'; import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
-import {List, ListItem} from 'material-ui/List';
+import UserDialog from './user_dialog';
 import Colors from './color';
 import React from 'react';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
 import MsgSnackbar from './msg_snackbar';
+import BoardList from './board_list';
+import UserAssgin from './user_assign';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -23,7 +23,9 @@ class LandingLayout extends Layout  {
     return {
       list_items: BoardStore.getBoards(),
       menu_open: false,
-      board_open: BoardStore.getBoardDialogOpen()
+      board_open: BoardStore.getBoardDialogOpen(),
+      user_open: BoardStore.getUserDialogOpen(),
+      show_user_assign: BoardStore.getShowUserAssign()
     };
   }
 
@@ -37,7 +39,6 @@ class LandingLayout extends Layout  {
 
   componentDidMount = () => {
     BoardStore.addChangeListener(this._onChange);
-    BoardActions.fetchBoards();
   }
 
   handleTouchTapMenuBtn = (event) => {
@@ -50,21 +51,18 @@ class LandingLayout extends Layout  {
     this.setState({menu_open: false, menu_achor: achor_element});
   }
 
-  handleListClick = (event, name) => {
-    window.location.pathname = `/${name}`;
-  }
-
   handleBoardDialogClose = () => {
     BoardActions.closeBoardDialog();
     BoardActions.fetchBoards();
   }
 
-  onIconClickHandler = (event, id) => {
-    event.stopPropagation();
-    BoardActions.deleteBoard(id);
+  handleUserDialogClose = () => {
+    BoardActions.closeUserDialog();
+    BoardActions.fetchBoards();
   }
 
   render() {
+    var content =  this.state.show_user_assign ? <UserAssgin /> : <BoardList />;
     return <div>
       <AppBar
         title={this.props.title}
@@ -79,18 +77,12 @@ class LandingLayout extends Layout  {
         touchAwayHandler={this.handleTouchTapCloseMenu}
         landing={true}/>
       <BoardDialog open={this.state.board_open}
-       handleClose={this.handleBoardDialogClose}
-       />
-      <List>
-        {this.state.list_items.map((list_item, key) => {
-          return <ListItem
-            onClick={event => {this.handleListClick(event, list_item.name);}}
-            key={key} primaryText={list_item.name}
-            rightIcon={ <DeleteForeverIcon onClick={event =>
-              {this.onIconClickHandler(event, list_item.id);}}/> }
-          />;
-        })}
-      </List>
+        handleClose={this.handleBoardDialogClose}
+      />
+      <UserDialog open={this.state.user_open}
+        handleClose={this.handleUserDialogClose}
+      />
+      {content}
       {this.props.children}
       <MsgSnackbar/>
      </div>;

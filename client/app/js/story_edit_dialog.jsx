@@ -4,22 +4,38 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import ReactDOM from 'react-dom';
 import StoryPointPicker from './story_point_picker';
+import ColorSelect from './color_select';
 import BoardActions from './actions/BoardActions';
 import BoardStore from './store/BoardStore';
-import ErrorActions from './actions/ErrorActions';
 import ErrorStore from './store/ErrorStore';
+import Checkbox from 'material-ui/Checkbox';
+
+const default_form_values = {
+  name: "",
+  desc: "",
+  points: 1,
+  requirements: "",
+  board_id: "",
+  archived: false,
+  color: ""
+};
 
 export default class StoryEditDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this.getState();
-    this.setDefaultFormValues();
+    var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+    this.state = this.getState(new_form_values);
   }
 
-  getState = () => {
-    return {
-      error: ErrorStore.getStoryErrors()
+  getState = (form_values) => {
+    var new_state = {
+      error: ErrorStore.getStoryErrors(),
+      story: BoardStore.getStory(),
     };
+    if (form_values) {
+      new_state.form_values = form_values;
+    }
+    return new_state;
   }
 
   _onError = () => {
@@ -34,43 +50,40 @@ export default class StoryEditDialog extends React.Component {
     ErrorStore.addChangeListener(this._onError);
   }
 
-  setDefaultFormValues = () => {
-    this.form_values = {
-      name: "",
-      desc: "",
-      points: 0,
-      priority: 1,
-      requirements: "",
-      column_id: ""
-    };
+  componentDidUpdate = () => {
+    var story = BoardStore.getStory();
+    if (story && story !== this.state.story) {
+      this.setState(this.getState(story));
+    }
   }
 
-  getInputValue = (ref, type) => {
-    return ReactDOM.findDOMNode(ref).querySelectorAll(type)[0].value;
+  componentWillUpdate = (nextProps) => {
+    if (!this.props.open && nextProps.open) {
+      var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+      this.setState(this.getState(new_form_values));
+    }
+  }
+
+  setDefaultFormValues = () => {
+    var new_form_values = JSON.parse(JSON.stringify(default_form_values));
+    this.setState({story: null, form_values: new_form_values});
   }
 
   handleFormSubmit = () => {
-    this.form_values.name = this.getInputValue(this.refs.story_name, "input");
-    this.form_values.desc = this.getInputValue(this.refs.story_desc, "textarea");
-    this.form_values.requirements = this.getInputValue(this.refs.story_req, "textarea");
-    this.form_values.board_id = BoardStore.getBoardId();
-    var column = BoardStore.getFirstColumn();
-    if (!column) {
-      ErrorActions.addStoryErrors({name:
-        "No column found. Add column first." });
-      return;
+    var form_values = this.state.form_values;
+    form_values.board_id = BoardStore.getBoardId();
+
+    if (this.state.story) {
+      BoardActions.updateStory(form_values);
+    } else {
+      BoardActions.addStory(form_values);
     }
-    this.form_values.column_id = column.id;
-
-    BoardActions.addStory(this.form_values);
   }
 
-  pointsHandler = (value) => {
-    this.form_values.points = value;
-  }
-
-  priorityHandler = (value) => {
-    this.form_values.priority = value;
+  onChange(component, key, value) {
+    var form_values = this.state.form_values;
+    form_values[key] = value;
+    this.setState({form_values: form_values});
   }
 
   editForm = () => {
@@ -92,14 +105,29 @@ export default class StoryEditDialog extends React.Component {
         onRequestClose={BoardActions.closeStoryEditDialog.bind(this, true)}
         autoScrollBodyContent={true}
       >
-         <StoryPointPicker title="Points" key='0' valueHandler={this.pointsHandler}/>
-         <StoryPointPicker title="Priority" key='1' valueHandler={this.priorityHandler}
-         range={[1,2,3,4,5,6,7,8,9,10]}/>
+         <StoryPointPicker
+           title="Points"
+           key='0'
+           valueHandler={(comp, val) => {this.onChange(comp, "points", val);}}
+           value={this.state.form_values.points}
+          />
         <br />
         Add a name
         <br />
-        <TextField ref="story_name" hintText="Story Name"
-          errorText={this.state.error.name} />
+        <TextField ref="story_name"
+          hintText="Story Name"
+          errorText={this.state.error.name}
+          fullWidth={true}
+          value={this.state.form_values.name}
+          onChange={(comp, val) => {this.onChange(comp, "name", val);}}
+        />
+        <br />
+        Select a color
+        <br />
+        <ColorSelect ref="story_color"
+          value={this.state.form_values.color}
+          onChange={(comp, index, val) => {this.onChange(comp, "color", val);}}
+          errorText={this.state.error.color} />
         <br />
         <br />
         Add a Description
@@ -109,6 +137,8 @@ export default class StoryEditDialog extends React.Component {
           errorText={this.state.error.desc}
           multiLine={true}
           fullWidth={true}
+          value={this.state.form_values.desc}
+          onChange={(comp, val) => {this.onChange(comp, "desc", val);}}
         />
         <br />
         <br />
@@ -119,8 +149,16 @@ export default class StoryEditDialog extends React.Component {
           errorText={this.state.error.req}
           multiLine={true}
           fullWidth={true}
+          value={this.state.form_values.requirements}
+          onChange={(comp, val) => {this.onChange(comp, "requirements", val);}}
         />
         <br />
+        <br />
+        Archived
+        <br />
+        <Checkbox ref="archived" onCheck={
+          (comp, val) => {this.onChange(comp, "archived", val);}}
+          checked={this.state.form_values.archived} />
       </Dialog>
     );
   }

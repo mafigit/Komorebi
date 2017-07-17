@@ -1,0 +1,15 @@
+exports[`<BoardList /> Should render BoardList 1`] = `
+<BoardList>
+  <List>
+    <div
+      style={
+        Object {
+          "muiPrepared": true,
+          "padding": 0,
+          "paddingBottom": 8,
+          "paddingTop": 8,
+        }
+      } />
+  </List>
+</BoardList>
+`;

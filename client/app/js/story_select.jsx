@@ -3,6 +3,11 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import BoardStore from './store/BoardStore';
 
+const error_style = {
+  color: "rgb(244, 67, 54)",
+  fontSize: 12
+};
+
 export default class StorySelect extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +20,7 @@ export default class StorySelect extends React.Component {
       this.props.onChange(event, index, value);
     }
   }
+
   menuItems = () => {
     var stories = BoardStore.getStories().slice();
     if (this.props.allow_empty) {
@@ -26,9 +32,15 @@ export default class StorySelect extends React.Component {
   }
 
   render() {
-    return <SelectField value={this.state.select_value}
-      onChange={this.handleStoryChange} floatingLabelStyle={this.props.style}>
-      {this.menuItems()}
-    </SelectField>;
+    return <div>
+      <SelectField value={this.state.select_value}
+        onChange={this.handleStoryChange}
+        fullWidth={true}
+        floatingLabelStyle={this.props.style}>
+        {this.menuItems()}
+      </SelectField>
+      <div style={error_style}>{this.props.errorText}</div>
+    </div>
+    ;
   }
 }

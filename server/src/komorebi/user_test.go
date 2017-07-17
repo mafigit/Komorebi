@@ -34,12 +34,6 @@ func TestUserValidation(t *testing.T) {
 		t.Error("Should be invalid by missing name")
 	}
 	u.Name = "Woot"
-	u.ImagePath = ""
-	success, msg = u.Validate()
-	if success == true ||
-		!contains(msg["image_path"], "ImagePath not present.") {
-		t.Error("Should be invalid by missing ImagePath")
-	}
 	u2 := NewUser("Franz", "/tmp/foo")
 	u2.Save()
 	u.Name = u2.Name

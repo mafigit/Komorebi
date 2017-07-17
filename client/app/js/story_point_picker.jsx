@@ -6,9 +6,9 @@ export default class StoryPointPicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 1
+      value: (this.props.value || 1)
     };
-    this.value = 1;
+    this.value = this.props.value || 1;
     this.iterrator = 0;
     this.range = this.props.range || [
       1, 2, 3, 5, 8, 13, 21, 34, 55
@@ -23,7 +23,7 @@ export default class StoryPointPicker extends React.Component {
     }
     this.value = this.range[this.iterrator];
     if (this.props.valueHandler) {
-      this.props.valueHandler(this.value);
+      this.props.valueHandler(this, this.value);
     }
     this.setState({value: this.value});
   }

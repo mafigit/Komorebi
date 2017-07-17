@@ -10,6 +10,7 @@ import MySnackbar from './snackbar';
 import MsgSnackbar from './msg_snackbar';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
+import ConfirmationDialog from './confirmation_dialog';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -51,6 +52,7 @@ class App extends React.Component {
     if(this.props.landing) {
       return <MuiThemeProvider>
         <LandingLayout title="Boards">
+          <ConfirmationDialog />
         </LandingLayout>
       </MuiThemeProvider>;
     } else {
@@ -60,6 +62,7 @@ class App extends React.Component {
           <Board />
           <MySnackbar boardName={this.state.title} />
           <MsgSnackbar/>
+          <ConfirmationDialog />
         </BoardLayout>
       </MuiThemeProvider>;
     }

@@ -25,10 +25,19 @@ exports[`test Should render TaskDialog 1`] = `
   repositionOnUpdate={true}
   title="Add Task">
   <br />
+  Select User
+  <br />
+  <UserSelect
+    onChange={[Function]}
+    users={Array []} />
+  <br />
+  <br />
   Select Story
   <br />
   <StorySelect
-    onChange={[Function]} />
+    errorText=""
+    onChange={[Function]}
+    story_id={null} />
   <br />
   <br />
   Add a name
@@ -37,12 +46,14 @@ exports[`test Should render TaskDialog 1`] = `
     disabled={false}
     errorText=""
     floatingLabelFixed={false}
-    fullWidth={false}
+    fullWidth={true}
     hintText="Task Name"
     multiLine={false}
+    onChange={[Function]}
     rows={1}
     type="text"
-    underlineShow={true} />
+    underlineShow={true}
+    value="" />
   <br />
   <br />
   Add a Description
@@ -54,9 +65,11 @@ exports[`test Should render TaskDialog 1`] = `
     fullWidth={true}
     hintText="Task Description"
     multiLine={true}
+    onChange={[Function]}
     rows={1}
     type="text"
-    underlineShow={true} />
+    underlineShow={true}
+    value="" />
   <br />
   <br />
 </Dialog>

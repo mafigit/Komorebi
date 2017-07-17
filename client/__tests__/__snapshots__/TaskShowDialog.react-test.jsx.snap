@@ -5,12 +5,29 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
   modal={false}
   onRequestClose={[Function]}
   open={true}
-  repositionOnUpdate={true}
-  title="">
+  repositionOnUpdate={true}>
+  <Card
+    className="task"
+    expandable={false}
+    expanded={null}
+    initiallyExpanded={false}>
+    <CardHeader
+      avatar={null}
+      title=""
+      titleStyle={
+        Object {
+          "fontSize": 20,
+        }
+      } />
+    <CardText
+      className="task-text">
+      <ReactMarkdown
+        containerTagName="div"
+        parserOptions={Object {}}
+        source="" />
+    </CardText>
+  </Card>
   <br />
-  <ReactMarkdown
-    containerTagName="div"
-    source="" />
   <BottomNavigation>
     <BottomNavigationItem
       icon={
@@ -22,6 +39,17 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
           } />
       }
       label="Delete"
+      onTouchTap={[Function]} />
+    <BottomNavigationItem
+      icon={
+        <EditorModeEdit
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Edit"
       onTouchTap={[Function]} />
   </BottomNavigation>
 </Dialog>

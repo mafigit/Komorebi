@@ -14,6 +14,18 @@ class MyMenu extends React.Component {
         {
           name: "Add Board",
           action: BoardActions.openBoardDialog
+        },
+        {
+          name: "Add User",
+          action: BoardActions.openUserDialog
+        },
+        {
+          name: "User Assgin",
+          action: BoardActions.showUserAssign
+        },
+        {
+          name: "Board List",
+          action: BoardActions.showBoardList
         }
       ];
     } else {
@@ -33,7 +45,16 @@ class MyMenu extends React.Component {
         {
           name: "Add Column",
           action: BoardActions.showColumnDialog
+        },
+        {
+          name: "Sprint Burndown",
+          action: BoardActions.showChartDialog
+        },
+        {
+          name: "Definition of Done",
+          action: BoardActions.showDodDialog
         }
+
       ];
     }
   }

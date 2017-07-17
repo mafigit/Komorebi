@@ -27,6 +27,15 @@ var BoardActions = {
       actionType: "CLOSE_STORY_SHOW_DIALOG",
     });
   },
+  archiveStory: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "ARCHIVE_STORY",
+      id: id
+    });
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_STORY_SHOW_DIALOG",
+    });
+  },
   deleteTask: (id) => {
     AppDispatcher.dispatch({
       actionType: "DELETE_TASK",
@@ -34,6 +43,11 @@ var BoardActions = {
     });
     AppDispatcher.dispatch({
       actionType: "CLOSE_TASK_SHOW_DIALOG",
+    });
+  },
+  clearBurndown: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLEAR_BURNDOWN",
     });
   },
   fetchBoards: () => {
@@ -56,9 +70,48 @@ var BoardActions = {
       actionType: "FETCH_ALL",
     });
   },
-  showTaskDialog: () =>  {
+  moveColumn: (id, direction) => {
     AppDispatcher.dispatch({
-      actionType: "SHOW_TASK_DIALOG"
+      actionType: "MOVE_COLUMN",
+      id: id,
+      direction: direction
+    });
+  },
+  showConfirmation: (callback) => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_CONFIRMATION",
+      callback: callback
+    });
+  },
+  closeConfirmation: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_CONFIRMATION"
+    });
+  },
+  showTaskDialog: (task_id) =>  {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_TASK_DIALOG",
+      task_id: task_id
+    });
+  },
+  showChartDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_CHART_DIALOG"
+    });
+  },
+  showDodDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_DOD_DIALOG"
+    });
+  },
+  closeChartDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_CHART_DIALOG",
+    });
+  },
+  closeDodDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_DOD_DIALOG",
     });
   },
   closeTaskDialog: (reload) =>  {
@@ -74,6 +127,11 @@ var BoardActions = {
     AppDispatcher.dispatch({
       actionType: "OPEN_STORY_SHOW_DIALOG",
       story_id: story_id
+    });
+  },
+  toggleBoardMenu: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "TOGGLE_MENU"
     });
   },
   closeStoryShowDialog: () =>  {
@@ -92,9 +150,21 @@ var BoardActions = {
       actionType: "CLOSE_TASK_SHOW_DIALOG",
     });
   },
-  openStoryEditDialog: () =>  {
+  openStoryEditDialog: (story_id) =>  {
     AppDispatcher.dispatch({
-      actionType: "OPEN_STORY_EDIT_DIALOG"
+      actionType: "OPEN_STORY_EDIT_DIALOG",
+      story_id: story_id
+    });
+  },
+  openDodCheckDialog: (story_id) =>  {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_DOD_CHECK_DIALOG",
+      story_id: story_id
+    });
+  },
+  closeDodCheckDialog: () =>  {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_DOD_CHECK_DIALOG",
     });
   },
   openStoryFromIssueEditDialog: () =>  {
@@ -125,15 +195,33 @@ var BoardActions = {
       reload: reload
     });
   },
-  showTasksForStoryId: (story_id) =>  {
+  toggleTasksForStoryId: (story_id) =>  {
     AppDispatcher.dispatch({
-      actionType: "SHOW_TASKS_FOR_STORY_ID",
+      actionType: "TOGGLE_TASKS_FOR_STORY_ID",
       story_id: story_id
     });
   },
   updateTask: (data) => {
     AppDispatcher.dispatch({
       actionType: "UPDATE_TASK",
+      data: data
+    });
+  },
+  updateDods: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_DODS",
+      data: data
+    });
+  },
+  updateStoryDod: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_STORY_DOD",
+      data: data
+    });
+  },
+  updateTaskPosition: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_TASK_POSITION",
       data: data
     });
   },
@@ -171,10 +259,28 @@ var BoardActions = {
       id: story_id
     });
   },
+  updateSelectedColor: (color) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_SELECTED_COLOR",
+      color: color
+    });
+  },
   addStory: (data) => {
     AppDispatcher.dispatch({
       actionType: "ADD_STORY",
       data: data
+    });
+  },
+  updateStory: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "UPDATE_STORY",
+      data: data
+    });
+  },
+  addStoryFromIssue: (form_values) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_STORY_FROM_ISSUE",
+      issue: form_values.issue
     });
   },
   initBoard: () => {
@@ -185,6 +291,49 @@ var BoardActions = {
   closeMessage: () => {
     AppDispatcher.dispatch({
       actionType: "CLOSE_MESSAGE"
+    });
+  },
+  addUser: (data) => {
+    AppDispatcher.dispatch({
+      actionType: "ADD_USER",
+      data: data
+    });
+  },
+  openUserDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_USER_DIALOG"
+    });
+  },
+  closeUserDialog: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_USER_DIALOG"
+    });
+  },
+  fetchUsers: () => {
+    AppDispatcher.dispatch({
+      actionType: "FETCH_USERS"
+    });
+  },
+  showUserAssign: () => {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_USER_ASSIGN"
+    });
+  },
+  showBoardList: () => {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_BOARD_LIST"
+    });
+  },
+  toggleUserById: (user_id) => {
+    AppDispatcher.dispatch({
+      user_id: user_id,
+      actionType: "TOGGLE_USER_BY_ID"
+    });
+  },
+  selectBoard: (board_id) => {
+    AppDispatcher.dispatch({
+      board_id: board_id,
+      actionType: "SELECT_BOARD"
     });
   }
 };

@@ -61,10 +61,34 @@ var routes = Routes{
 		BoardUpdate,
 	},
 	Route{
+		"AssignUsersToBoard",
+		"POST",
+		"/boards/{board_id}/assign_users",
+		AssignUsersToBoard,
+	},
+	Route{
+		"GetUsersFromBoard",
+		"GET",
+		"/boards/{board_id}/users",
+		GetUsersFromBoard,
+	},
+	Route{
+		"ClearDumpsFromBoard",
+		"GET",
+		"/boards/{board_id}/clear",
+		ClearDumpsFromBoard,
+	},
+	Route{
 		"BoardDelete",
 		"DELETE",
 		"/boards/{board_id}",
 		BoardDelete,
+	},
+	Route{
+		"GetBurndownFromBoard",
+		"GET",
+		"/boards/{board_id}/burndown",
+		GetBurndownFromBoard,
 	},
 	Route{
 		"ColumnGet",
@@ -77,6 +101,12 @@ var routes = Routes{
 		"POST",
 		"/columns/{column_id}",
 		ColumnUpdate,
+	},
+	Route{
+		"ColumnMove",
+		"POST",
+		"/columns/{column_id}/move",
+		ColumnMove,
 	},
 	Route{
 		"TasksGetByColumn",
@@ -107,6 +137,18 @@ var routes = Routes{
 		"GET",
 		"/stories/{story_id}",
 		StoryGet,
+	},
+	Route{
+		"StoryDodGet",
+		"GET",
+		"/stories/{story_id}/dods",
+		StoryDodGet,
+	},
+	Route{
+		"StoryDodUpdate",
+		"POST",
+		"/stories/{story_id}/dods",
+		StoryDodUpdate,
 	},
 	Route{
 		"StoryUpdate",
@@ -163,6 +205,18 @@ var routes = Routes{
 		TaskUpdate,
 	},
 	Route{
+		"AssignUsersToTask",
+		"POST",
+		"/tasks/{task_id}/assign_users",
+		AssignUsersToTask,
+	},
+	Route{
+		"GetUsersFromTask",
+		"GET",
+		"/tasks/{task_id}/users",
+		GetUsersFromTask,
+	},
+	Route{
 		"TaskDelete",
 		"DELETE",
 		"/tasks/{task_id}",
@@ -179,6 +233,18 @@ var routes = Routes{
 		"GET",
 		"/tasks/{task_id}",
 		TaskGet,
+	},
+	Route{
+		"BoardDodGet",
+		"GET",
+		"/{board_name}/dods",
+		BoardDodGet,
+	},
+	Route{
+		"BoardDodUpdate",
+		"POST",
+		"/{board_name}/dods",
+		BoardDodUpdate,
 	},
 	Route{
 		"BoardShow",

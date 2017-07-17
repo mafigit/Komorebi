@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	fmt.Println("created db " + file.Name())
 
 	//Fixtures
-	b := NewBoard("test1")
+	b := NewBoard("test1", false)
 	b.Save()
 	c1 := NewColumn("WIP", 0, 1)
 	c2 := NewColumn("TEST", 1, 1)
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestBoardDatabase(t *testing.T) {
-	b := NewBoard("test")
+	b := NewBoard("test", false)
 	if b.Name != "test" {
 		t.Error("Board should have name test")
 	}
@@ -109,27 +109,27 @@ func TestBoardDatabase(t *testing.T) {
 }
 
 func TestBoardValidation(t *testing.T) {
-	b := NewBoard("testValidation")
+	b := NewBoard("testValidation", false)
 	if success, _ := b.Validate(); success == false {
 		t.Error("Name 'testValidation' should be valid")
 	}
 
-	b = NewBoard("test foo")
+	b = NewBoard("test foo", true)
 	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'test foo' should not be valid")
 	}
 
-	b = NewBoard("gz")
+	b = NewBoard("gz", false)
 	b.Save()
 
-	b = NewBoard("gz")
+	b = NewBoard("gz", false)
 	if success, _ := b.Validate(); success == true {
 		t.Error("Name 'gz' should be uniq")
 	}
 }
 
 func TestBoardNested(t *testing.T) {
-	b := NewBoard("testValidationFoobar")
+	b := NewBoard("testValidationFoobar", false)
 	b.Save()
 	var board Board
 	GetByName(&board, b.Name)
@@ -140,14 +140,14 @@ func TestBoardNested(t *testing.T) {
 	c.Save()
 	cols := GetColumnsByBoardId(board.Id)
 
-	s := NewStory("Story 1", "description", "Do this and that", 5, 4,
-		board.Id)
+	s := NewStory("Story 1", "description", "Do this and that", 3,
+		board.Id, "green")
 	s.Save()
-	s = NewStory("Story 2", "description 2", "Do this and that", 3, 4,
-		board.Id)
+	s = NewStory("Story 2", "description 2", "Do this and that", 3,
+		board.Id, "green")
 	s.Save()
 	stories := GetStoriesByBoardName(board.Name)
-	task := NewTask("task for story2", "desctip", stories[1].Id, cols[1].Id, 1)
+	task := NewTask("task for story2", "desctip", stories[1].Id, cols[1].Id)
 	task.Save()
 	res1 := GetBoardNestedByName(board.Name)
 	res2 := GetBoardNestedByName(board.Name)
@@ -168,7 +168,7 @@ func TestBoardNested(t *testing.T) {
 	stories[0].Name = "fooo"
 	stories[0].Save()
 
-	ta := res1.StoriesNested[1].Tasks[0]
+	ta := res1.StoriesNested[1].TasksNested[0]
 	if ta.Name != task.Name {
 		t.Error("Task in story 2 should be 'task for story2'. Is:", ta.Name)
 	}
@@ -186,7 +186,7 @@ func TestBoardNested(t *testing.T) {
 }
 
 func TestBoardNestedDelete(t *testing.T) {
-	b := NewBoard("testNestedDelete")
+	b := NewBoard("testNestedDelete", false)
 	b.Save()
 	var board Board
 	GetByName(&board, b.Name)
@@ -201,8 +201,8 @@ func TestBoardNestedDelete(t *testing.T) {
 		"description",
 		"Do this and that",
 		5,
-		4,
 		board.Id,
+		"green",
 	)
 	s.Save()
 	var story Story
@@ -213,7 +213,6 @@ func TestBoardNestedDelete(t *testing.T) {
 		"a desc",
 		story.Id,
 		column.Id,
-		1,
 	)
 	ta.Save()
 	var task Task

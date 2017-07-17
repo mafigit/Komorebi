@@ -5,7 +5,7 @@ import (
 )
 
 func TestNewTask(t *testing.T) {
-	task := NewTask("haensel", "desctip", 1, 5, 1)
+	task := NewTask("haensel", "desctip", 1, 1)
 	if task.Name != "haensel" {
 		t.Error("Should have instanciate a task:", task.Name)
 	}
@@ -15,7 +15,7 @@ func TestNewTask(t *testing.T) {
 }
 
 func TestTaskCreate(t *testing.T) {
-	task := NewTask("haensel", "desctip", 1, 4, 1)
+	task := NewTask("haensel", "desctip", 1, 1)
 	if !task.Save() {
 		t.Error("Should have created the task")
 	}
@@ -26,7 +26,7 @@ func TestTaskCreate(t *testing.T) {
 }
 
 func TestTaskValidation(t *testing.T) {
-	task := NewTask("haensel", "desctip", 1, 5, 1)
+	task := NewTask("haensel", "desctip", 1, 1)
 	success, msg := task.Validate()
 	if success == false {
 		t.Error("Should be valid")
@@ -56,7 +56,6 @@ func TestTaskDelete(t *testing.T) {
 	ta := NewTask(
 		"Task to delete",
 		"A description",
-		1,
 		1,
 		1,
 	)

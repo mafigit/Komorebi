@@ -4,12 +4,35 @@ exports[`test Should update position of task after clicking on next button 1`] =
   expandable={false}
   expanded={null}
   initiallyExpanded={false}>
-  <CardTitle
-    subtitle="Story tag"
-    title="test" />
+  <Badge
+    badgeContent={<ActionBookmark />}
+    primary={false}
+    secondary={false}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }>
+    <CardHeader
+      avatar={null}
+      subtitle=""
+      title={
+        <span>
+          test
+        </span>
+      }
+      titleStyle={
+        Object {
+          "fontSize": 16,
+        }
+      } />
+  </Badge>
   <CardText
     className="task-text">
-    test desc
+    <ReactMarkdown
+      containerTagName="div"
+      parserOptions={Object {}}
+      source="test desc" />
   </CardText>
   <CardActions>
     <Grid
@@ -56,7 +79,7 @@ exports[`test Should update position of task after clicking on next button 1`] =
             <IconButton
               className="prevButton"
               disableTouchRipple={false}
-              disabled={false}
+              disabled={true}
               iconStyle={
                 Object {
                   "height": 20,
