@@ -6,9 +6,9 @@ defmodule Krcli.Story do
    # XXX [mh] fix this
     all_json(board)
     |> Util.unwrap
-    |> Map.get(Krcli.Column.type_json_name)
+    |> Map.get(Krcli.Column.type_json_name())
     |> Enum.find(:error, Util.ln_cmp(column, &(Map.get(&1,"name"))))
-    |> Map.get(type_json_name)
+    |> Map.get(type_json_name())
   end
 
   def all(board), do: all_fun(fn() -> stories_json(board, 1) end)

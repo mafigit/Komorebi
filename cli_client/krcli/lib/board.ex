@@ -82,7 +82,7 @@ defmodule Krcli.Board do
     with {:ok, board} <- fetch(board.name),
       val = Enum.find(board.columns, :error, Util.ln_cmp(item, &(&1.name))),
     do:
-      if val == :error, do: {:error, "could not find " <> type_name},
+      if val == :error, do: {:error, "could not find " <> type_name()},
       else: fun.(val)
   end
 
@@ -162,7 +162,7 @@ defmodule Krcli.Board do
   end
 
   def list do
-    all_json |> show_boards |> Util.comply_good
+    all_json() |> show_boards |> Util.comply_good
   end
 
   def fetch(name) do

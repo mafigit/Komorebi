@@ -6,7 +6,7 @@ defmodule Krcli.Column do
   def parse(col), do: from_hash(col)
 
   def column_json(board) do
-    all_json(board) |> Util.unwrap |> Map.get(type_json_name) |> Util.wrap
+    all_json(board) |> Util.unwrap |> Map.get(type_json_name()) |> Util.wrap
   end
 
   def all(board_name), do: all_fun(fn() -> column_json(board_name) end)

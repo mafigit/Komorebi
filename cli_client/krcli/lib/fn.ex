@@ -15,14 +15,14 @@ defmodule FN do
         with {:ok, items} <- data,
         item = Enum.find(items, :error, Util.ln_cmp(name, &(&1.name))),
         do:
-          if item == :error, do: {:error, "could not find " <> type_name},
+          if item == :error, do: {:error, "could not find " <> type_name()},
           else: Util.wrap(item)
       end
 
-      def by_name(name), do: by_name(name, all)
+      def by_name(name), do: by_name(name, all())
 
       def all_json do
-        SbServer.get_json(type_url) |> Util.unwrap |> JSX.decode
+        SbServer.get_json(type_url()) |> Util.unwrap |> JSX.decode
       end
 
       def all_json(board_name) do
@@ -45,9 +45,9 @@ defmodule FN do
       end
 
       def destroy_item(item) do
-        SbServer.delete_json(type_url <> "/" <> Integer.to_string(item.id))
+        SbServer.delete_json(type_url() <> "/" <> Integer.to_string(item.id))
         |> Util.success?
-        |> Util.comply!(type_name <> " successfully destroyed.")
+        |> Util.comply!(type_name() <> " successfully destroyed.")
       end
 
       def parse_batch(items) do
