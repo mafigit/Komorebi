@@ -8,38 +8,41 @@ defmodule Krcli.Board do
       IO.puts "Board is called: " <> board.name
     end
 
-    def _expand_acc_match(task, col, story, acc) do
+    def _expand_acc_match(task, linenum, colnum, col, story, acc) do
       with task_column_id = task.column_id,
         col_id = col.id,
         task_story_id = task.story_id,
         story_id = story.id,
+        line_map = Map.get(acc, linenum, %{}),
+        col_map = Map.get(line_map, colnum, []),
       do:
         if task_column_id == col_id and task_story_id == story_id,
-          do: (acc ++ [task.name]),
+          do: Map.put(acc, linenum, Map.put(line_map, colnum, col_map ++ [task.name])),
           else: acc
     end
 
-    def _get_story_task_line(board, story, init) do
-      Enum.reduce(board.columns, init, fn(col, acc_1) ->
-        Enum.reduce(story.tasks, acc_1, fn(task, acc_2) ->
-          _expand_acc_match(task, col, story, acc_2)
-        end)
-      end)
+    def _get_story_task_line(board, linenum, story, init, prepend) do
+      with {acc, _} <- Enum.reduce(board.columns, {init, 1}, fn(col, {acc_1,colnum}) ->
+          {Enum.reduce(story.tasks, acc_1, fn(task, acc_2) ->
+            _expand_acc_match(task, linenum, colnum, col, story, acc_2)
+          end), colnum+1}
+        end),
+      do: Map.put(acc, linenum, Map.put(Map.get(acc, linenum), 0, prepend))
     end
 
     def story_tasks_by_column(board) do
-      Enum.reduce(board.stories, [], fn(story, acc) ->
-        with nacc <- [story.name <> " (Id: " <> Integer.to_string(story.id) <> ")"],
-          nline <- _get_story_task_line(board, story, nacc),
-        do: acc ++ [nline]
-      end)
+      with {result, _} <- Enum.reduce(board.stories, {%{}, 0}, fn(story, {acc, line}) ->
+          with prepend <- [story.name <> " (Id: " <> Integer.to_string(story.id) <> ")"],
+          do: {_get_story_task_line(board, line, story, acc, prepend), line + 1}
+        end),
+      do: result
     end
 
     def stories_by_column(board) do
       with cols <- story_tasks_by_column(board),
       do:
       Krcli.Table.p_base_table(
-        Krcli.Table.create(%{columns: length(board.columns)+1, width: 20,
+        Krcli.Table.create(%{columns: length(board.columns)+1, width: 30,
           lines: length(board.stories),
           headers: ["Story" | Enum.map(board.columns, fn(x) -> "Column: " <> x.name end)],
           data: cols })
@@ -114,7 +117,12 @@ defmodule Krcli.Board do
           Krcli.Table.create(%{columns: 2, width: 30,
             lines: length(boards),
             headers: ["Board Id", "Board name"],
-            data: Enum.map(boards, fn(x) -> [Integer.to_string(x["id"]), x["name"]] end)
+            data: Enum.at(Enum.reduce(boards, [%{}, 0],
+              fn(x, [acc, ln]) -> [Map.put(acc, ln,
+                %{0 => [Integer.to_string(x["id"])],
+                  1 => [x["name"]] }),
+                ln + 1]
+              end), 0, %{})
           })
         ) |> Util.good
       {:error, err} -> raise err
