@@ -20,7 +20,7 @@ defmodule KrOpts do
       krcli story <storyid> destroy -> destroy story
       krcli story <storyid> show -> show story
       krcli story <storyid> move <boardid> <columnid> -> move story to board / column
-      krcli board <boardid> column <columnid> story <storyid> task new -> new task
+      krcli task new -> new task
       krcli task <taskid> show -> show details of a task
       krcli task <taskid> move <boardid> <columnid> -> move task to board / column")
   end
@@ -36,13 +36,12 @@ defmodule KrOpts do
         Krcli.Board.create_column(column, board)
       ["board", board, "column", column, "destroy"] ->
         Krcli.Board.destroy_column(column, board)
-      ["board", board, "story", "new"] -> Krcli.Board.create_story(board)
+      ["story", "new"] -> Krcli.Story.create
       ["story", story_id, "destroy"] -> Krcli.Story.destroy(story_id)
       ["story", story_id, "show"] -> Krcli.Story.show(story_id)
       ["story", story_id, "move", board, column] -> Krcli.Story.move(board, column, story_id)
       ["story", story_id, "tasks"] -> Krcli.Task.display(story_id)
-      ["board", board, "column", column, "story", story_id, "task", "new"] ->
-        Krcli.Board.create_task(board, column, story_id)
+      ["task", "new"] -> Krcli.Task.create
       ["task", task_id, "show"] -> Krcli.Task.show(task_id)
       _ -> error(:no_opt)
     end

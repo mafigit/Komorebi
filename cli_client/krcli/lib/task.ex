@@ -1,5 +1,5 @@
 defmodule Krcli.Task do
-  defstruct [:id, :name, :desc, :story_id, :column_id, :priority]
+  defstruct [:id, :name, :desc, :story_id, :column_id]
   use FN, url: "/tasks", name: "Story", json_name: "tasks"
 
   def get_server_col(col),
@@ -29,7 +29,6 @@ defmodule Krcli.Task do
       desc: col["desc"],
       story_id: col["story_id"],
       column_id: col["column_id"],
-      priority: col["priority"]
     }
   end
 
@@ -58,35 +57,30 @@ defmodule Krcli.Task do
   def create_from_file do
     with {:ok, data} <- File.read("/tmp/krcli.task"),
       lines = String.split(data, ["\n"]),
-      ["Column", column_id] <- String.split(Enum.at(lines, 1), ":"),
-      ["Story", story_id] <- String.split(Enum.at(lines, 2), ":"),
+      ["Board", board_name] <- String.split(Enum.at(lines, 0), ":"),
+      ["Column", column_name] <- String.split(Enum.at(lines, 1), ":"),
+      ["Story_id", story_str] <- String.split(Enum.at(lines, 2), ":"),
       ["Name", nname] <- String.split(Enum.at(lines, 3), ":"),
-      ["Points", points] <- String.split(Enum.at(lines, 4), ":"),
-      ["Priority", prio] <- String.split(Enum.at(lines, 5), ":"),
       {2, description} <- Util.collect_till(lines, "Description:", "EOTD"),
-      {ncolumn, _} <- Integer.parse(column_id),
-      {nstory, _} <- Integer.parse(story_id),
-      {npoints, _} <- Integer.parse(points),
-      {nprio, _} <- Integer.parse(prio),
+      {story_id, _} <- Integer.parse(story_str),
+      {:ok, board} <- Krcli.Board.get_by_name(board_name) |> Util.unwrap |> Krcli.Board.fetch,
+      {:ok, column} <- Krcli.Column.get_by_name(column_name, Util.wrap(board.columns)),
+      {:ok, story} <- Krcli.Story.get_by_id(story_id, Util.wrap(board.stories)),
       ndesc = Enum.join(description, "\n"),
       {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
-        points: npoints, column_id: ncolumn, priority: nprio,
-        story_id: nstory}),
+        column_id: column.id, story_id: story.id}),
     do:
       SbServer.post_json("/tasks", json)
       |> Util.lift_maybe(fn(_) -> File.rm("/tmp/krcli.task") end)
       |> Util.comply!("Task created successfully!")
-
   end
 
- def create(board, column, story) do
+ def create do
     with {:ok, file} <- File.open("/tmp/krcli.task", [:write]),
-      :ok <- IO.write(file, "Board:" <> Integer.to_string(board.id) <> "\n"),
-      :ok <- IO.write(file, "Column:" <> Integer.to_string(column.id) <> "\n"),
-      :ok <- IO.write(file, "Story:" <> Integer.to_string(story.id) <> "\n"),
+      :ok <- IO.write(file, "Board:CHANGEME\n"),
+      :ok <- IO.write(file, "Column:CHANGEME\n"),
+      :ok <- IO.write(file, "Story_id:CHANGEME\n"),
       :ok <- IO.write(file, "Name:CHANGEME\n"),
-      :ok <- IO.write(file, "Points:3\n"),
-      :ok <- IO.write(file, "Priority:1\n"),
       :ok <- IO.write(file, "Description:\nSome Description\nEOTD\n"),
       :ok <- File.close(file),
     do: IO.puts("The file /tmp/krcli.task has been written to disk. Please " <>

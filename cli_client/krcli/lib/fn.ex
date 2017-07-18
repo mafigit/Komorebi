@@ -21,14 +21,32 @@ defmodule FN do
 
       def by_name(name), do: by_name(name, all())
 
+      def get_by_name(name, items) do
+        case by_name(name, items) do
+          {:ok, item} -> Util.wrap(item)
+          {:error, errmsg} -> Error.display(errmsg)
+          foo -> IO.inspect(foo)
+        end
+      end
+
+      def get_by_name(name), do: get_by_name(name, all())
+
       def by_id(id, data) do
         with {:ok, items} <- data,
-          item = Enum.find(items, :error, Util.ln_cmp(id, &(&1.id))),
+          item = Enum.find(items, :error, Util.cmp(id, &(&1.id))),
         do:
           if item == :error, do: {:error, "could not find " <> type_name()},
           else: Util.wrap(item)
       end
       def by_id(id), do: by_id(id, all())
+
+      def get_by_id(name, items) do
+        case by_id(name, items) do
+          {:ok, item} -> Util.wrap(item)
+          {:error, errmsg} -> Error.display(errmsg)
+        end
+      end
+      def get_by_id(name), do: get_by_id(name, all())
 
       def all_json do
         SbServer.get_json(type_url()) |> Util.unwrap |> JSX.decode

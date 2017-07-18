@@ -100,14 +100,6 @@ defmodule Krcli.Board do
     with_structure(board, &(Krcli.Column.create(nname, &1.id)))
   end
 
-  def create_story(board) do
-    with_structure(board, &(Krcli.Story.create(&1)))
-  end
-
-  def create_task(board, column, story) do
-    with_structure(board, column, story, &(Krcli.Task.create(&1, &2, &3)))
-  end
-
   defp show_board(input) do
     with {:ok, board} <- input,
       :ok <- Print.board(board),
@@ -138,7 +130,10 @@ defmodule Krcli.Board do
   end
 
   def fetch(name) do
-    SbServer.get_json("/" <> name) |> parse
+    case name do
+      %Krcli.Board{} -> fetch(name.name)
+      _ -> SbServer.get_json("/" <> name) |> parse
+    end
   end
 
   def display(boardname) do

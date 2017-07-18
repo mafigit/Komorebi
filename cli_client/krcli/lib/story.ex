@@ -22,19 +22,19 @@ defmodule Krcli.Story do
   def create_from_file do
     with {:ok, data} <- File.read("/tmp/krcli.story"),
       lines = String.split(data, ["\n"]),
-      ["Board", board_id] <- String.split(Enum.at(lines, 0), ":"),
-      ["Name", nname] <- String.split(Enum.at(lines, 2), ":"),
-      ["Points", points] <- String.split(Enum.at(lines, 3), ":"),
-      ["Priority", prio] <- String.split(Enum.at(lines, 4), ":"),
+      ["Board", board_name] <- String.split(Enum.at(lines, 0), ":"),
+      ["Name", nname] <- String.split(Enum.at(lines, 1), ":"),
+      ["Points", points] <- String.split(Enum.at(lines, 2), ":"),
+      ["Priority", prio] <- String.split(Enum.at(lines, 3), ":"),
       {2, description} <- Util.collect_till(lines, "Description:", "EOTD"),
       {2, requirements} <- Util.collect_till(lines, "Requirements:", "EOTR"),
-      {nboard, _} <- Integer.parse(board_id),
       {npoints, _} <- Integer.parse(points),
       {nprio, _} <- Integer.parse(prio),
       ndesc = Enum.join(description, "\n"),
       nreq = Enum.join(requirements, "\n"),
+      {:ok, board} <- Krcli.Board.get_by_name(board_name),
       {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
-        points: npoints, requirements: nreq, board_id: nboard,
+        points: npoints, requirements: nreq, board_id: board.id,
         priority: nprio}),
     do:
       SbServer.post_json("/stories", json)
@@ -42,9 +42,9 @@ defmodule Krcli.Story do
       |> Util.comply!("Story created successfully!")
   end
 
-  def create(board) do
+  def create do
     with {:ok, file} <- File.open("/tmp/krcli.story", [:write]),
-      :ok <- IO.write(file, "Board:" <> Integer.to_string(board.id) <> "\n"),
+      :ok <- IO.write(file, "Board:CHANGEME\n"),
       :ok <- IO.write(file, "Name:CHANGEME\n"),
       :ok <- IO.write(file, "Points:3\n"),
       :ok <- IO.write(file, "Priority:1\n"),
