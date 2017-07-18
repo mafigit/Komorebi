@@ -17,7 +17,8 @@ defmodule Krcli.Board do
         col_map = Map.get(line_map, colnum, []),
       do:
         if task_column_id == col_id and task_story_id == story_id,
-          do: Map.put(acc, linenum, Map.put(line_map, colnum, col_map ++ [task.name])),
+          do: Map.put(acc, linenum, Map.put(line_map, colnum, col_map ++
+            [Integer.to_string(task.id) <> ": "<>task.name])),
           else: acc
     end
 
@@ -32,7 +33,7 @@ defmodule Krcli.Board do
 
     def story_tasks_by_column(board) do
       with {result, _} <- Enum.reduce(board.stories, {%{}, 0}, fn(story, {acc, line}) ->
-          with prepend <- [story.name <> " (Id: " <> Integer.to_string(story.id) <> ")"],
+          with prepend <- [Integer.to_string(story.id) <> ": "<> story.name],
           do: {_get_story_task_line(board, line, story, acc, prepend), line + 1}
         end),
       do: result

@@ -62,12 +62,14 @@ defmodule Krcli.Task do
       ["Story_id", story_str] <- String.split(Enum.at(lines, 2), ":"),
       ["Name", nname] <- String.split(Enum.at(lines, 3), ":"),
       {2, description} <- Util.collect_till(lines, "Description:", "EOTD"),
-      {story_id, _} <- Integer.parse(story_str),
-      {:ok, board} <- Krcli.Board.get_by_name(board_name) |> Util.unwrap |> Krcli.Board.fetch,
-      {:ok, column} <- Krcli.Column.get_by_name(column_name, Util.wrap(board.columns)),
+      {story_id, _} <- String.trim(story_str) |> Integer.parse,
+      {:ok, board} <- Krcli.Board.get_by_name(String.trim(board_name))
+        |> Util.unwrap |> Krcli.Board.fetch,
+      {:ok, column} <- Krcli.Column.get_by_name(String.trim(column_name),
+        Util.wrap(board.columns)),
       {:ok, story} <- Krcli.Story.get_by_id(story_id, Util.wrap(board.stories)),
       ndesc = Enum.join(description, "\n"),
-      {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
+      {:ok, json} <- JSX.encode(%{name: String.trim(nname), desc: String.trim(ndesc),
         column_id: column.id, story_id: story.id}),
     do:
       SbServer.post_json("/tasks", json)

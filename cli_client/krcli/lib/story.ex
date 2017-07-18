@@ -28,13 +28,13 @@ defmodule Krcli.Story do
       ["Priority", prio] <- String.split(Enum.at(lines, 3), ":"),
       {2, description} <- Util.collect_till(lines, "Description:", "EOTD"),
       {2, requirements} <- Util.collect_till(lines, "Requirements:", "EOTR"),
-      {npoints, _} <- Integer.parse(points),
-      {nprio, _} <- Integer.parse(prio),
+      {npoints, _} <- String.trim(points) |> Integer.parse,
+      {nprio, _} <- String.trim(prio) |> Integer.parse,
       ndesc = Enum.join(description, "\n"),
       nreq = Enum.join(requirements, "\n"),
-      {:ok, board} <- Krcli.Board.get_by_name(board_name),
-      {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
-        points: npoints, requirements: nreq, board_id: board.id,
+      {:ok, board} <- Krcli.Board.get_by_name(String.trim(board_name)),
+      {:ok, json} <- JSX.encode(%{name: String.trim(nname), desc: String.trim(ndesc),
+        points: npoints, requirements: String.trim(nreq), board_id: board.id,
         priority: nprio}),
     do:
       SbServer.post_json("/stories", json)
