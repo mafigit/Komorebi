@@ -93,6 +93,11 @@ curl  localhost:8080/gz/stories
 => Get all stories of board gz
 => [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"board_id":1,"archived":false,"color":""}]
 
+GET /gz/archived_stories
+curl localhost:8080/foo/archived_stories
+=> Get all archived stories from board foo
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"board_id":1,"archived":true,"color":""}]
+
 POST /stories as json
 curl -H "Content-Type: application/json" -d '{"name":"test","desc":"a description","points":5,"requirements":"Do this and that","board_id":1 }' localhost:8080/stories
 => Create a user story

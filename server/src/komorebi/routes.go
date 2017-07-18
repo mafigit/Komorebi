@@ -241,6 +241,12 @@ var routes = Routes{
 		BoardDodGet,
 	},
 	Route{
+		"BoardArchivedGet",
+		"GET",
+		"/{board_name}/archived_stories",
+		BoardArchivedGet,
+	},
+	Route{
 		"BoardDodUpdate",
 		"POST",
 		"/{board_name}/dods",

@@ -720,6 +720,13 @@ func StoryDodGet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(dods)
 }
 
+func BoardArchivedGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	board_name := vars["board_name"]
+	stories := GetArchivedStoriesByBoardName(board_name)
+	json.NewEncoder(w).Encode(stories)
+}
+
 func StoryDodUpdate(w http.ResponseWriter, r *http.Request) {
 	var dods Dods
 	var story Story

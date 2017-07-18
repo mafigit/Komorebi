@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -43,7 +42,6 @@ func TestBoardShowHandler(t *testing.T) {
 	b.Save()
 	req, _ := http.NewRequest("GET", "/testBoardShow", nil)
 	w := httptest.NewRecorder()
-	context.Set(req, 0, "testBoardShow")
 	BoardShow(w, req)
 	fmt.Printf("body: ", w.Code, w.Body.String())
 

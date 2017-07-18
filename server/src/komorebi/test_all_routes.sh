@@ -143,6 +143,14 @@ echo "Create story test"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"test","desc":"desc","points":3,"requirements":"Do this!","board_id":1 }' localhost:8080/stories 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
+echo "Archive Story 2"
+resp=`curl -H "Content-Type: application/json" -d '{"id":2,"name":"test","points":3,"requirements":"Dothis!","board_id":1,"archived":true}' localhost:8080/stories/2 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Get Archived Story 2"
+resp=`curl  localhost:8080/foo/archived_stories 2>/dev/null`
+test_match "\[{\"id\":2,\"name\":\"test\",\"updated_at\":[0-9]{19},\"desc\":\"\",\"points\":3,\"requirements\":\"Dothis!\",\"board_id\":1,\"archived\":true,\"color\":\"\"}\]" $resp
+
 echo "Delete Story test"
 resp=`curl  -X DELETE localhost:8080/stories/2 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
