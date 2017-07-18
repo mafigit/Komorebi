@@ -15,6 +15,7 @@ defmodule Krcli.Table do
     IO.puts("-" <> String.duplicate("-", tab.columns*(tab.width+1)))
     tab
   end
+
   def p_step(tab, item) do
     :io.format("~-" <> Integer.to_string(tab.width) <> "s|", [item])
     tab

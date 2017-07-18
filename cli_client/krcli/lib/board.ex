@@ -83,24 +83,8 @@ defmodule Krcli.Board do
     |> Util.comply!("Board " <> nname <> " successfully created.")
   end
 
-  def with_structure(board, fun) do
-    with_item(board, &(fun.(&1)))
-  end
-
-  def with_structure(board, column, fun) do
-    with_structure(board, fn(b) ->
-      Krcli.Column.with_item(b.name, column, &fun.(b, &1))
-    end)
-  end
-
-  def with_structure(board, column, story, fun) do
-    with_structure(board, column, fn(b, c) ->
-      Krcli.Story.with_item(story, &fun.(b, c, &1))
-    end)
-  end
-
   def create_column(nname, board) do
-    with_structure(board, &(Krcli.Column.create(nname, &1.id)))
+    with_item(board, &(Krcli.Column.create(nname, &1.id)))
   end
 
   defp show_board(input) do
