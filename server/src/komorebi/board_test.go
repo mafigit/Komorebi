@@ -141,10 +141,10 @@ func TestBoardNested(t *testing.T) {
 	cols := GetColumnsByBoardId(board.Id)
 
 	s := NewStory("Story 1", "description", "Do this and that", 3,
-		board.Id, "green")
+		board.Id, "green", 0)
 	s.Save()
 	s = NewStory("Story 2", "description 2", "Do this and that", 3,
-		board.Id, "green")
+		board.Id, "green", 0)
 	s.Save()
 	stories := GetStoriesByBoardName(board.Name)
 	task := NewTask("task for story2", "desctip", stories[1].Id, cols[1].Id)
@@ -203,6 +203,7 @@ func TestBoardNestedDelete(t *testing.T) {
 		5,
 		board.Id,
 		"green",
+		0,
 	)
 	s.Save()
 	var story Story

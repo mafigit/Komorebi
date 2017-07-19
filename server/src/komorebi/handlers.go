@@ -371,7 +371,7 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
-		story.BoardId, story.Color)
+		story.BoardId, story.Color, story.IssueNr)
 	modelCreate(&story, w, r)
 }
 
@@ -701,8 +701,10 @@ func getStoryFromIssue(issue string, board_id int) (bool, Story) {
 	desc += ") <br>"
 	desc += resp_json.Issue.Description
 
+	issue_nr, _ := strconv.Atoi(issue)
+
 	story = NewStory(resp_json.Issue.Subject,
-		desc, "", 3, board_id, "")
+		desc, "", 3, board_id, "", issue_nr)
 	return true, story
 }
 

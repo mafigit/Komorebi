@@ -16,7 +16,7 @@ curl localhost:8080/gz
 GET /gz as json
 curl  -H "Accept: application/json" localhost:8080/gz
 => json response with board gz with columns, stories and tasks
-=> {"id":1,"name":"foo","updated_at":1471541456481743347,"private":false,"columns":[{"id":3,"name":"WIP","updated_at":1471541504413505006,"position":1,"board_id":1}],"stories":[{"id":1,"name":"do_that","updated_at":1471541541313618700,"desc":"","points":5,"requirements":"Do_this!","board_id":3,"archived":false,"color":"","tasks":[{"id":3,"name":"asdfasdf","updated_at":1471541536411708346,"desc":"","story_id":1,"column_id":3,"archived":false},"users":[{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]]}]}
+=> {"id":1,"name":"foo","updated_at":1471541456481743347,"private":false,"columns":[{"id":3,"name":"WIP","updated_at":1471541504413505006,"position":1,"board_id":1}],"stories":[{"id":1,"name":"do_that","updated_at":1471541541313618700,"desc":"","points":5,"requirements":"Do_this!","board_id":3,"archived":false,"color":"","issue_nr":0,"tasks":[{"id":3,"name":"asdfasdf","updated_at":1471541536411708346,"desc":"","story_id":1,"column_id":3,"archived":false},"users":[{"id":1,"name":"August","updated_at":0,"image_path":"/public/franz.jpg"}]]}]}
 
 POST /boards as json
 curl  -H "Content-Type: application/json" -d '{"name":"gz","private":true}' localhost:8080/boards
@@ -86,12 +86,12 @@ curl  -X DELETE localhost:8080/columns/4
 GET /stories/{:story_id}
 curl  localhost:8080/stories/5
 => get story 5
-=> {"id":5,"name":"asdf","updated_at":1468575129729239946,"desc":"","points":4,"requirements":"","board_id":4,"archived":false,"color":""}
+=> {"id":5,"name":"asdf","updated_at":1468575129729239946,"desc":"","points":4,"requirements":"","board_id":4,"archived":false,"color":"","issue_nr":0}
 
 GET /gz/stories
 curl  localhost:8080/gz/stories
 => Get all stories of board gz
-=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"board_id":1,"archived":false,"color":""}]
+=> [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"board_id":1,"archived":false,"color":"","issue_nr":0}]
 
 GET /gz/archived_stories
 curl localhost:8080/foo/archived_stories
