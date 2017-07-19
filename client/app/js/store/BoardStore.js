@@ -481,6 +481,7 @@ var updateTask = (data) => {
       if (response_obj.success) {
         resolve(data);
         task_dialog_open = false;
+        ErrorActions.removeTaskErrors();
         selected_story_id = null;
       } else {
         var obj_errors = response_obj.messages;
@@ -530,7 +531,7 @@ var updateStoryDod = (dods) => {
     Ajax.postJson(url, data).then(response => {
       var response_obj = JSON.parse(response.responseText);
       if (response_obj.success) {
-        dod_check_dialog_open = true;
+        dod_check_dialog_open = false;
         BoardStore.emitChange();
         ErrorActions.removeCheckDodErrors();
         resolve(data);
@@ -592,6 +593,7 @@ var addTask = (data) => {
     var response_obj = JSON.parse(response.responseText);
     if (response_obj.success) {
       task_dialog_open = false;
+      ErrorActions.removeTaskErrors();
       if (data.user_id) {
         data.id = response_obj.id;
         assignUserToTask(data.user_id, data).then(() => {
