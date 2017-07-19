@@ -29,6 +29,6 @@ defmodule Krcli.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:exjsx, "~> 3.2"}, {:httpoison, "~> 0.9.0"}]
+    [{:exjsx, "~> 3.2"}, {:httpoison, "~> 0.9.0"}, {:configparser_ex, "~> 1.0.0"}]
   end
 end

@@ -25,7 +25,6 @@ defmodule FN do
         case by_name(name, items) do
           {:ok, item} -> Util.wrap(item)
           {:error, errmsg} -> Error.display(errmsg)
-          foo -> IO.inspect(foo)
         end
       end
 

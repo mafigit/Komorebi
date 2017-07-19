@@ -1,8 +1,9 @@
 defmodule KrOpts do
   def dispatch(args) do
-    if File.exists?("/tmp/krcli.story"),
+    Conf.read_and_store_conf
+    if File.exists?("#{Conf.current.home}/krcli.story"),
       do: Krcli.Story.create_from_file() |> Util.comply_good,
-    else: if File.exists?("/tmp/krcli.task"),
+    else: if File.exists?("#{Conf.current.home}/krcli.task"),
       do: Krcli.Task.create_from_file() |> Util.comply_good,
       else: dispatch_from_args(args)
   end
