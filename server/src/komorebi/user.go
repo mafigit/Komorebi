@@ -1,19 +1,54 @@
 package komorebi
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"math/rand"
 	"strings"
 )
 
 type User struct {
 	DbModel
-	ImagePath string `json:"image_path"`
+	ImagePath    string `json:"image_path"`
+	HashedPasswd string `json:"password"`
+	Salt         string `json:"-"`
 }
 
 type Users []User
 
-func NewUser(name string, image_path string) User {
+func GenerateSalt() string {
+	r := make([]byte, 32)
+	if _, err := rand.Read(r); err != nil {
+		Logger.Printf("failed to get random salt:", err)
+	}
+	return string(r)
+}
+
+func HashPasswd(passwd string, salt string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(passwd + salt))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func Authenticate(name string, passwd string) bool {
+	var user User
+	err := dbMapper.Connection.SelectOne(&user,
+		"select * from users where Name=?", name)
+	if err != nil {
+		Logger.Printf("authentication failed: error:", err)
+		return false
+	}
+	hashed_passwd := HashPasswd(passwd, user.Salt)
+	return hashed_passwd == user.HashedPasswd
+}
+
+func NewUser(name string, passwd string, image_path string) User {
+	salt := GenerateSalt()
+	hashed_passwd := HashPasswd(passwd, salt)
 	return User{
-		ImagePath: image_path,
+		ImagePath:    image_path,
+		Salt:         salt,
+		HashedPasswd: hashed_passwd,
 		DbModel: DbModel{
 			Name: name,
 		},
@@ -21,6 +56,22 @@ func NewUser(name string, image_path string) User {
 }
 
 func (u *User) Save() bool {
+
+	if u.Id != 0 {
+		// on update an user, keep the salt
+		var old_user User
+		dbMapper.Connection.SelectOne(&old_user,
+			"select * from users where Id=?", u.Id)
+		u.Salt = old_user.Salt
+
+		if len(u.HashedPasswd) <= 0 {
+			// update user without setting a new password: keep old password
+			u.HashedPasswd = old_user.HashedPasswd
+		} else if len(u.HashedPasswd) > 0 {
+			// update user with setting a new password
+			u.HashedPasswd = HashPasswd(u.HashedPasswd, u.Salt)
+		}
+	}
 	return dbMapper.Save(u)
 }
 
@@ -80,7 +131,7 @@ func GetUsersByBoardId(board_id int) Users {
 		return users
 	}
 	_, err = dbMapper.Connection.Select(&users,
-		"select * from users where Id IN ("+user_ids+")")
+		"select Id, Name, UpdatedAt, ImagePath from users where Id IN ("+user_ids+")")
 	if err != nil {
 		Logger.Printf("Could not get users by board id", board_id)
 	}
@@ -104,7 +155,7 @@ func GetUsersByTaskId(task_id int) Users {
 	}
 
 	_, err = dbMapper.Connection.Select(&users,
-		"select * from users where Id IN ("+user_ids+")")
+		"select Id, Name, UpdatedAt, ImagePath from users where Id IN ("+user_ids+")")
 	if err != nil {
 		Logger.Println("Could not get users by task id", task_id)
 	}

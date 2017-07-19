@@ -234,6 +234,11 @@ func ColumnCreate(w http.ResponseWriter, r *http.Request) {
 func UsersGet(w http.ResponseWriter, r *http.Request) {
 	var users Users
 	GetAll(&users)
+
+	for i, _ := range users {
+		user := &users[i]
+		user.HashedPasswd = ""
+	}
 	json.NewEncoder(w).Encode(users)
 }
 
@@ -245,7 +250,7 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user = NewUser(user.Name, user.ImagePath)
+	user = NewUser(user.Name, user.HashedPasswd, user.ImagePath)
 	modelCreate(&user, w, r)
 }
 

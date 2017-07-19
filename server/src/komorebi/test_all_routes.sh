@@ -216,7 +216,7 @@ test_match "\[{\"id\":1,\"name\":\"bar\",\"updated_at\":[0-9]{19},\"desc\":\"des
 ### User routes
 
 echo "Create user franz"
-resp=`curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/franz.jpg"}' localhost:8080/users 2>/dev/null`
+resp=`curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/franz.jpg", "password":"abcd"}' localhost:8080/users 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{},\"id\":1}" $resp
 
 echo "Create user hans-peter"
@@ -229,7 +229,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get all users"
 resp=`curl localhost:8080/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
 
 echo "Update user franz with name august"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
@@ -245,7 +245,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from board foo"
 resp=`curl localhost:8080/boards/1/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
 
 echo "Assign no user to board foo"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/boards/1/assign_users 2>/dev/null`
@@ -269,7 +269,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from task 1"
 resp=`curl localhost:8080/tasks/1/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
 
 echo "Assign no user to task 1"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/tasks/1/assign_users 2>/dev/null`

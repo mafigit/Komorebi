@@ -42,7 +42,8 @@ export default class UserDialog extends React.Component {
   setDefaultFormValues = () => {
     this.form_values = {
       name: "",
-      image_path: ""
+      image_path: "",
+      password: ""
     };
   }
 
@@ -54,6 +55,7 @@ export default class UserDialog extends React.Component {
     var form_data = {
       name: this.getInputValue(this.refs.user_name, "input"),
       image_path: this.getInputValue(this.refs.user_image_path, "input"),
+      password: this.getInputValue(this.refs.user_password, "input"),
     };
     BoardActions.addUser(form_data);
   }
@@ -90,6 +92,13 @@ export default class UserDialog extends React.Component {
         <br />
         <TextField ref="user_image_path" hintText="User Image Path"
           errorText={this.state.error.image_path}
+        />
+        <br />
+        <br />
+        Add a Password (Please note, there is no encypted connection)
+        <br />
+        <TextField ref="user_password" hintText="User Password"
+          errorText={this.state.error.password} type="password"
         />
         <br />
         <br />
