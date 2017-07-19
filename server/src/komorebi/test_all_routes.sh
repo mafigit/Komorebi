@@ -235,7 +235,27 @@ echo "Update user franz with name august"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
+echo "Login should fail with wrong password for user August"
+resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcde" }' localhost:8080/login 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"login\":[\"Login failed\"]}}" "${resp}"
 
+echo "Login should fail with wrong username"
+resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"foobar", "password":"abcd" }' localhost:8080/login 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"login\":[\"Login failed\"]}}" "${resp}"
+
+echo "Login should fail with empty username and empty password"
+resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"", "password":"" }' localhost:8080/login 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"login\":[\"Login failed\"]}}" "${resp}"
+
+echo "Login with user August"
+resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcd" }' localhost:8080/login 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+echo "Logout with user August"
+resp=`curl --cookie-jar "cookie.txt" --cookie "cookie.txt" localhost:8080/logout 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+rm cookie.txt
 
 ### Assign users to Board
 

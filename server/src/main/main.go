@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	"github.com/gorilla/context"
+	"github.com/gorilla/sessions"
+	"github.com/gorilla/securecookie"
 	"komorebi"
 	"log"
 	"net/http"
@@ -63,6 +66,13 @@ func main() {
 		komorebi.ClearDump(*clear_board)
 		os.Exit(0)
 	}
+	komorebi.SessionStore = sessions.NewCookieStore(securecookie.GenerateRandomKey(64))
+	komorebi.SessionStore.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   60 * 60 * 24 * 7,
+		Secure:   false,
+		HttpOnly: true,
+	}
 
 	ticker := time.NewTicker(time.Hour * 24)
 	go func() {
@@ -78,5 +88,5 @@ func main() {
 	}()
 
 	router := komorebi.NewRouter()
-	log.Fatal(http.ListenAndServe(":"+*port, router))
+	log.Fatal(http.ListenAndServe(":"+*port, context.ClearHandler(router)))
 }

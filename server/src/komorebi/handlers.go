@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-resty/resty"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"log"
@@ -18,6 +19,7 @@ import (
 var PublicDir string
 var HookDir string
 var Logger *log.Logger
+var SessionStore *sessions.CookieStore
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -99,6 +101,45 @@ func GetStories(w http.ResponseWriter, r *http.Request) {
 	board_name := vars["board_name"]
 	stories := GetStoriesByBoardName(board_name)
 	json.NewEncoder(w).Encode(stories)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+	var user User
+
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	if Authenticate(user.Name, user.HashedPasswd) == false {
+		response.Success = false
+		response.Messages["login"] = append(response.Messages["login"],
+			"Login failed")
+
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	CreateSession(w, r, user.Name)
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(response)
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	DestroySession(w, r)
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(response)
 }
 
 func modelCreate(m Model, w http.ResponseWriter, r *http.Request) {
