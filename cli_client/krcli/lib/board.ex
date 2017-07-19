@@ -43,10 +43,12 @@ defmodule Krcli.Board do
       with cols <- story_tasks_by_column(board),
       do:
       Krcli.Table.p_base_table(
-        Krcli.Table.create(%{columns: length(board.columns)+1, width: 30,
+        Krcli.Table.create(%{columns: length(board.columns)+1,
+          width: Conf.t_width(length(board.columns)+1),
           lines: length(board.stories),
           headers: ["Story" | Enum.map(board.columns, fn(x) -> "Column: " <> x.name end)],
-          data: cols })
+          data: cols,
+          pad_left: 5 })
       )
     end
   end

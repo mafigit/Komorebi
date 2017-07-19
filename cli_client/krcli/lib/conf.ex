@@ -28,8 +28,13 @@ defmodule Conf do
   end
 
   def with_config(item, fun) do
-    if Map.get(current, item, nil),
-    do: fun.(Map.get(current, item)),
+    if Map.get(current(), item, nil),
+    do: fun.(Map.get(current(), item)),
     else: raise "Only available with configured #{item}"
+  end
+
+  def t_width(cols) do
+    with {:ok, width} <- :io.columns,
+    do: round((width - 15)/cols)
   end
 end

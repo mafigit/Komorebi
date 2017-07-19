@@ -1,5 +1,5 @@
 defmodule Krcli.Table do
-  defstruct [:columns, :width, :lines, :headers, :data]
+  defstruct [:columns, :width, :lines, :headers, :data, :pad_left]
 
   def create(t) do
     %Krcli.Table{
@@ -7,11 +7,13 @@ defmodule Krcli.Table do
       width: t.width,
       lines: t.lines,
       headers: t.headers,
-      data: t.data
+      data: t.data,
+      pad_left: t.pad_left
     }
   end
 
   def p_spacer(tab) do
+    p_pad_left(tab)
     IO.puts("-" <> String.duplicate("-", tab.columns*(tab.width+1)))
     tab
   end
@@ -21,7 +23,13 @@ defmodule Krcli.Table do
     tab
   end
 
+  def p_pad_left(tab) do
+    IO.write(String.duplicate(" ", tab.pad_left || 0))
+    tab
+  end
+
   def p_header(tab) do
+    p_pad_left(tab)
     :io.format("|")
     Enum.each(tab.headers, fn(head) ->
       p_step(tab, head)
@@ -45,6 +53,7 @@ defmodule Krcli.Table do
       max_depth <- _max_table_depth(line),
     do: (fn() ->
       Enum.each(0..(max_depth-1), fn(dep) ->
+        p_pad_left(tab)
         IO.write("|")
         Enum.each(0..(tab.columns-1), fn(col) ->
           p_step(tab, Enum.at(line[col] || [], dep, ""))
