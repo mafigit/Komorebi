@@ -26,4 +26,10 @@ defmodule Conf do
       [config: conf] -> conf
     end
   end
+
+  def with_config(item, fun) do
+    if Map.get(current, item, nil),
+    do: fun.(Map.get(current, item)),
+    else: raise "Only available with configured #{item}"
+  end
 end

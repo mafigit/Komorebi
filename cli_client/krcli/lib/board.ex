@@ -28,7 +28,7 @@ defmodule Krcli.Board do
             _expand_acc_match(task, linenum, colnum, col, story, acc_2)
           end), colnum+1}
         end),
-      do: Map.put(acc, linenum, Map.put(Map.get(acc, linenum), 0, prepend))
+      do: Map.put(acc, linenum, Map.put(Map.get(acc, linenum) || %{}, 0, prepend))
     end
 
     def story_tasks_by_column(board) do

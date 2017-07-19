@@ -20,7 +20,8 @@ defmodule Krcli.Story do
   end
 
   def create_from_file do
-    with {:ok, data} <- File.read("/tmp/krcli.story"),
+    with story_file <- Path.join(Conf.current.home, "krcli.story"),
+      {:ok, data} <- File.read(story_file),
       lines = String.split(data, ["\n"]),
       ["Board", board_name] <- String.split(Enum.at(lines, 0), ":"),
       ["Name", nname] <- String.split(Enum.at(lines, 1), ":"),
@@ -38,22 +39,24 @@ defmodule Krcli.Story do
         priority: nprio}),
     do:
       SbServer.post_json("/stories", json)
-      |> Util.lift_maybe(fn(_) -> File.rm("/tmp/krcli.story") end)
+      |> Util.lift_maybe(fn(_) -> File.rm(story_file) end)
       |> Util.comply!("Story created successfully!")
   end
 
   def create do
-    with {:ok, file} <- File.open("/tmp/krcli.story", [:write]),
-      :ok <- IO.write(file, "Board:CHANGEME\n"),
+    with story_file <- Path.join(Conf.current.home, "krcli.story"),
+      {:ok, file} <- File.open(story_file, [:write]),
+      board_name <- Conf.current.board || "CHANGEME",
+      :ok <- IO.write(file, "Board:#{board_name}\n"),
       :ok <- IO.write(file, "Name:CHANGEME\n"),
       :ok <- IO.write(file, "Points:3\n"),
       :ok <- IO.write(file, "Priority:1\n"),
       :ok <- IO.write(file, "Description:\nSome Description\nEOTD\n"),
       :ok <- IO.write(file, "Requirements:\nSome Requirements\nEOTR\n"),
       :ok <- File.close(file),
-    do: IO.puts("The file /tmp/krcli.story has been written to disk. Please " <>
+    do: IO.puts("The file #{story_file} has been written to disk. Please " <>
       "Edit it with the data you would like to have, running:\n\n" <>
-      (System.get_env("EDITOR") || "vim") <> " /tmp/krcli.story && krcli\n\n" <>
+      (System.get_env("EDITOR") || "vim") <> " #{story_file} && krcli\n\n" <>
       "to create the story.")
   end
 

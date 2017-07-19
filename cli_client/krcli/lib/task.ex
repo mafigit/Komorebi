@@ -55,7 +55,8 @@ defmodule Krcli.Task do
   end
 
   def create_from_file do
-    with {:ok, data} <- File.read("/tmp/krcli.task"),
+    with task_file <- Path.join(Conf.current.home, "krcli.task"),
+      {:ok, data} <- File.read(task_file),
       lines = String.split(data, ["\n"]),
       ["Board", board_name] <- String.split(Enum.at(lines, 0), ":"),
       ["Column", column_name] <- String.split(Enum.at(lines, 1), ":"),
@@ -73,21 +74,24 @@ defmodule Krcli.Task do
         column_id: column.id, story_id: story.id}),
     do:
       SbServer.post_json("/tasks", json)
-      |> Util.lift_maybe(fn(_) -> File.rm("/tmp/krcli.task") end)
+      |> Util.lift_maybe(fn(_) -> File.rm(task_file) end)
       |> Util.comply!("Task created successfully!")
   end
 
  def create do
-    with {:ok, file} <- File.open("/tmp/krcli.task", [:write]),
-      :ok <- IO.write(file, "Board:CHANGEME\n"),
-      :ok <- IO.write(file, "Column:CHANGEME\n"),
+    with task_file <- Path.join(Conf.current.home, "krcli.task"),
+      {:ok, file} <- File.open(task_file, [:write]),
+      board_name <- Conf.current.board || "CHANGEME",
+      column_name <- Conf.current.column || "CHANGEME",
+      :ok <- IO.write(file, "Board:#{board_name}\n"),
+      :ok <- IO.write(file, "Column:#{column_name}\n"),
       :ok <- IO.write(file, "Story_id:CHANGEME\n"),
       :ok <- IO.write(file, "Name:CHANGEME\n"),
       :ok <- IO.write(file, "Description:\nSome Description\nEOTD\n"),
       :ok <- File.close(file),
-    do: IO.puts("The file /tmp/krcli.task has been written to disk. Please " <>
+    do: IO.puts("The file #{task_file} has been written to disk. Please " <>
       "Edit it with the data you would like to have, running:\n\n" <>
-      (System.get_env("EDITOR") || "vim") <> " /tmp/krcli.task && krcli\n\n" <>
+      (System.get_env("EDITOR") || "vim") <> " #{task_file} && krcli\n\n" <>
       "to create the task.")
   end
 
