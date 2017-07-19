@@ -5,14 +5,18 @@ import (
 )
 
 func TestNewUser(t *testing.T) {
-	u := NewUser("haensel", "/tmp/foo")
+	u := NewUser("haensel", "1234", "/tmp/foo")
 	if u.Name != "haensel" {
 		t.Error("Should have instanciate a user:", u.Name)
+	}
+	if len(u.HashedPasswd) <= 0 || u.HashedPasswd == "" ||
+		u.HashedPasswd == "1234" {
+		t.Error("Should have a hashed passwd:", u.HashedPasswd)
 	}
 }
 
 func TestUserCreate(t *testing.T) {
-	u := NewUser("haensel", "/tmp/foo")
+	u := NewUser("haensel", "1234", "/tmp/foo")
 	if !u.Save() {
 		t.Error("Should have created the user")
 	}
@@ -20,10 +24,14 @@ func TestUserCreate(t *testing.T) {
 	if u.Name != "haensel" {
 		t.Error("Should have saved a user", u.Name)
 	}
+	if len(u.HashedPasswd) <= 0 || u.HashedPasswd == "" ||
+		u.HashedPasswd == "1234" {
+		t.Error("Should have a hashed passwd:", u.HashedPasswd)
+	}
 }
 
 func TestUserValidation(t *testing.T) {
-	u := NewUser("About a boy", "/tmp/foo")
+	u := NewUser("About a boy", "abcd", "/tmp/foo")
 	success, msg := u.Validate()
 	if success == false {
 		t.Error("Should be valid")
@@ -34,7 +42,7 @@ func TestUserValidation(t *testing.T) {
 		t.Error("Should be invalid by missing name")
 	}
 	u.Name = "Woot"
-	u2 := NewUser("Franz", "/tmp/foo")
+	u2 := NewUser("Franz", "abcd", "/tmp/foo")
 	u2.Save()
 	u.Name = u2.Name
 	u.ImagePath = "/tmp/foo"
@@ -51,5 +59,14 @@ func TestGetById(t *testing.T) {
 	}
 	if u.Name != "haensel" {
 		t.Error("Should have name haensel got:", u.Name)
+	}
+}
+
+func TestUserAuthentication(t *testing.T) {
+	u := NewUser("herbert", "secure", "/images/herbert.jpg")
+	u.Save()
+	defer u.Destroy()
+	if Authenticate("herbert", "secure") == false {
+		t.Error("Authentication failed")
 	}
 }

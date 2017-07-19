@@ -94,8 +94,8 @@ curl  localhost:8080/gz/stories
 => [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"board_id":1,"archived":false,"color":"","issue_nr":0}]
 
 GET /gz/archived_stories
-curl localhost:8080/foo/archived_stories
-=> Get all archived stories from board foo
+curl localhost:8080/gz/archived_stories
+=> Get all archived stories from board gz
 => [{"id":1,"name":"test","desc":"a description","points":5,"requirements":"Do this and that","updated_at":1468338234914643720,"board_id":1,"archived":true,"color":""}]
 
 POST /stories as json
@@ -161,10 +161,10 @@ curl localhost:8080/tasks/1/users
 GET /users
 curl   localhost:8080/users
 => get all users
-=> [{"id":1,"name":"Franz","updated_at":0,"image_path":"/public/images/franz.jpg"}]
+=> [{"id":1,"name":"Franz","updated_at":0,"image_path":"/public/images/franz.jpg","password":""}]
 
 POST /users
-curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg"}' localhost:8080/users
+curl  -H "Content-Type: application/json" -d '{"name":"Franz", "image_path":"/public/images/franz.jpg","password":"1234"}' localhost:8080/users
 => create a user
 => {"success":true,"messages":{},"id":1}
 
