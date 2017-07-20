@@ -123,6 +123,7 @@ export default class StoryEditDialog extends React.Component {
           onChange={(comp, val) => {this.onChange(comp, "name", val);}}
         />
         <br />
+        <br />
         Select a color
         <br />
         <ColorSelect ref="story_color"

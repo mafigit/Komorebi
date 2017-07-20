@@ -59,6 +59,11 @@ class MyMenu extends React.Component {
     }
   }
 
+  handle_menue_action = (action) => {
+    BoardActions.toggleBoardMenu();
+    action();
+  }
+
   render() {
     return (
       <div>
@@ -74,7 +79,7 @@ class MyMenu extends React.Component {
               return <MenuItem
                 key={key}
                 primaryText={item.name}
-                onTouchTap={item.action}
+                onTouchTap={this.handle_menue_action.bind(this, item.action)}
               />;
             })}
           </Menu>
