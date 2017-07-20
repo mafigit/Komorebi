@@ -17,8 +17,8 @@ defmodule Krcli.Board do
         col_map = Map.get(line_map, colnum, []),
       do:
         if task_column_id == col_id and task_story_id == story_id,
-          do: Map.put(acc, linenum, Map.put(line_map, colnum, col_map ++
-            [Integer.to_string(task.id) <> ": "<>task.name])),
+          do: Util.M.double_put(acc, linenum, line_map, colnum, col_map ++
+            [Integer.to_string(task.id) <> ": "<>task.name]),
           else: acc
     end
 
@@ -28,7 +28,7 @@ defmodule Krcli.Board do
             _expand_acc_match(task, linenum, colnum, col, story, acc_2)
           end), colnum+1}
         end),
-      do: Map.put(acc, linenum, Map.put(Map.get(acc, linenum) || %{}, 0, prepend))
+      do: Util.M.inner_update_at(acc, linenum, 0, prepend)
     end
 
     def story_tasks_by_column(board) do
@@ -105,10 +105,9 @@ defmodule Krcli.Board do
             lines: length(boards),
             headers: ["Board Id", "Board name"],
             data: Enum.at(Enum.reduce(boards, [%{}, 0],
-              fn(x, [acc, ln]) -> [Map.put(acc, ln,
-                %{0 => [Integer.to_string(x["id"])],
-                  1 => [x["name"]] }),
-                ln + 1]
+              fn(x, [acc, ln]) ->
+                [Util.M.inner_update_at(acc, ln, 0, [Integer.to_string(x["id"])]) |>
+                  Util.M.inner_update_at(ln, 1, [x["name"]]), ln + 1 ]
               end), 0, %{})
           })
         ) |> Util.good

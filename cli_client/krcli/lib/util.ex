@@ -1,5 +1,15 @@
 defmodule Util do
 
+  defmodule M do
+    def double_put(map, idx, map_i, idx_i, v) do
+      Map.put(map, idx, Map.put(map_i, idx_i, v))
+    end
+
+    def inner_update_at(map, idx, inner_idx, item) do
+      Map.put(map, idx, Map.put(Map.get(map, idx) || %{}, inner_idx, item))
+    end
+  end
+
   def wrap(item) do
     {:ok, item}
   end
