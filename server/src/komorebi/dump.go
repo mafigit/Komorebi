@@ -64,7 +64,8 @@ func CountDoneTasks(board Board) int64 {
 	count, err := dbMapper.Connection.SelectInt(
 		"select count(tasks.Id) from tasks left join "+
 			"columns ON columns.Id = tasks.ColumnId "+
-			"where columns.Id=?", done_column_id)
+			"left join stories ON stories.Id = tasks.StoryId "+
+			"where columns.Id=? AND stories.Archived = 0 ", done_column_id)
 	if err != nil {
 		log.Println("Cound not count done tasks from board", board.Name)
 	}
