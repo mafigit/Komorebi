@@ -28,5 +28,5 @@ test('Click on Story to showTasksForStoryId', () => {
   let tree2 = toJson(component2);
   expect(tree2).toMatchSnapshot();
   tree2.props.onClick();
-  expect(BoardStore.getSelectedStories()).toEqual(["1", "2"]);
+  expect(BoardStore.getSelectedStories()).toEqual(["2"]);
 });

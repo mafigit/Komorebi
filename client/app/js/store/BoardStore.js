@@ -831,6 +831,10 @@ AppDispatcher.register(function(action) {
         BoardStore.emitChange();
       }
       break;
+    case "SET_SELECTED_STORY_ID":
+      selected_stories = [action.story_id];
+      BoardStore.emitChange();
+      break;
     case "TOGGLE_TASKS_FOR_STORY_ID":
       var index = selected_stories.indexOf(action.story_id);
       if (index >= 0) {

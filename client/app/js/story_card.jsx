@@ -14,8 +14,13 @@ export default class StoryCard extends React.Component {
     this.state={};
   }
 
-  onClickHandler = () => {
+  onClickColorIconHandler = (event) => {
     BoardActions.toggleTasksForStoryId(this.props.story_id);
+    event.stopPropagation();
+  }
+
+  onClickHandler = () => {
+    BoardActions.setSelectedStoryId(this.props.story_id);
   }
 
   onClickIconHandler = (event) => {
@@ -36,9 +41,9 @@ export default class StoryCard extends React.Component {
   }
 
   render() {
-    var leftIcon = <LabelOutlineIcon color={this.props.color} />;
+    var leftIcon = <LabelOutlineIcon color={this.props.color} onClick={this.onClickColorIconHandler}/>;
     if (this.props.active) {
-      leftIcon = <LabelIcon color={this.props.color}/>;
+      leftIcon = <LabelIcon color={this.props.color} onClick={this.onClickColorIconHandler}/>;
     }
     var rightIcon = (<IconButton tooltip="Show story" onClick={this.onClickIconHandler}>
         <MoreVertIcon color={grey400} />
