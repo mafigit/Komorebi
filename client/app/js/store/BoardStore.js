@@ -954,4 +954,7 @@ AppDispatcher.register(function(action) {
       break;
   }
 });
+
+Ajax.allowCaching = false;
+
 module.exports = BoardStore;
