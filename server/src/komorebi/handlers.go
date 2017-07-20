@@ -20,6 +20,7 @@ var PublicDir string
 var HookDir string
 var Logger *log.Logger
 var SessionStore *sessions.CookieStore
+var FailedLoginCount map[string]int
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
