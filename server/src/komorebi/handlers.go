@@ -73,18 +73,28 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
 	content_type := r.Header.Get("Accept")
-	board_column := GetBoardNestedByName(board_name)
+	board := GetBoardNestedByName(board_name)
 
-	if board_column.Id == 0 {
+	if board.Id == 0 {
 		OwnNotFound(w, r)
 		return
 	}
 
-	if strings.Contains(content_type, "json") {
-		json.NewEncoder(w).Encode(board_column)
-	} else {
+	if !strings.Contains(content_type, "json") {
 		data := getIndex()
 		fmt.Fprintln(w, data)
+		return
+	}
+
+	if !board.Private {
+		json.NewEncoder(w).Encode(board)
+		return
+	}
+
+	if LoggedIn(w, r) && BoardAuthorized(w, r, board.Name) {
+		json.NewEncoder(w).Encode(board)
+	} else {
+		http.Error(w, "Not authorized", 401)
 	}
 }
 

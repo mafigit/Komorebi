@@ -39,3 +39,22 @@ func getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	}
 	return session
 }
+
+func BoardAuthorized(w http.ResponseWriter, r *http.Request, board_name string) bool {
+	sess := getSession(w, r)
+	sess_user := sess.Values["username"]
+	if sess_user == nil {
+		return false
+	}
+
+	authorized, err := dbMapper.Connection.SelectInt(
+		"Select 1 from board_users LEFT JOIN boards "+
+			"ON boards.Id = board_users.BoardId LEFT JOIN users "+
+			"ON board_users.UserId = users.Id WHERE boards.Name = ? "+
+			"AND users.Name = ?", board_name, sess_user)
+
+	if err != nil || authorized != 1 {
+		return false
+	}
+	return true
+}
