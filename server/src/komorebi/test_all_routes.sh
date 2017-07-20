@@ -251,26 +251,29 @@ test_equal "{\"success\":false,\"messages\":{\"login\":[\"Login failed\"]}}" "${
 echo "create private board and check if logged in assiged user only get this board"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"testpriv","private":true}' localhost:8080/boards 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
+echo "no admin should not assign a user to a board"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/3/assign_users 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to assign a user to this board.\"]}}" "${resp}"
+echo "make user to admin"
+../../add_admin.sh komorebi.db August
+echo "Get board without cookie: get only public boards"
 resp=`curl  localhost:8080/boards 2>/dev/null`
 test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false}]" $resp
 echo "Login with user August"
 resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcd" }' localhost:8080/login 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
+echo "admin should be authorized to assign a user to a board"
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/3/assign_users 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" "${resp}"
+echo "Get board with cookie: get all public boards and users boards"
 resp=`curl --cookie "cookie.txt" localhost:8080/boards 2>/dev/null`
 test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false},{\"id\":3,\"name\":\"testpriv\",\"updated_at\":[0-9]{19},\"private\":true}]" $resp
 
-echo "Logout with user August"
-resp=`curl --cookie-jar "cookie.txt" --cookie "cookie.txt" localhost:8080/logout 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
-
-rm cookie.txt
 
 ### Assign users to Board
 
 echo "Assign user august to board foo"
-resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/1/assign_users 2>/dev/null`
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/1/assign_users 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from board foo"
@@ -278,7 +281,7 @@ resp=`curl localhost:8080/boards/1/users 2>/dev/null`
 test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
 
 echo "Assign no user to board foo"
-resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/boards/1/assign_users 2>/dev/null`
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/boards/1/assign_users 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get no users from board foo"
@@ -286,7 +289,7 @@ resp=`curl localhost:8080/boards/1/users 2>/dev/null`
 test_match "\[\]" $resp
 
 echo "Assign wrong user to board foo"
-resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localhost:8080/boards/1/assign_users 2>/dev/null`
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localhost:8080/boards/1/assign_users 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
 
 
@@ -405,6 +408,11 @@ sleep 2
 rm story_name
 
 
+echo "Logout with user August"
+resp=`curl --cookie-jar "cookie.txt" --cookie "cookie.txt" localhost:8080/logout 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+rm cookie.txt
 
 echo 
 echo "#############"

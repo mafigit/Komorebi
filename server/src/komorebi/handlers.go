@@ -640,6 +640,15 @@ func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 		Messages: make(map[string][]string),
 	}
 
+	if !LoggedIn(w, r) || !IsAdmin(w, r) {
+		response.Success = false
+		response.Messages["authorization"] = append(response.Messages["authorization"],
+			"You are not authorized to assign a user to this board.")
+		w.WriteHeader(401)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
 	if board.Id <= 0 {
 		response.Success = false
 		response.Messages["board_id"] = append(response.Messages["board_id"],

@@ -54,10 +54,13 @@ func main() {
 	db.AddTable(komorebi.TaskUsers{}, "task_users")
 	db.AddTable(komorebi.DodTemplate{}, "dod_templates")
 	db.AddTable(komorebi.Dod{}, "dods")
+	db.AddTable(komorebi.Migration{}, "migrations")
 	tableMap := db.AddTable(komorebi.Story{}, "stories")
 	tableMap.ColMap("Desc").SetMaxSize(1024)
 	tableMap.ColMap("Requirements").SetMaxSize(1024)
 	db.CreateTables()
+
+	komorebi.RunMigrations()
 
 	if *dump {
 		komorebi.Logger.Printf("Dump tasks")

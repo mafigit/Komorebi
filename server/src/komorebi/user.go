@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"math/rand"
+	"net/http"
 	"strings"
 )
 
@@ -12,6 +13,7 @@ type User struct {
 	ImagePath    string `json:"image_path"`
 	HashedPasswd string `json:"password"`
 	Salt         string `json:"-"`
+	IsAdmin      bool   `json:"-"`
 }
 
 type Users []User
@@ -28,6 +30,23 @@ func HashPasswd(passwd string, salt string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(passwd + salt))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func IsAdmin(w http.ResponseWriter, r *http.Request) bool {
+	username := GetLoggedInUsername(w, r)
+	if len(username) <= 0 {
+		return false
+	}
+
+	var user User
+	err := dbMapper.Connection.SelectOne(&user,
+		"select * from users where Name=?", username)
+
+	if err != nil {
+		Logger.Printf("failed to get user:", err)
+		return false
+	}
+	return user.IsAdmin
 }
 
 func Authenticate(name string, passwd string) bool {
