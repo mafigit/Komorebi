@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"github.com/gorilla/context"
-	"github.com/gorilla/sessions"
 	"github.com/gorilla/securecookie"
+	"github.com/gorilla/sessions"
 	"komorebi"
 	"log"
 	"net/http"
@@ -74,9 +74,15 @@ func main() {
 		HttpOnly: true,
 	}
 
+	komorebi.FailedLoginCount = make(map[string]int)
+
 	ticker := time.NewTicker(time.Hour * 24)
 	go func() {
 		for _ = range ticker.C {
+
+			// Clear FailedLoginCount
+			komorebi.FailedLoginCount = make(map[string]int)
+
 			weekday := time.Now().Weekday().String()
 			if weekday == "Sunday" || weekday == "Saturday" {
 				komorebi.Logger.Printf("Skip periodic task dump")

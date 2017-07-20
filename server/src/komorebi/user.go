@@ -38,8 +38,20 @@ func Authenticate(name string, passwd string) bool {
 		Logger.Printf("authentication failed: error:", err)
 		return false
 	}
+
+	if FailedLoginCount[name] > 3 {
+		return false
+	}
+
 	hashed_passwd := HashPasswd(passwd, user.Salt)
-	return hashed_passwd == user.HashedPasswd
+
+	if hashed_passwd == user.HashedPasswd {
+		FailedLoginCount[name] = 0
+		return true
+	} else {
+		FailedLoginCount[name] = FailedLoginCount[name] + 1
+		return false
+	}
 }
 
 func NewUser(name string, passwd string, image_path string) User {

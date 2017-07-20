@@ -63,10 +63,36 @@ func TestGetById(t *testing.T) {
 }
 
 func TestUserAuthentication(t *testing.T) {
+	// we have to set the global variable because the initialiation
+	// in main() is not executed in a test
+	FailedLoginCount = make(map[string]int)
+
 	u := NewUser("herbert", "secure", "/images/herbert.jpg")
 	u.Save()
 	defer u.Destroy()
 	if Authenticate("herbert", "secure") == false {
 		t.Error("Authentication failed")
+	}
+}
+
+func TestUserLock(t *testing.T) {
+	// we have to set the global variable because the initialiation
+	// in main() is not executed in a test
+	FailedLoginCount = make(map[string]int)
+
+	u := NewUser("herbert", "secure", "/images/herbert.jpg")
+	u.Save()
+	defer u.Destroy()
+	if Authenticate("herbert", "secure") == false {
+		t.Error("Authentication failed")
+	}
+	// fail login four times with wrong password
+	Authenticate("herbert", "wrong")
+	Authenticate("herbert", "wrong1")
+	Authenticate("herbert", "wrong2")
+	Authenticate("herbert", "wrong3")
+
+	if Authenticate("herbert", "secure") == true {
+		t.Error("User should be locked after four wrong logins")
 	}
 }
