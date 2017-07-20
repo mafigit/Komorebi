@@ -109,9 +109,7 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     });
   },
   getBoards: function() {
-    return boards.filter((board) => {
-      return !board.private;
-    });
+    return boards;
   },
   getBoardsWithSelected: function() {
     return boards.map((board) => {

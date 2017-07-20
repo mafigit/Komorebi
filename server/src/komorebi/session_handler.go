@@ -40,10 +40,18 @@ func getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	return session
 }
 
-func BoardAuthorized(w http.ResponseWriter, r *http.Request, board_name string) bool {
+func GetLoggedInUsername(w http.ResponseWriter, r *http.Request) string {
 	sess := getSession(w, r)
-	sess_user := sess.Values["username"]
-	if sess_user == nil {
+	user := sess.Values["username"]
+	if user == nil {
+		return ""
+	}
+	return user.(string)
+}
+
+func BoardAuthorized(w http.ResponseWriter, r *http.Request, board_name string) bool {
+	sess_user := GetLoggedInUsername(w, r)
+	if len(sess_user) <= 0 {
 		return false
 	}
 

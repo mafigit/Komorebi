@@ -247,9 +247,19 @@ echo "Login should fail with empty username and empty password"
 resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"", "password":"" }' localhost:8080/login 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"login\":[\"Login failed\"]}}" "${resp}"
 
+
+echo "create private board and check if logged in assiged user only get this board"
+resp=`curl -H "Content-Type: application/json" -d '{"name":"testpriv","private":true}' localhost:8080/boards 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/3/assign_users 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+resp=`curl  localhost:8080/boards 2>/dev/null`
+test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false}]" $resp
 echo "Login with user August"
 resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcd" }' localhost:8080/login 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
+resp=`curl --cookie "cookie.txt" localhost:8080/boards 2>/dev/null`
+test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false},{\"id\":3,\"name\":\"testpriv\",\"updated_at\":[0-9]{19},\"private\":true}]" $resp
 
 echo "Logout with user August"
 resp=`curl --cookie-jar "cookie.txt" --cookie "cookie.txt" localhost:8080/logout 2>/dev/null`

@@ -178,7 +178,15 @@ curl  -X DELETE localhost:8080/users/4
 => delete user with id 4, json response
 => {"success":true,"messages":{}}
 
+POST /login
+curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcd" }' localhost:8080/login
+=> user login, set cookie
+=> {"success":true,"messages":{}}
 
+GET /logout
+curl --cookie-jar "cookie.txt" --cookie "cookie.txt" localhost:8080/logout
+=> user logout, delete cookie
+=> {"success":true,"messages":{}}
 
 ### Definition of done's
 
