@@ -66,7 +66,11 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func BoardsGet(w http.ResponseWriter, r *http.Request) {
 	var boards Boards
-	GetAll(&boards)
+	if LoggedIn(w, r) {
+		GetMyBoards(&boards, w, r)
+	} else {
+		GetPublicBoards(&boards)
+	}
 	json.NewEncoder(w).Encode(boards)
 }
 

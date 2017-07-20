@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/securecookie"
+	"github.com/gorilla/sessions"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -24,6 +26,8 @@ func TestIndexHandler(t *testing.T) {
 func TestBoardsGetHandler(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/boards", nil)
 	w := httptest.NewRecorder()
+
+	SessionStore = sessions.NewCookieStore(securecookie.GenerateRandomKey(64))
 	BoardsGet(w, req)
 
 	fmt.Printf("%d - %s", w.Code, w.Body.String())

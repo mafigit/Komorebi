@@ -121,7 +121,7 @@ func GetByName(i Model, name string) bool {
 func GetAll(i Models) bool {
 	_, err := dbMapper.Connection.
 		Select(i, "select * from "+
-			i.TableName()+" order by id")
+			i.TableName()+" order by Id")
 	if err != nil {
 		Logger.Printf("could not find model", err)
 		return false
