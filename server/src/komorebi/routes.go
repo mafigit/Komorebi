@@ -37,6 +37,18 @@ var routes = Routes{
 		Index,
 	},
 	Route{
+		"Login",
+		"POST",
+		"/login",
+		Login,
+	},
+	Route{
+		"Logout",
+		"GET",
+		"/logout",
+		Logout,
+	},
+	Route{
 		"GetBoards",
 		"GET",
 		"/boards",
