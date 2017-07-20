@@ -195,6 +195,12 @@ var BoardActions = {
       reload: reload
     });
   },
+  setSelectedStoryId: (story_id) =>  {
+    AppDispatcher.dispatch({
+      actionType: "SET_SELECTED_STORY_ID",
+      story_id: story_id
+    });
+  },
   toggleTasksForStoryId: (story_id) =>  {
     AppDispatcher.dispatch({
       actionType: "TOGGLE_TASKS_FOR_STORY_ID",
