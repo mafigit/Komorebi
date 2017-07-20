@@ -44,7 +44,7 @@ defmodule Krcli.Board do
       do:
       Krcli.Table.p_base_table(
         Krcli.Table.create(%{columns: length(board.columns)+1,
-          width: Conf.t_width(length(board.columns)+1),
+          width: Conf.t_width,
           lines: length(board.stories),
           headers: ["Story" | Enum.map(board.columns, fn(x) -> "Column: " <> x.name end)],
           data: cols,

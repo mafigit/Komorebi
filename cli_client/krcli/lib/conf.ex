@@ -33,8 +33,8 @@ defmodule Conf do
     else: raise "Only available with configured #{item}"
   end
 
-  def t_width(cols) do
+  def t_width do
     with {:ok, width} <- :io.columns,
-    do: round((width - 15)/cols)
+    do: width-5
   end
 end

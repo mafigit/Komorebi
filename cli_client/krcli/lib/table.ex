@@ -1,5 +1,5 @@
 defmodule Krcli.Table do
-  defstruct [:columns, :width, :lines, :headers, :data, :pad_left]
+  defstruct [:columns, :width, :lines, :headers, :data, :pad_left, :pmc]
 
   def create(t) do
     %Krcli.Table{
@@ -8,38 +8,20 @@ defmodule Krcli.Table do
       lines: t.lines,
       headers: t.headers,
       data: t.data,
-      pad_left: t.pad_left
+      pad_left: t["pad_left"] || 0,
+      pmc: PMC.setup(t.width, t["pad_left"] || 0)
     }
   end
 
-  def p_spacer(tab) do
-    p_pad_left(tab)
-    IO.puts("-" <> String.duplicate("-", tab.columns*(tab.width+1)))
-    tab
-  end
-
-  def p_step(tab, item) do
-    :io.format("~-" <> Integer.to_string(tab.width) <> "s|", [item])
-    tab
-  end
-
-  def p_pad_left(tab) do
-    IO.write(String.duplicate(" ", tab.pad_left || 0))
-    tab
-  end
-
   def p_header(tab) do
-    p_pad_left(tab)
-    :io.format("|")
-    Enum.each(tab.headers, fn(head) ->
-      p_step(tab, head)
-      end)
-    IO.puts("")
-    tab
+    with pmc <- PMC.h_bar(tab.pmc, "-")
+    |> PMC.enclose_columns(tab.headers, "|")
+    |> PMC.h_bar("-"),
+    do: %{ tab | pmc: pmc }
   end
 
   def p_base_table(tab) do
-    tab |> p_spacer |> p_header |> p_spacer |> p_table_body
+    p_header(tab) |> p_table_body
   end
 
   def _max_table_depth(cols) do
@@ -48,24 +30,21 @@ defmodule Krcli.Table do
     end)
   end
 
-  def _table_line(tab, lin) do
+  def _table_line(lin, tab) do
     with line = tab.data[lin] || %{},
       max_depth <- _max_table_depth(line),
-    do: (fn() ->
-      Enum.each(0..(max_depth-1), fn(dep) ->
-        p_pad_left(tab)
-        IO.write("|")
-        Enum.each(0..(tab.columns-1), fn(col) ->
-          p_step(tab, Enum.at(line[col] || [], dep, ""))
-        end)
-        IO.puts("")
-      end)
-      p_spacer(tab)
-    end).()
-  end
+    do:
+      %{tab | pmc: Enum.reduce(0..(max_depth-1), tab.pmc, fn(dep, pmc) ->
+        PMC.enclose_columns(pmc, Enum.map(0..(tab.columns-1), fn(col) ->
+          Enum.at(line[col] || [], dep, "")
+        end), "|")
+      end) |> PMC.h_bar("-") }
+    end
+
+  def p_print_tab(tab), do: PMC.print(tab.pmc)
 
   def p_table_body(tab) do
-    Enum.each(0..(tab.lines-1), &(_table_line(tab,&1)))
+    Enum.reduce(0..(tab.lines-1), tab, &_table_line/2) |> p_print_tab
     |> Util.good
   end
 end

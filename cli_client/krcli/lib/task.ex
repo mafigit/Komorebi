@@ -38,6 +38,12 @@ defmodule Krcli.Task do
     |> Util.unwrap_fn(&parse/1)
   end
 
+  def by_story_id(story_id) do
+    SbServer.get_json("/stories/" <> Integer.to_string(story_id) <> "/tasks")
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse_batch/1)
+  end
+
   def create_task(data) do
     with {:ok, json} <- data,
       {:ok, result} <- SbServer.post_json("/tasks", json),
