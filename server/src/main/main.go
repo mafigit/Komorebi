@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"github.com/gorilla/context"
-	"github.com/gorilla/sessions"
 	"github.com/gorilla/securecookie"
+	"github.com/gorilla/sessions"
 	"komorebi"
 	"log"
 	"net/http"
@@ -19,12 +19,15 @@ var (
 
 func main() {
 
-	port := flag.String("port", "8080", "Listening port")
+	port := flag.String("port", "", "Listening port (default 8080)")
 	logfile := flag.String("logfile", "", "Logfile (default stdout)")
 	dump := flag.Bool("dump", false, "Dump stories, make a snapshot")
 	clear_board := flag.String("clear", "", "Clears dump from given board")
 	flag.StringVar(&komorebi.PublicDir, "publicdir", "public/", "Public directory")
 	flag.StringVar(&komorebi.HookDir, "hookdir", "hooks/", "Directory for hooks")
+
+	server_crt := flag.String("crt", "", "Server cert file for https")
+	server_key := flag.String("key", "", "Server key file for https")
 
 	flag.Parse()
 
@@ -88,5 +91,17 @@ func main() {
 	}()
 
 	router := komorebi.NewRouter()
-	log.Fatal(http.ListenAndServe(":"+*port, context.ClearHandler(router)))
+
+	if len(*server_crt) > 0 && len(*server_key) > 0 {
+		if len(*port) <= 0 {
+			*port = "443"
+		}
+		log.Fatal(http.ListenAndServeTLS(":"+*port, *server_crt, *server_key,
+			context.ClearHandler(router)))
+	} else {
+		if len(*port) <= 0 {
+			*port = "8080"
+		}
+		log.Fatal(http.ListenAndServe(":"+*port, context.ClearHandler(router)))
+	}
 }
