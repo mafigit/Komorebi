@@ -51,7 +51,6 @@ defmodule KrOpts do
       ["story", story_id, "destroy"] -> Krcli.Story.destroy(story_id)
       ["story", story_id, "show"] -> Krcli.Story.show(story_id)
       ["story", story_id, "move", board, column] -> Krcli.Story.move(board, column, story_id)
-      ["story", story_id, "tasks"] -> Krcli.Task.display(story_id)
       ["task", "new"] -> Krcli.Task.create
       ["task", task_id, "show"] -> Krcli.Task.show(task_id)
       ["board", "show"] -> Conf.with_config(:board, &Krcli.Board.display/1)

@@ -19,6 +19,12 @@ defmodule Krcli.Story do
     |> Util.unwrap_fn(&parse/1)
   end
 
+  def by_id(story_id) do
+     SbServer.get_json("/stories/" <> Integer.to_string(story_id))
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse/1)
+  end
+
   def create_from_file do
     with story_file <- Path.join(Conf.current.home, "krcli.story"),
       {:ok, data} <- File.read(story_file),
@@ -89,21 +95,6 @@ defmodule Krcli.Story do
       id: story.id
     }
   end
-
-  # def show_story(story) do
-  #   with story_id = Integer.to_string(story.id),
-  #   pad_desc = Util.split_indent_wrap(story.desc, "  "),
-  #   pad_req = Util.split_indent_wrap(story.requirements, "  "),
-  #   points = Integer.to_string(story.points),
-  #   prio = Integer.to_string(story.priority),
-  #   board_name = Krcli.Board.by_id(Integer.to_string(story.board_id)).name,
-  #   do:
-  #     IO.puts("Story: " <> story.name <> " ( story:" <> story_id <>
-  #       ", Board: " <> board_name <> " )\n" <>
-  #     "Points: "<> points <> "\nPriority: " <> prio <>
-  #     "\nDescription:\n" <> pad_desc <> "\nRequirements:\n" <> pad_req <>
-  #     "\n")
-  # end
 
   def show_story(story) do
     with {:ok, board} <- Krcli.Board.by_id(story.board_id),

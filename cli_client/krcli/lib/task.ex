@@ -102,15 +102,17 @@ defmodule Krcli.Task do
   end
 
   def show_task(task) do
-    with task_id = Integer.to_string(task.id),
-    pad_desc = Util.split_indent_wrap(task.desc, "  "),
-    prio = Integer.to_string(task.priority),
-    column_name = Krcli.Column.by_id(Integer.to_string(task.column_id)).name,
-    do:
-      IO.puts("Task: " <> task.name <>
-        " ( task:" <> task_id <> ", Column: " <> column_name <> " )" <>
-      "\nPriority: " <> prio <>
-      "\nDescription:\n" <> pad_desc <> "\n")
+    with story <- Krcli.Story.by_id(task.story_id) |> Util.unwrap,
+      column <- Krcli.Column.by_id(task.column_id),
+      pmc <- PMC.setup(80, 3) |> PMC.h_bar("=") |> PMC.enclose(task.name, "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_multiline(task.desc, "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_columns(["Story:", story.name <> "(ID: " <>
+          Integer.to_string(story.id) <> ")"], "||")
+        |> PMC.enclose_columns(["Column:", column.name], "||")
+        |> PMC.h_bar("="),
+    do: PMC.print(pmc)
   end
 
   def show(task_id) do

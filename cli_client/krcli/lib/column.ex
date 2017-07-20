@@ -27,7 +27,7 @@ defmodule Krcli.Column do
   end
 
   def by_id(column) do
-    SbServer.get_json("/columns/" <> column)
+    SbServer.get_json("/columns/" <> Integer.to_string(column))
     |> Util.unwrap_fn(&JSX.decode/1)
     |> Util.unwrap_fn(&parse/1)
   end
