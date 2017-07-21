@@ -38,7 +38,7 @@ defmodule PMC do
         "#{border} #{ncol}" <>
         String.duplicate(" ", len_per - String.length(ncol) - bord_len - 1) end),
       str <- Enum.join(padded_cols, ""),
-    do: _paint_canvas(pmc, str <> String.duplicate(" ",pmc.width - (len_per*num_cols + pmc.padding + bord_len)) <> border),
+    do: _paint_canvas(pmc, str <> String.duplicate(" ",pmc.width - (len_per*num_cols + pmc.padding + bord_len)) <> border)
   end
 
   def enclose_multiline(pmc, str, border) do
