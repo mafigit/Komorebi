@@ -1,6 +1,21 @@
 defmodule Util do
+
+  defmodule M do
+    def double_put(map, idx, map_i, idx_i, v) do
+      Map.put(map, idx, Map.put(map_i, idx_i, v))
+    end
+
+    def inner_update_at(map, idx, inner_idx, item) do
+      Map.put(map, idx, Map.put(Map.get(map, idx) || %{}, inner_idx, item))
+    end
+  end
+
   def wrap(item) do
     {:ok, item}
+  end
+
+  def wrap(:ok, item) do
+    wrap(item)
   end
 
   def unwrap(item) do
@@ -46,6 +61,10 @@ defmodule Util do
     &(fun.(&1) == String.downcase(val))
   end
 
+  def cmp(val, fun) do
+    &(fun.(&1) == val)
+  end
+
   def num_cmp(val, fun) do
     &(fun.(&1) == val)
   end
@@ -81,4 +100,5 @@ defmodule Util do
   def no_args(_, fun, arg) do
     fun.(arg)
   end
+
 end

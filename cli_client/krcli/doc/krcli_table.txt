@@ -1,0 +1,19 @@
+Utility documentation, table
+
+The 'table' helper of krcli expects data in the following format:
+
+%{
+  0 => %{
+    1 => [ 1, 2, 3 ],
+    2 => [ 2, 3],
+    3 => [ 4, 5],
+  }
+}
+
+Wherein the 'inner' arrays are lines that are inside one column field, wheras the inner map are columns and the outer map are lines. the example above would print the following:
+
+-------------
+| 1 | 2 | 4 |
+| 2 | 3 | 5 |
+| 3 |   |   |
+-------------

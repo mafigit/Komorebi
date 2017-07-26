@@ -1,11 +1,8 @@
 defmodule SbServer do
   use HTTPoison.Base
 
-  # XXX [mh] Actually make this configurable
-  @endpoint "http://localhost:8080"
-
   defp process_url(url) do
-    @endpoint <> url
+    Path.join(Conf.current.server, url)
   end
 
   def get_json(url) do

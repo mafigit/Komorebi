@@ -15,14 +15,40 @@ defmodule FN do
         with {:ok, items} <- data,
         item = Enum.find(items, :error, Util.ln_cmp(name, &(&1.name))),
         do:
-          if item == :error, do: {:error, "could not find " <> type_name},
-        else: Util.wrap(item)
+          if item == :error, do: {:error, "could not find " <> type_name()},
+          else: Util.wrap(item)
       end
 
-      def by_name(name), do: by_name(name, all)
+      def by_name(name), do: by_name(name, all())
+
+      def get_by_name(name, items) do
+        case by_name(name, items) do
+          {:ok, item} -> Util.wrap(item)
+          {:error, errmsg} -> Error.display(errmsg)
+        end
+      end
+
+      def get_by_name(name), do: get_by_name(name, all())
+
+      def by_id(id, data) do
+        with {:ok, items} <- data,
+          item = Enum.find(items, :error, Util.cmp(id, &(&1.id))),
+        do:
+          if item == :error, do: {:error, "could not find " <> type_name()},
+          else: Util.wrap(item)
+      end
+      def by_id(id), do: by_id(id, all())
+
+      def get_by_id(name, items) do
+        case by_id(name, items) do
+          {:ok, item} -> Util.wrap(item)
+          {:error, errmsg} -> Error.display(errmsg)
+        end
+      end
+      def get_by_id(name), do: get_by_id(name, all())
 
       def all_json do
-        SbServer.get_json(type_url) |> Util.unwrap |> JSX.decode
+        SbServer.get_json(type_url()) |> Util.unwrap |> JSX.decode
       end
 
       def all_json(board_name) do
@@ -45,16 +71,16 @@ defmodule FN do
       end
 
       def destroy_item(item) do
-        SbServer.delete_json(type_url <> "/" <> Integer.to_string(item.id))
+        SbServer.delete_json(type_url() <> "/" <> Integer.to_string(item.id))
         |> Util.success?
-        |> Util.comply!(type_name <> " successfully destroyed.")
+        |> Util.comply!(type_name() <> " successfully destroyed.")
       end
 
       def parse_batch(items) do
         items |> Util.unwrap |> Enum.map(&(parse(&1) |> Util.unwrap)) |> Util.wrap
       end
 
-      defoverridable [from_hash: 1, by_name: 1]
+      defoverridable [from_hash: 1, by_name: 1, by_id: 1]
     end
   end
 

@@ -6,7 +6,7 @@ defmodule Krcli.Column do
   def parse(col), do: from_hash(col)
 
   def column_json(board) do
-    all_json(board) |> Util.unwrap |> Map.get(type_json_name) |> Util.wrap
+    all_json(board) |> Util.unwrap |> Map.get(type_json_name()) |> Util.wrap
   end
 
   def all(board_name), do: all_fun(fn() -> column_json(board_name) end)
@@ -27,7 +27,7 @@ defmodule Krcli.Column do
   end
 
   def by_id(column) do
-    SbServer.get_json("/columns/" <> column)
+    SbServer.get_json("/columns/" <> Integer.to_string(column))
     |> Util.unwrap_fn(&JSX.decode/1)
     |> Util.unwrap_fn(&parse/1)
   end

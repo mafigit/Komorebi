@@ -1,5 +1,5 @@
 defmodule Krcli.Task do
-  defstruct [:id, :name, :desc, :story_id, :column_id, :priority]
+  defstruct [:id, :name, :desc, :story_id, :column_id]
   use FN, url: "/tasks", name: "Story", json_name: "tasks"
 
   def get_server_col(col),
@@ -19,20 +19,29 @@ defmodule Krcli.Task do
     do: all_fun(fn() -> tasks_json(board, column) end)
 
   def parse(col) do
+    from_hash(col) |> Util.wrap
+  end
+
+  def from_hash(col) do
     %Krcli.Task{
       id: col["id"],
       name: col["name"],
       desc: col["desc"],
       story_id: col["story_id"],
       column_id: col["column_id"],
-      priority: col["priority"]
-    } |> Util.wrap
+    }
   end
 
   def by_name(item) do
     SbServer.get_json("/tasks/" <> item)
     |> Util.unwrap_fn(&JSX.decode/1)
     |> Util.unwrap_fn(&parse/1)
+  end
+
+  def by_story_id(story_id) do
+    SbServer.get_json("/stories/" <> Integer.to_string(story_id) <> "/tasks")
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse_batch/1)
   end
 
   def create_task(data) do
@@ -51,64 +60,59 @@ defmodule Krcli.Task do
     Krcli.Board.with_column(board, item, &destroy_item/1)
   end
 
-  def by_column(column) do
-    SbServer.get_json("/columns/" <> Integer.to_string(column.id) <> "/tasks")
-    |> Util.unwrap
-    |> JSX.decode
-    |> Util.unwrap
-    |> parse_batch
-  end
-
   def create_from_file do
-    with {:ok, data} <- File.read("/tmp/krcli.task"),
+    with task_file <- Path.join(Conf.current.home, "krcli.task"),
+      {:ok, data} <- File.read(task_file),
       lines = String.split(data, ["\n"]),
-      ["Column", column_id] <- String.split(Enum.at(lines, 1), ":"),
-      ["Story", story_id] <- String.split(Enum.at(lines, 2), ":"),
+      ["Board", board_name] <- String.split(Enum.at(lines, 0), ":"),
+      ["Column", column_name] <- String.split(Enum.at(lines, 1), ":"),
+      ["Story_id", story_str] <- String.split(Enum.at(lines, 2), ":"),
       ["Name", nname] <- String.split(Enum.at(lines, 3), ":"),
-      ["Points", points] <- String.split(Enum.at(lines, 4), ":"),
-      ["Priority", prio] <- String.split(Enum.at(lines, 5), ":"),
       {2, description} <- Util.collect_till(lines, "Description:", "EOTD"),
-      {ncolumn, _} <- Integer.parse(column_id),
-      {nstory, _} <- Integer.parse(story_id),
-      {npoints, _} <- Integer.parse(points),
-      {nprio, _} <- Integer.parse(prio),
+      {story_id, _} <- String.trim(story_str) |> Integer.parse,
+      {:ok, board} <- Krcli.Board.get_by_name(String.trim(board_name))
+        |> Util.unwrap |> Krcli.Board.fetch,
+      {:ok, column} <- Krcli.Column.get_by_name(String.trim(column_name),
+        Util.wrap(board.columns)),
+      {:ok, story} <- Krcli.Story.get_by_id(story_id, Util.wrap(board.stories)),
       ndesc = Enum.join(description, "\n"),
-      {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
-        points: npoints, column_id: ncolumn, priority: nprio,
-        story_id: nstory}),
+      {:ok, json} <- JSX.encode(%{name: String.trim(nname), desc: String.trim(ndesc),
+        column_id: column.id, story_id: story.id}),
     do:
       SbServer.post_json("/tasks", json)
-      |> Util.lift_maybe(fn(_) -> File.rm("/tmp/krcli.task") end)
+      |> Util.lift_maybe(fn(_) -> File.rm(task_file) end)
       |> Util.comply!("Task created successfully!")
-
   end
 
- def create(board, column, story) do
-    with {:ok, file} <- File.open("/tmp/krcli.task", [:write]),
-      :ok <- IO.write(file, "Board:" <> Integer.to_string(board.id) <> "\n"),
-      :ok <- IO.write(file, "Column:" <> Integer.to_string(column.id) <> "\n"),
-      :ok <- IO.write(file, "Story:" <> Integer.to_string(story.id) <> "\n"),
+ def create do
+    with task_file <- Path.join(Conf.current.home, "krcli.task"),
+      {:ok, file} <- File.open(task_file, [:write]),
+      board_name <- Conf.current.board || "CHANGEME",
+      column_name <- Conf.current.column || "CHANGEME",
+      :ok <- IO.write(file, "Board:#{board_name}\n"),
+      :ok <- IO.write(file, "Column:#{column_name}\n"),
+      :ok <- IO.write(file, "Story_id:CHANGEME\n"),
       :ok <- IO.write(file, "Name:CHANGEME\n"),
-      :ok <- IO.write(file, "Points:3\n"),
-      :ok <- IO.write(file, "Priority:1\n"),
       :ok <- IO.write(file, "Description:\nSome Description\nEOTD\n"),
       :ok <- File.close(file),
-    do: IO.puts("The file /tmp/krcli.task has been written to disk. Please " <>
+    do: IO.puts("The file #{task_file} has been written to disk. Please " <>
       "Edit it with the data you would like to have, running:\n\n" <>
-      (System.get_env("EDITOR") || "vim") <> " /tmp/krcli.task && krcli\n\n" <>
+      (System.get_env("EDITOR") || "vim") <> " #{task_file} && krcli\n\n" <>
       "to create the task.")
   end
 
   def show_task(task) do
-    with task_id = Integer.to_string(task.id),
-    pad_desc = Util.split_indent_wrap(task.desc, "  "),
-    prio = Integer.to_string(task.priority),
-    column_name = Krcli.Column.by_id(Integer.to_string(task.column_id)).name,
-    do:
-      IO.puts("Task: " <> task.name <>
-        " ( task:" <> task_id <> ", Column: " <> column_name <> " )" <>
-      "\nPriority: " <> prio <>
-      "\nDescription:\n" <> pad_desc <> "\n")
+    with story <- Krcli.Story.by_id(task.story_id) |> Util.unwrap,
+      column <- Krcli.Column.by_id(task.column_id),
+      pmc <- PMC.setup(80, 3) |> PMC.h_bar("=") |> PMC.enclose(task.name, "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_multiline(task.desc, "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_columns(["Story:", story.name <> "(ID: " <>
+          Integer.to_string(story.id) <> ")"], "||")
+        |> PMC.enclose_columns(["Column:", column.name], "||")
+        |> PMC.h_bar("="),
+    do: PMC.print(pmc)
   end
 
   def show(task_id) do

@@ -1,16 +1,17 @@
 defmodule Krcli.Story do
-  defstruct [:id, :name, :desc, :points, :requirements, :column_id, :priority]
+  defstruct [:id, :name, :desc, :points, :requirements, :board_id, :priority, :tasks]
   use FN, url: "/stories", name: "Story", json_name: "stories"
 
   def stories_json(board, column) do
+   # XXX [mh] fix this
     all_json(board)
     |> Util.unwrap
-    |> Map.get(Krcli.Column.type_json_name)
+    |> Map.get(Krcli.Column.type_json_name())
     |> Enum.find(:error, Util.ln_cmp(column, &(Map.get(&1,"name"))))
-    |> Map.get(type_json_name)
+    |> Map.get(type_json_name())
   end
 
-  def all(board, column), do: all_fun(fn() -> stories_json(board, column) end)
+  def all(board), do: all_fun(fn() -> stories_json(board, 1) end)
 
   def by_name(item) do
     SbServer.get_json("/stories/" <> item)
@@ -18,43 +19,50 @@ defmodule Krcli.Story do
     |> Util.unwrap_fn(&parse/1)
   end
 
+  def by_id(story_id) do
+     SbServer.get_json("/stories/" <> Integer.to_string(story_id))
+    |> Util.unwrap_fn(&JSX.decode/1)
+    |> Util.unwrap_fn(&parse/1)
+  end
+
   def create_from_file do
-    with {:ok, data} <- File.read("/tmp/krcli.story"),
+    with story_file <- Path.join(Conf.current.home, "krcli.story"),
+      {:ok, data} <- File.read(story_file),
       lines = String.split(data, ["\n"]),
-      ["Column", column_id] <- String.split(Enum.at(lines, 1), ":"),
-      ["Name", nname] <- String.split(Enum.at(lines, 2), ":"),
-      ["Points", points] <- String.split(Enum.at(lines, 3), ":"),
-      ["Priority", prio] <- String.split(Enum.at(lines, 4), ":"),
+      ["Board", board_name] <- String.split(Enum.at(lines, 0), ":"),
+      ["Name", nname] <- String.split(Enum.at(lines, 1), ":"),
+      ["Points", points] <- String.split(Enum.at(lines, 2), ":"),
+      ["Priority", prio] <- String.split(Enum.at(lines, 3), ":"),
       {2, description} <- Util.collect_till(lines, "Description:", "EOTD"),
       {2, requirements} <- Util.collect_till(lines, "Requirements:", "EOTR"),
-      {ncolumn, _} <- Integer.parse(column_id),
-      {npoints, _} <- Integer.parse(points),
-      {nprio, _} <- Integer.parse(prio),
+      {npoints, _} <- String.trim(points) |> Integer.parse,
+      {nprio, _} <- String.trim(prio) |> Integer.parse,
       ndesc = Enum.join(description, "\n"),
       nreq = Enum.join(requirements, "\n"),
-      {:ok, json} <- JSX.encode(%{name: nname, desc: ndesc,
-        points: npoints, requirements: nreq, column_id: ncolumn,
+      {:ok, board} <- Krcli.Board.get_by_name(String.trim(board_name)),
+      {:ok, json} <- JSX.encode(%{name: String.trim(nname), desc: String.trim(ndesc),
+        points: npoints, requirements: String.trim(nreq), board_id: board.id,
         priority: nprio}),
     do:
       SbServer.post_json("/stories", json)
-      |> Util.lift_maybe(fn(_) -> File.rm("/tmp/krcli.story") end)
+      |> Util.lift_maybe(fn(_) -> File.rm(story_file) end)
       |> Util.comply!("Story created successfully!")
-
   end
 
-  def create(board, column) do
-    with {:ok, file} <- File.open("/tmp/krcli.story", [:write]),
-      :ok <- IO.write(file, "Board:" <> Integer.to_string(board.id) <> "\n"),
-      :ok <- IO.write(file, "Column:" <> Integer.to_string(column.id) <> "\n"),
+  def create do
+    with story_file <- Path.join(Conf.current.home, "krcli.story"),
+      {:ok, file} <- File.open(story_file, [:write]),
+      board_name <- Conf.current.board || "CHANGEME",
+      :ok <- IO.write(file, "Board:#{board_name}\n"),
       :ok <- IO.write(file, "Name:CHANGEME\n"),
       :ok <- IO.write(file, "Points:3\n"),
       :ok <- IO.write(file, "Priority:1\n"),
       :ok <- IO.write(file, "Description:\nSome Description\nEOTD\n"),
       :ok <- IO.write(file, "Requirements:\nSome Requirements\nEOTR\n"),
       :ok <- File.close(file),
-    do: IO.puts("The file /tmp/krcli.story has been written to disk. Please " <>
+    do: IO.puts("The file #{story_file} has been written to disk. Please " <>
       "Edit it with the data you would like to have, running:\n\n" <>
-      (System.get_env("EDITOR") || "vim") <> " /tmp/krcli.story && krcli\n\n" <>
+      (System.get_env("EDITOR") || "vim") <> " #{story_file} && krcli\n\n" <>
       "to create the story.")
   end
 
@@ -63,20 +71,22 @@ defmodule Krcli.Story do
   end
 
   def from_hash(item) do
-    %Krcli.Story{
+    with tasks = Enum.map(item["tasks"] || [], &Krcli.Task.from_hash/1),
+    do: %Krcli.Story{
        id: item["id"],
       desc: item["desc"],
       points: item["points"],
       requirements: item["requirements"],
-      column_id: item["column_id"],
+      board_id: item["board_id"],
       name: item["name"],
-      priority: item["priority"]
+      priority: item["priority"],
+      tasks: tasks
     }
   end
 
   def unparse(story) do
     %{
-      column_id: story.column_id,
+      board_id: story.board_id,
       name: story.name,
       desc: story.desc,
       points: story.points,
@@ -86,25 +96,22 @@ defmodule Krcli.Story do
     }
   end
 
-  def by_column(col) do
-    SbServer.get_json("/columns/" <> Integer.to_string(col.id) <> "/stories")
-    |> Util.unwrap_fn(&JSX.decode/1)
-    |> parse_batch
-  end
-
   def show_story(story) do
-    with story_id = Integer.to_string(story.id),
-    pad_desc = Util.split_indent_wrap(story.desc, "  "),
-    pad_req = Util.split_indent_wrap(story.requirements, "  "),
-    points = Integer.to_string(story.points),
-    prio = Integer.to_string(story.priority),
-    column_name = Krcli.Column.by_id(Integer.to_string(story.column_id)).name,
-    do:
-      IO.puts("Story: " <> story.name <> " ( story:" <> story_id <>
-        ", Column: " <> column_name <> " )\n" <>
-      "Points: "<> points <> "\nPriority: " <> prio <>
-      "\nDescription:\n" <> pad_desc <> "\nRequirements:\n" <> pad_req <>
-      "\n")
+    with {:ok, board} <- Krcli.Board.by_id(story.board_id),
+      {:ok, tasks} <- Krcli.Task.by_story_id(story.id),
+      pmc <- PMC.setup(80, 3) |> PMC.h_bar("=") |> PMC.enclose(story.name, "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_multiline(story.desc, "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_columns(["Board:", board.name], "||")
+        |> PMC.enclose_columns(["Points:", Integer.to_string(story.points) ], "||")
+        |> PMC.enclose_columns(["Associated Tasks:", Integer.to_string(length(tasks)) ], "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose("Requirements:", "||")
+        |> PMC.h_bar("-")
+        |> PMC.enclose_multiline(story.requirements, "||")
+        |> PMC.h_bar("="),
+    do: PMC.print(pmc)
   end
 
   def show(story_id) do
