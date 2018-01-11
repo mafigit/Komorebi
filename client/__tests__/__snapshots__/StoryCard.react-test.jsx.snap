@@ -59,17 +59,30 @@ exports[`test Click on Story to showTasksForStoryId 2`] = `
   primaryText="test2"
   primaryTogglesNestedList={false}
   rightIconButton={
-    <IconButton
-      disableTouchRipple={false}
-      disabled={false}
-      iconStyle={Object {}}
-      onClick={[Function]}
-      tooltip="Show story"
-      tooltipPosition="bottom-center"
-      touch={false}>
-      <NavigationMoreVert
-        color="#bdbdbd" />
-    </IconButton>
+    <div>
+      <IconButton
+        disableTouchRipple={false}
+        disabled={false}
+        iconStyle={Object {}}
+        onClick={[Function]}
+        tooltip="Add task"
+        tooltipPosition="bottom-center"
+        touch={false}>
+        <ContentAdd
+          color="#bdbdbd" />
+      </IconButton>
+      <IconButton
+        disableTouchRipple={false}
+        disabled={false}
+        iconStyle={Object {}}
+        onClick={[Function]}
+        tooltip="Show story"
+        tooltipPosition="bottom-center"
+        touch={false}>
+        <NavigationMoreVert
+          color="#bdbdbd" />
+      </IconButton>
+    </div>
   }
   secondaryTextLines={1} />
 `;
