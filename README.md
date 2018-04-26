@@ -16,6 +16,23 @@ To build the front end you need node/npm already installed.
 The backend is written in go and uses a sqlite3 Database.
 
 
+## Installation
+
+### Requirements
+- Golang (1.7+)
+- npm
+- gulp
+
+### Build
+```
+cd client/ && npm install
+export GOPATH=$(git rev-parse --show-toplevel)/server
+cd server/src/komorebi && go get
+cd server/ && make
+./server/bin/komorebi -port 80
+```
+
+
 ## Notes for contributers
 
 ### Examples for material-ui
