@@ -70,8 +70,8 @@ export default class TaskDialog extends React.Component {
   }
 
   onChangeStorySelect(component, key, opt, value) {
-		BoardActions.updateSelectedStoryId(value);
-		this.onChange(component, key, opt, value);
+    BoardActions.updateSelectedStoryId(value);
+    this.onChange(component, key, opt, value);
   }
 
   componentWillUnmount = () => {
