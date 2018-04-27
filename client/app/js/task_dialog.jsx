@@ -69,6 +69,11 @@ export default class TaskDialog extends React.Component {
     this.setState({form_values: form_values});
   }
 
+  onChangeStorySelect(component, key, opt, value) {
+    BoardActions.updateSelectedStoryId(value);
+    this.onChange(component, key, opt, value);
+  }
+
   componentWillUnmount = () => {
     ErrorStore.removeChangeListener(this._onError);
     BoardStore.removeChangeListener(this._onChange);
@@ -103,10 +108,6 @@ export default class TaskDialog extends React.Component {
       form_data.column_id = BoardStore.getFirstColumn().id;
       BoardActions.addTask(form_data);
     }
-  }
-
-  handleStoryIdChange = (event, index, value) => {
-    BoardActions.updateSelectedStoryId(value);
   }
 
   render() {
@@ -144,7 +145,12 @@ export default class TaskDialog extends React.Component {
         <br />
         Select Story
         <br />
-        <StorySelect onChange={this.handleStoryIdChange}
+        <StorySelect
+          onChange={
+            (comp, opt, val) => {
+              this.onChangeStorySelect(comp, "story_id", opt, val);
+            }
+          }
           story_id={this.state.last_sel_story_id}
           errorText={this.state.error.story_id}
         />
