@@ -350,8 +350,8 @@ var fetchBoards = () => {
 var fetchUsers = () => {
   return Ajax.getJson('/users').then(response => {
     users = JSON.parse(response.response).sort((a, b) => {
-			return a.name.localeCompare(b.name);
-		}).map((user) => {
+      return a.name.localeCompare(b.name);
+    }).map((user) => {
       user.selected = false;
       return user;
     });
