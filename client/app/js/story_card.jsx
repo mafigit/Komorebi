@@ -31,7 +31,7 @@ export default class StoryCard extends React.Component {
 
   onClickAddTaskHandler = (event) => {
     event.stopPropagation();
-    BoardActions.showTaskDialog();
+    BoardActions.showTaskDialog(null, this.props.story_id);
   }
 
   // This is needed for testing the a component without the whole app context

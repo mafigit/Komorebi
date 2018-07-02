@@ -782,6 +782,7 @@ AppDispatcher.register(function(action) {
       task_dialog_open = true;
       task_show_dialog_open = false;
       task_edit_id = action.task_id;
+      selected_story_id = action.story_id;
       BoardStore.emitChange();
       break;
     case "CLOSE_TASK_DIALOG":

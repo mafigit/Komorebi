@@ -25,10 +25,11 @@ export default class TaskDialog extends React.Component {
   }
 
   getState = (form_values) => {
+    var story_id = BoardStore.getSelectedStoryId();
     var new_state = {
       error: ErrorStore.getTaskErrors(),
       task: BoardStore.getTask(),
-      last_sel_story_id: BoardStore.getSelectedStoryId(),
+      last_sel_story_id: story_id,
       users: BoardStore.getUsersForBoard()
     };
 
@@ -37,7 +38,7 @@ export default class TaskDialog extends React.Component {
       new_state.last_sel_story_id = new_state.task.story_id;
     } else if (form_values) {
       new_state.form_values = form_values;
-      new_state.last_sel_story_id = null;
+      new_state.last_sel_story_id = story_id;
     }
 
     return new_state;

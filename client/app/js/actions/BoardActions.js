@@ -88,10 +88,11 @@ var BoardActions = {
       actionType: "CLOSE_CONFIRMATION"
     });
   },
-  showTaskDialog: (task_id) =>  {
+  showTaskDialog: (task_id, story_id) =>  {
     AppDispatcher.dispatch({
       actionType: "SHOW_TASK_DIALOG",
-      task_id: task_id
+      task_id: task_id,
+      story_id: story_id,
     });
   },
   showChartDialog: () =>  {
