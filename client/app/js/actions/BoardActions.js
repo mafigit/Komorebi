@@ -18,6 +18,12 @@ var BoardActions = {
       id: id
     });
   },
+  deleteUser: (id) => {
+    AppDispatcher.dispatch({
+      actionType: "DELETE_USER",
+      id: id
+    });
+  },
   deleteStory: (id) => {
     AppDispatcher.dispatch({
       actionType: "DELETE_STORY",
@@ -305,14 +311,26 @@ var BoardActions = {
       data: data
     });
   },
-  openUserDialog: () => {
+  updateUser: (data) => {
     AppDispatcher.dispatch({
-      actionType: "OPEN_USER_DIALOG"
+      actionType: "UPDATE_USER",
+      data: data
+    });
+  },
+  openUserDialog: (user_data) => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_USER_DIALOG",
+      user: user_data
     });
   },
   closeUserDialog: () => {
     AppDispatcher.dispatch({
       actionType: "CLOSE_USER_DIALOG"
+    });
+  },
+  closeUserManageList: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_USER_MANAGE_LIST"
     });
   },
   fetchUsers: () => {
@@ -328,6 +346,11 @@ var BoardActions = {
   showBoardList: () => {
     AppDispatcher.dispatch({
       actionType: "SHOW_BOARD_LIST"
+    });
+  },
+  showUserManage: () => {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_USER_MANAGE"
     });
   },
   toggleUserById: (user_id) => {

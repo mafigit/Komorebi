@@ -3,7 +3,6 @@ import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton'; import MyMenu from './menu';
 import Layout from './layout';
 import BoardDialog from './board_dialog';
-import UserDialog from './user_dialog';
 import Colors from './color';
 import React from 'react';
 import BoardStore from './store/BoardStore';
@@ -11,7 +10,8 @@ import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MsgSnackbar from './msg_snackbar';
 import BoardList from './board_list';
-import UserAssgin from './user_assign';
+import UserAssign from './user_assign';
+import UserManage from './user_manage';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -24,8 +24,8 @@ class LandingLayout extends Layout  {
       list_items: BoardStore.getBoards(),
       menu_open: false,
       board_open: BoardStore.getBoardDialogOpen(),
-      user_open: BoardStore.getUserDialogOpen(),
-      show_user_assign: BoardStore.getShowUserAssign()
+      show_user_assign: BoardStore.getShowUserAssign(),
+      show_user_manage: BoardStore.getShowUserManage()
     };
   }
 
@@ -56,16 +56,22 @@ class LandingLayout extends Layout  {
     BoardActions.fetchBoards();
   }
 
-  handleUserDialogClose = () => {
-    BoardActions.closeUserDialog();
-    BoardActions.fetchBoards();
-  }
 
   render() {
-    var content =  this.state.show_user_assign ? <UserAssgin /> : <BoardList />;
+    var content, site_title;
+    if (this.state.show_user_assign) {
+      content = <UserAssign />;
+      site_title = "User Assign";
+    } else if (this.state.show_user_manage) {
+      content = <UserManage />;
+      site_title = "Manage Users";
+    } else {
+      content = <BoardList />;
+      site_title = this.props.title;
+    }
     return <div>
       <AppBar
-        title={this.props.title}
+        title={site_title}
         onLeftIconButtonTouchTap={this.handleTouchTapMenuBtn}
         iconElementRight={<FlatButton label="木漏れ日"
           href={"https://github.com/mafigit/Komorebi"}
@@ -78,9 +84,6 @@ class LandingLayout extends Layout  {
         landing={true}/>
       <BoardDialog open={this.state.board_open}
         handleClose={this.handleBoardDialogClose}
-      />
-      <UserDialog open={this.state.user_open}
-        handleClose={this.handleUserDialogClose}
       />
       {content}
       {this.props.children}

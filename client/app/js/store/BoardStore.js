@@ -16,6 +16,7 @@ var tasks_to_display = {};
 var selected_stories = [];
 var boards = [];
 var users = [];
+var user_data = null;
 var selected_story_id = null;
 var selected_color = null;
 var selected_board_id = null;
@@ -27,6 +28,7 @@ var message = "";
 var menu_open = false;
 var show_user_assign = false;
 var show_board_list = false;
+var show_user_manage = false;
 var column_dialog_open = false;
 var chart_dialog_open = false;
 var dod_dialog_open = false;
@@ -56,6 +58,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getShowDodDialog: function () {
     return dod_dialog_open;
   },
+  getUserData: function () {
+    return user_data;
+  },
   getBurnDownData: function () {
     return burndown_data;
   },
@@ -70,6 +75,9 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getShowBoardList: function() {
     return show_board_list;
+  },
+  getShowUserManage: function() {
+    return show_user_manage;
   },
   getUsers: function() {
     return users;
@@ -318,6 +326,18 @@ var deleteColumn = (id) => {
   var url = `/columns/${id}`;
   return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
     if(response.status == 200) {
+      MessageActions.showMessage("Successfully deleted");
+    }
+  });
+};
+
+var deleteUser = (id) => {
+  var url = `/users/${id}`;
+  return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    if(response.status == 200) {
+      fetchUsers().then(fetchUsersByBoardId.bind(this, selected_board_id)).then(() => {
+        BoardStore.emitChange();
+      });
       MessageActions.showMessage("Successfully deleted");
     }
   });
@@ -644,6 +664,25 @@ var addUser = (data) => {
   });
 };
 
+var updateUser = (data) => {
+  var url = `/users/${data.id}`;
+  return Ajax.postJson(url, data).then(response => {
+    var response_obj = JSON.parse(response.responseText);
+    if (response_obj.success) {
+      ErrorActions.removeUserErrors();
+      user_dialog_open = false;
+      fetchUsers().then(fetchUsersByBoardId.bind(this, selected_board_id)).then(() => {
+        BoardStore.emitChange();
+      });
+    } else {
+      var obj_errors = response_obj.messages;
+      var error_fields = ErrorFields.USER;
+      var errors = genErrors(error_fields, obj_errors);
+      ErrorActions.addUserErrors(errors);
+    }
+  });
+};
+
 var updateStory = (form_values) => {
   var url = `/stories/${story_edit_id}`;
   return Ajax.postJson(url, form_values).then(response => {
@@ -700,6 +739,9 @@ AppDispatcher.register(function(action) {
       break;
     case "DELETE_COLUMN":
       deleteColumn(action.id);
+      break;
+    case "DELETE_USER":
+      deleteUser(action.id);
       break;
     case "DELETE_STORY":
       deleteStory(action.id);
@@ -914,8 +956,12 @@ AppDispatcher.register(function(action) {
     case "ADD_USER":
       addUser(action.data);
       break;
+    case "UPDATE_USER":
+      updateUser(action.data);
+      break;
     case "OPEN_USER_DIALOG":
       user_dialog_open = true;
+      user_data = action.user;
       BoardStore.emitChange();
       break;
     case "OPEN_CONFIRMATION":
@@ -930,6 +976,11 @@ AppDispatcher.register(function(action) {
       break;
     case "CLOSE_USER_DIALOG":
       user_dialog_open = false;
+      user_data = null;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_USER_MANAGE_LIST":
+      show_user_manage = false;
       BoardStore.emitChange();
       break;
     case "TOGGLE_USER_BY_ID":
@@ -947,12 +998,21 @@ AppDispatcher.register(function(action) {
     case "SHOW_USER_ASSIGN":
       show_user_assign = true;
       show_board_list = false;
+      show_user_manage = false;
       selected_board_id = null;
       BoardStore.emitChange();
       break;
     case "SHOW_BOARD_LIST":
-      show_user_assign = false;
       show_board_list = true;
+      show_user_assign = false;
+      show_user_manage = false;
+      selected_board_id = null;
+      BoardStore.emitChange();
+      break;
+    case "SHOW_USER_MANAGE":
+      show_user_manage = true;
+      show_user_assign = false;
+      show_board_list = false;
       selected_board_id = null;
       BoardStore.emitChange();
       break;

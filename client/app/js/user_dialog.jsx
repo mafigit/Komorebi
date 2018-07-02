@@ -12,12 +12,18 @@ export default class UserDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = this.getState();
-    this.setDefaultFormValues();
   }
 
   getState = () => {
+    var user = BoardStore.getUserData();
     return {
       error: ErrorStore.getUserErrors(),
+      user:  {
+        name: user ? user.name : "",
+        image_path: user ? user.image_path : "",
+        id: user ? user.id : null,
+        password: "",
+      }
     };
   }
 
@@ -27,6 +33,12 @@ export default class UserDialog extends React.Component {
 
   _onChange = () => {
     this.setState(this.getState());
+  }
+
+  onChange(component, key, value) {
+    var data = this.state;
+    data.user[key] = value;
+    this.setState(data);
   }
 
   componentWillUnmount = () => {
@@ -39,14 +51,6 @@ export default class UserDialog extends React.Component {
     BoardStore.addChangeListener(this._onChange);
   }
 
-  setDefaultFormValues = () => {
-    this.form_values = {
-      name: "",
-      image_path: "",
-      password: ""
-    };
-  }
-
   getInputValue = (ref, type) => {
     return ReactDOM.findDOMNode(ref).querySelectorAll(type)[0].value;
   }
@@ -57,10 +61,16 @@ export default class UserDialog extends React.Component {
       image_path: this.getInputValue(this.refs.user_image_path, "input"),
       password: this.getInputValue(this.refs.user_password, "input"),
     };
-    BoardActions.addUser(form_data);
+
+    if (this.state.user.id) {
+      BoardActions.updateUser(this.state.user);
+    } else {
+      BoardActions.addUser(form_data);
+    }
   }
 
   render() {
+    var title = this.state.user.id ? "Update User" : "Add User";
     const actions = [
       <FlatButton
         label="Ok"
@@ -72,7 +82,7 @@ export default class UserDialog extends React.Component {
 
     return (
       <Dialog
-        title={"Add User"}
+        title={title}
         actions={actions}
         modal={false}
         open={this.props.open}
@@ -85,6 +95,8 @@ export default class UserDialog extends React.Component {
         <br />
         <TextField ref="user_name" hintText="User Name"
           errorText={this.state.error.name}
+          value={this.state.user.name}
+          onChange={(comp, val) => {this.onChange(comp, "name", val);}}
         />
         <br />
         <br />
@@ -92,6 +104,8 @@ export default class UserDialog extends React.Component {
         <br />
         <TextField ref="user_image_path" hintText="User Image Path"
           errorText={this.state.error.image_path}
+          value={this.state.user.image_path}
+          onChange={(comp, val) => {this.onChange(comp, "image_path", val);}}
         />
         <br />
         <br />
@@ -99,6 +113,7 @@ export default class UserDialog extends React.Component {
         <br />
         <TextField ref="user_password" hintText="User Password"
           errorText={this.state.error.password} type="password"
+          onChange={(comp, val) => {this.onChange(comp, "password", val);}}
         />
         <br />
         <br />
