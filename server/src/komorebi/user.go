@@ -14,6 +14,7 @@ type User struct {
 	HashedPasswd string `json:"password"`
 	Salt         string `json:"-"`
 	IsAdmin      bool   `json:"-"`
+	Disabled     bool   `json:"disabled"`
 }
 
 type Users []User
@@ -83,6 +84,8 @@ func NewUser(name string, passwd string, image_path string) User {
 		DbModel: DbModel{
 			Name: name,
 		},
+		IsAdmin:  false,
+		Disabled: false,
 	}
 }
 

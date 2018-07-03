@@ -229,7 +229,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get all users"
 resp=`curl localhost:8080/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
 
 echo "Update user franz with name august"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
@@ -278,7 +278,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from board foo"
 resp=`curl localhost:8080/boards/1/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
 
 echo "Assign no user to board foo"
 resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/boards/1/assign_users 2>/dev/null`
@@ -302,7 +302,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from task 1"
 resp=`curl localhost:8080/tasks/1/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\"}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
 
 echo "Assign no user to task 1"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/tasks/1/assign_users 2>/dev/null`
@@ -316,6 +316,12 @@ echo "Assign wrong user to task 1"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localhost:8080/tasks/1/assign_users 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
 
+echo "Update user franz with disabled=true"
+resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "disabled":true, "id":1 }' localhost:8080/users/1 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" $resp
+echo "Assign disabled user to task 1"
+resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/tasks/1/assign_users 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
 
 
 ### Definiton of Done routes

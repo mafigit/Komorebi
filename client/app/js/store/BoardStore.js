@@ -84,7 +84,7 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getUsersForBoard: function() {
     return users.reduce((acc, user) => {
-      if (user.selected) {
+      if (user.selected && !user.disabled) {
         acc.push(user);
       }
       return acc;
