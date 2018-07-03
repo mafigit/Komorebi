@@ -21,7 +21,7 @@ type Users []User
 func GenerateSalt() string {
 	r := make([]byte, 32)
 	if _, err := rand.Read(r); err != nil {
-		Logger.Printf("failed to get random salt:", err)
+		Logger.Printf("failed to get random salt: %s", err)
 	}
 	return string(r)
 }
@@ -43,7 +43,7 @@ func IsAdmin(w http.ResponseWriter, r *http.Request) bool {
 		"select * from users where Name=?", username)
 
 	if err != nil {
-		Logger.Printf("failed to get user:", err)
+		Logger.Printf("failed to get user: %s", err)
 		return false
 	}
 	return user.IsAdmin
@@ -54,7 +54,7 @@ func Authenticate(name string, passwd string) bool {
 	err := dbMapper.Connection.SelectOne(&user,
 		"select * from users where Name=?", name)
 	if err != nil {
-		Logger.Printf("authentication failed: error:", err)
+		Logger.Printf("authentication failed: error: %s", err)
 		return false
 	}
 
@@ -120,7 +120,7 @@ func (u User) Destroy() bool {
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&u); errDelete != nil {
-		Logger.Printf("delete of user failed.", errDelete)
+		Logger.Printf("delete of user failed. %s", errDelete)
 		return false
 	}
 	return true
@@ -154,7 +154,7 @@ func GetUsersByBoardId(board_id int) Users {
 	_, err := dbMapper.Connection.Select(&ids,
 		"select UserId from board_users where BoardId=?", board_id)
 	if err != nil {
-		Logger.Printf("Could not get user_ids by board id", board_id)
+		Logger.Printf("Could not get user_ids by board id %d", board_id)
 	}
 	user_ids := strings.Join(ids, ", ")
 
@@ -164,7 +164,7 @@ func GetUsersByBoardId(board_id int) Users {
 	_, err = dbMapper.Connection.Select(&users,
 		"select Id, Name, UpdatedAt, ImagePath from users where Id IN ("+user_ids+")")
 	if err != nil {
-		Logger.Printf("Could not get users by board id", board_id)
+		Logger.Printf("Could not get users by board id %d", board_id)
 	}
 
 	return users

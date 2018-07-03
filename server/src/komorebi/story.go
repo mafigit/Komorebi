@@ -119,7 +119,7 @@ func (s Story) Destroy() bool {
 
 	Exe("before.story.delete", strconv.Itoa(s.Id), s.Name)
 	if _, errDelete := dbMapper.Connection.Delete(&s); errDelete != nil {
-		Logger.Printf("delete of story failed.", errDelete)
+		Logger.Printf("delete of story failed. %s", errDelete)
 		return false
 	}
 

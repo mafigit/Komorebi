@@ -47,7 +47,7 @@ func TestBoardShowHandler(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/testBoardShow", nil)
 	w := httptest.NewRecorder()
 	BoardShow(w, req)
-	fmt.Printf("body: ", w.Code, w.Body.String())
+	fmt.Printf("body: %d - %s", w.Code, w.Body.String())
 
 	//if w.Code == 404 {
 	//		t.Error("Request on /testBoardShow should not return 404")

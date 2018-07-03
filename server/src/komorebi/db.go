@@ -86,12 +86,12 @@ func (d Db) Save(i Model) bool {
 
 	if i.GetId() == 0 {
 		if err := dbMapper.Connection.Insert(i); err != nil {
-			Logger.Printf("create failed", err)
+			Logger.Printf("create failed %s", err)
 			return false
 		}
 	} else {
 		if _, errUpdate := dbMapper.Connection.Update(i); errUpdate != nil {
-			Logger.Printf("update failed", errUpdate)
+			Logger.Printf("update failed %s", errUpdate)
 			return false
 		}
 	}
@@ -102,7 +102,7 @@ func GetById(i Model, id int) bool {
 	err := dbMapper.Connection.SelectOne(i, "select * from "+
 		i.TableName()+" where Id=?", id)
 	if err != nil {
-		Logger.Printf("could not find model", err)
+		Logger.Printf("could not find model %s", err)
 		return false
 	}
 	return true
@@ -112,7 +112,7 @@ func GetByName(i Model, name string) bool {
 	err := dbMapper.Connection.SelectOne(i, "select * from "+
 		i.TableName()+" where Name=?", name)
 	if err != nil {
-		Logger.Printf("could not find model", err)
+		Logger.Printf("could not find model %s", err)
 		return false
 	}
 	return true
@@ -123,7 +123,7 @@ func GetAll(i Models) bool {
 		Select(i, "select * from "+
 			i.TableName()+" order by Id")
 	if err != nil {
-		Logger.Printf("could not find model", err)
+		Logger.Printf("could not find model %s", err)
 		return false
 	}
 	return true

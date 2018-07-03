@@ -39,12 +39,12 @@ func (c *Column) Save() bool {
 			}
 		}
 		if errInsert := dbMapper.Connection.Insert(c); errInsert != nil {
-			Logger.Printf("save of column failed", errInsert)
+			Logger.Printf("save of column failed %s", errInsert)
 			return false
 		}
 	} else {
 		if _, errUpdate := dbMapper.Connection.Update(c); errUpdate != nil {
-			Logger.Printf("save of column failed", errUpdate)
+			Logger.Printf("save of column failed %s", errUpdate)
 			return false
 		}
 	}
@@ -66,7 +66,7 @@ func (c Column) Destroy() bool {
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&c); errDelete != nil {
-		Logger.Printf("delete of column failed.", errDelete)
+		Logger.Printf("delete of column failed. %s", errDelete)
 		return false
 	}
 	reorderColumns(c.BoardId)
@@ -82,7 +82,7 @@ func reorderColumns(board_id int) {
 	for index, column := range GetColumnsByBoardId(board_id) {
 		column.Position = index
 		if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
-			Logger.Printf("save of column failed", errUpdate)
+			Logger.Printf("save of column failed %s", errUpdate)
 		}
 	}
 }
@@ -100,7 +100,7 @@ func (c Column) Validate() (bool, map[string][]string) {
 	var board Board
 	GetById(&board, c.BoardId)
 	if board.Id == 0 {
-		Logger.Printf("Column validation failed. BoardId does not exist:", c.BoardId)
+		Logger.Printf("Column validation failed. BoardId does not exist: %d", c.BoardId)
 		success = false
 		errors["board_id"] = append(errors["board_id"], "Board does not exist.")
 	}
@@ -122,7 +122,7 @@ func GetNestedColumnByColumnId(id int) ColumnNested {
 		"select * from columns where Id=?", id)
 
 	if err != nil {
-		Logger.Printf("could not find column", err)
+		Logger.Printf("could not find column %s", err)
 		return column
 	}
 
@@ -139,7 +139,7 @@ func GetColumnsByBoardId(board_id int) Columns {
 	_, err := dbMapper.Connection.Select(&cols,
 		"select * from columns where BoardId=? order by Position, Id ", board_id)
 	if err != nil {
-		Logger.Printf("Error while fetching columns", board_id)
+		Logger.Printf("Error while fetching columns %d", board_id)
 	}
 	return cols
 }
@@ -159,7 +159,7 @@ func MoveColumn(column Column, dir string) bool {
 		column.Position = column.Position - 1
 	}
 	if _, errUpdate := dbMapper.Connection.Update(&column); errUpdate != nil {
-		Logger.Printf("save of column failed", errUpdate)
+		Logger.Printf("save of column failed %s", errUpdate)
 	}
 	for _, c := range GetColumnsByBoardId(column.BoardId) {
 		if c.Position == column.Position && c.Id != column.Id {
@@ -169,7 +169,7 @@ func MoveColumn(column Column, dir string) bool {
 				c.Position = c.Position + 1
 			}
 			if _, errUpdate := dbMapper.Connection.Update(&c); errUpdate != nil {
-				Logger.Printf("save of column failed", errUpdate)
+				Logger.Printf("save of column failed %s", errUpdate)
 			}
 		}
 	}

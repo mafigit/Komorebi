@@ -43,7 +43,7 @@ func (d Dod) Destroy() bool {
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&d); errDelete != nil {
-		Logger.Printf("delete of dod failed.", errDelete)
+		Logger.Printf("delete of dod failed. %s", errDelete)
 		return false
 	}
 	return true
@@ -73,7 +73,7 @@ func GetDodsByStory(story Story) []Dod {
 	_, err := dbMapper.Connection.Select(&dods,
 		"select * from dods where StoryId=?", story.Id)
 	if err != nil {
-		Logger.Printf("could not get dods from story", story.Name)
+		Logger.Printf("could not get dods from story %s", story.Name)
 	}
 	if len(dods) == 0 {
 		var board Board
@@ -95,7 +95,7 @@ func GetDodsTemplatesByBoardName(board_name string) DodNames {
 		"select dod_templates.Name from dod_templates left join boards "+
 			"ON boards.ID = dod_templates.BoardId where boards.Name=?", board_name)
 	if err != nil {
-		Logger.Printf("could not get dod templates from board", board_name)
+		Logger.Printf("could not get dod templates from board %s", board_name)
 	}
 	return dods
 }
@@ -117,7 +117,7 @@ func UpdateDodsFromBoard(dods DodNames, board Board) bool {
 	_, err := dbMapper.Connection.Exec(
 		"DELETE FROM dod_templates WHERE BoardId=?", board.Id)
 	if err != nil {
-		Logger.Printf("could not delete dod templates", dods)
+		Logger.Printf("could not delete dod templates %+v", dods)
 		return false
 	}
 	for _, dod_name := range dods.DodNames {
@@ -125,7 +125,7 @@ func UpdateDodsFromBoard(dods DodNames, board Board) bool {
 			"INSERT INTO dod_templates (Name, BoardId) "+
 				"VALUES (?, ?)", dod_name, board.Id)
 		if err != nil {
-			Logger.Printf("could not insert dod templates", dods)
+			Logger.Printf("could not insert dod templates %+v", dods)
 			return false
 		}
 	}

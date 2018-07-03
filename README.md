@@ -19,7 +19,7 @@ The backend is written in go and uses a sqlite3 Database.
 ## Installation
 
 ### Requirements
-- Golang (1.7+)
+- Golang (1.10.3)
 - npm
 - gulp
 
