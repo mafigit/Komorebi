@@ -24,8 +24,10 @@ var burndown_data = null;
 var dod_data = null;
 var story_dod_data = null;
 var hi_task = null;
+var archived_stories = null;
 
 var message = "";
+var archived_stories_open = false;
 var menu_open = false;
 var show_user_assign = false;
 var show_board_list = false;
@@ -73,6 +75,12 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getShowUserAssign: function() {
     return show_user_assign;
+  },
+  getArchivedStoriesOpen: function() {
+    return archived_stories_open;
+  },
+  getArchivedStories: function() {
+    return archived_stories;
   },
   getShowBoardList: function() {
     return show_board_list;
@@ -339,6 +347,16 @@ var deleteBoard = (id) => {
       MessageActions.showMessage("Successfully deleted");
       fetchBoards().then(() => {BoardStore.emitChange();});
     }
+  });
+};
+
+var fetchArchivedStories = () => {
+  var board_name = BoardStore.getBoardTitle();
+  if (!board_name) { return; }
+  var url = `/${board_name}/archived_stories`;
+  return Ajax.getJson(url).then(response => {
+    archived_stories = JSON.parse(response.response);
+    BoardStore.emitChange();
   });
 };
 
@@ -768,6 +786,7 @@ AppDispatcher.register(function(action) {
       break;
     case "ARCHIVE_STORY":
       archiveStory(action.id);
+      fetchArchivedStories();
       break;
     case "DELETE_TASK":
       deleteTask(action.id);
@@ -779,6 +798,17 @@ AppDispatcher.register(function(action) {
     case "FETCH_TASKS":
       fetchTasks().
         then(() => {BoardStore.emitChange();});
+      break;
+    case "OPEN_ARCHIVED_STORIES":
+      archived_stories_open = true;
+      BoardStore.emitChange();
+      break;
+    case "FETCH_ARCHIVED_STORIES":
+      fetchArchivedStories();
+      break;
+    case "CLOSE_ARCHIVED_STORIES":
+      archived_stories_open = false;
+      BoardStore.emitChange();
       break;
     case "OPEN_STORY_SHOW_DIALOG":
       story_show_dialog_open = true;

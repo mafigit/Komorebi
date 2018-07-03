@@ -14,6 +14,7 @@ import TaskDialog from './task_dialog';
 import Colors from './color';
 import BoardStore from './store/BoardStore';
 import BoardActions from './actions/BoardActions';
+import ArchivedStories from './archived_stories';
 
 export default class BoardLayout extends Layout  {
   constructor(props) {
@@ -76,6 +77,7 @@ export default class BoardLayout extends Layout  {
       <StoryFromIssueEditDialog open={this.state.story_from_issue_edit_open} />
       <TaskDialog open={this.state.task_open} />
       {this.props.children}
+      <ArchivedStories/>
      </div>;
   }
 }

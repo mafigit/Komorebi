@@ -83,6 +83,21 @@ var BoardActions = {
       direction: direction
     });
   },
+  showArchivedStories: () => {
+    AppDispatcher.dispatch({
+      actionType: "OPEN_ARCHIVED_STORIES",
+    });
+  },
+  fetchArchivedStories: () => {
+    AppDispatcher.dispatch({
+      actionType: "FETCH_ARCHIVED_STORIES",
+    });
+  },
+  closeArchivedStories: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_ARCHIVED_STORIES",
+    });
+  },
   showConfirmation: (callback) => {
     AppDispatcher.dispatch({
       actionType: "OPEN_CONFIRMATION",

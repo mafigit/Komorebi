@@ -53,6 +53,10 @@ class MyMenu extends React.Component {
         {
           name: "Definition of Done",
           action: BoardActions.showDodDialog
+        },
+        {
+          name: "Archived Stories",
+          action: BoardActions.showArchivedStories
         }
 
       ];
