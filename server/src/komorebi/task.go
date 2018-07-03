@@ -129,7 +129,7 @@ func AddUsersToTask(task Task, users UserIds) bool {
 	user_ids := strings.Join(user_id_array, ", ")
 
 	count, err := dbMapper.Connection.SelectInt(
-		"select count(Id) from users where Id IN (" + user_ids + ")")
+		"select count(Id) from users where Id IN (" + user_ids + ") and users.Disabled = 0")
 	if count != int64(len(users.UserIds)) || err != nil {
 		Logger.Println("UserIds not valid", users)
 		return false

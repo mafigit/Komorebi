@@ -7,6 +7,7 @@ import BoardStore from './store/BoardStore';
 import ErrorStore from './store/ErrorStore';
 import BoardActions from './actions/BoardActions';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import Checkbox from 'material-ui/Checkbox';
 
 export default class UserDialog extends React.Component {
   constructor(props) {
@@ -23,6 +24,7 @@ export default class UserDialog extends React.Component {
         image_path: user ? user.image_path : "",
         id: user ? user.id : null,
         password: "",
+        disabled: user ? user.disabled : false
       }
     };
   }
@@ -59,6 +61,7 @@ export default class UserDialog extends React.Component {
     var form_data = {
       name: this.getInputValue(this.refs.user_name, "input"),
       image_path: this.getInputValue(this.refs.user_image_path, "input"),
+      disabled: this.getInputValue(this.refs.user_disabled, "input"),
       password: this.getInputValue(this.refs.user_password, "input"),
     };
 
@@ -71,6 +74,11 @@ export default class UserDialog extends React.Component {
 
   render() {
     var title = this.state.user.id ? "Update User" : "Add User";
+    var disabled = this.state.user.id ?  <Checkbox
+      ref="user_disabled"
+      checked={this.state.user.disabled}
+      onCheck={(e, check) => { this.onChange(e, "disabled", check);}}
+      label="Disabled"/> : <div></div>;
     const actions = [
       <FlatButton
         label="Ok"
@@ -99,6 +107,7 @@ export default class UserDialog extends React.Component {
           onChange={(comp, val) => {this.onChange(comp, "name", val);}}
         />
         <br />
+        {disabled}
         <br />
         Add a Image Path
         <br />
