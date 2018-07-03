@@ -270,6 +270,15 @@ var toggleUserByIdAction = (user_id) => {
   assignUsersToBoard();
 };
 
+var check_401 = (response) => {
+  if (response.status == 401) {
+    var err = JSON.parse(response.response);
+    if (err.messages && err.messages.authorization) {
+      MessageActions.showMessage(err.messages.authorization);
+    }
+  }
+};
+
 var assignUsersToBoard = () => {
   var selected_user_ids = users.reduce((acc, user) => {
     if (user.selected) {
@@ -280,7 +289,9 @@ var assignUsersToBoard = () => {
   if (selected_board_id) {
     let url = `/boards/${selected_board_id}/assign_users`;
     let data = {"user_ids": selected_user_ids};
-    return Ajax.postJson(url, data);
+    return Ajax.postJson(url, data).then(response => {
+      check_401(response);
+    });
   }
 };
 
@@ -446,6 +457,7 @@ var fetchAll = () => {
   board_id = null;
   board_title = "";
   return Ajax.get(window.location.pathname, {"Accept": "application/json"}).then(response => {
+    check_401(response);
     if(response.status == 200) {
       var board = JSON.parse(response.responseText);
       board_id = board.id;
@@ -466,6 +478,7 @@ var fetchAll = () => {
 };
 
 var initWebsocket = () => {
+  if (!board_title) { return; }
   var port = (location.port ? ':' + location.port : '');
   var uri = window.location.hostname + port;
   var socket = new WebSocket("ws://" + uri + "/" + board_title + "/ws");
