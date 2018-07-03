@@ -57,10 +57,14 @@ export default class Board extends React.Component {
     var columns = this.state.columns.map((col, key) => {
       var tasks_for_column = tasks_for_columns.reduce((acc, task, key) => {
         if (task.column_id == col.id) {
+          var highlighted = false;
+          if (task.id === Number(BoardStore.getHiTask())){
+            highlighted = true;
+          }
           acc.push(<TaskCard key={key} column_id={task.column_id}
             task_id={task.id} name={task.name} desc={task.desc}
             task_name={task.name} task_story_id={task.story_id}
-            user={task.user} />);
+            user={task.user} highlighted={highlighted} />);
         }
         return acc;
       }, []);

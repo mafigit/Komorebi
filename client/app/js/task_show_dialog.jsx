@@ -51,6 +51,8 @@ export default class TaskShowDialog extends React.Component {
   }
 
   showForm = () => {
+    var show_link = window.location.protocol + "//" + window.location.host +
+      window.location.pathname + "?task=" + this.props.task_id;
     var img = undefined;
     if (this.state.user) {
       if (this.state.user.image_path) {
@@ -68,6 +70,7 @@ export default class TaskShowDialog extends React.Component {
       ><Card className="task">
           <CardHeader titleStyle={{fontSize: 20}}
             title={this.state.name}
+            subtitle={show_link}
             avatar={img}
           />
           <CardText className="task-text">

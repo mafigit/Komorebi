@@ -13,6 +13,7 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
     initiallyExpanded={false}>
     <CardHeader
       avatar={null}
+      subtitle="about://blank?task=1"
       title=""
       titleStyle={
         Object {

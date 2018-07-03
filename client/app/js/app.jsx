@@ -19,6 +19,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = this.getBoardState();
+    BoardStore.setHiTask(this.props.hi_task);
   }
   getBoardState = () => {
     return {
@@ -70,7 +71,12 @@ class App extends React.Component {
 }
 
 var landing = window.location.pathname === "/";
+var highlighted_task = null;
+// /{board_name}?task=3
+if (window.location.search.includes("task=")) {
+  highlighted_task = window.location.search.split("task=")[1];
+}
 ReactDOM.render(
-  <App landing={landing} />,
+  <App landing={landing} hi_task={highlighted_task} />,
   document.getElementById('app')
 );

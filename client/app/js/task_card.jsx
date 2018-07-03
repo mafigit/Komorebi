@@ -41,6 +41,7 @@ export default class Column extends React.Component {
      * @property {number} task_story_id story id of task
      * @property {number} column_id column id of the task
      * @property {user} user user of the task
+     * @property {highlighted} task with other background
      */
     this.state={};
   }
@@ -123,6 +124,7 @@ export default class Column extends React.Component {
   }
 
   render () {
+    var style = this.props.highlighted ? {backgroundColor: "f5f5f5"} : {};
     var story = BoardStore.getStoryById(this.props.task_story_id);
     var name = <span>{this.props.name}</span>;
     var icon = <BookMarkIcon color={story.color}/>;
@@ -137,7 +139,7 @@ export default class Column extends React.Component {
       }
     }
 
-    return <Card className="task">
+    return <Card className="task" style={style}>
       <Badge badgeContent={icon} style={{width: "100%"}}>
         <CardHeader titleStyle={{fontSize: 16}}
           title={name}
