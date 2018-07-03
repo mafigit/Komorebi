@@ -28,13 +28,13 @@ func addIsAdminToUser() {
 	_, err := dbMapper.Connection.Exec(
 		"ALTER TABLE users ADD COLUMN IsAdmin integer")
 	if err != nil {
-		Logger.Printf("could not add IsAdmin to users", err)
+		Logger.Printf("could not add IsAdmin to users %s", err)
 		return
 	}
 	_, err = dbMapper.Connection.Exec(
 		"UPDATE users SET IsAdmin=0")
 	if err != nil {
-		Logger.Printf("could not set IsAdmin on users", err)
+		Logger.Printf("could not set IsAdmin on users %s", err)
 	}
 }
 

@@ -77,7 +77,7 @@ func (b Board) Destroy() bool {
 	}
 
 	if _, errDelete := dbMapper.Connection.Delete(&b); errDelete != nil {
-		Logger.Printf("delete of board failed.", errDelete)
+		Logger.Printf("delete of board failed: %s", errDelete)
 		return false
 	}
 	return true
@@ -88,7 +88,7 @@ func GetBoardNestedByName(name string) BoardNested {
 	err := dbMapper.Connection.
 		SelectOne(&board, "select * from boards where Name=?", name)
 	if err != nil {
-		Logger.Printf("could not find board with name", name)
+		Logger.Printf("could not find board with name %s", name)
 		return board
 	}
 	_, err = dbMapper.Connection.Select(&board.Columns,
@@ -146,14 +146,14 @@ func AddUsersToBoard(board Board, users UserIds) bool {
 	count, err := dbMapper.Connection.SelectInt(
 		"select count(Id) from users where Id IN (" + user_ids + ")")
 	if count != int64(len(users.UserIds)) || err != nil {
-		Logger.Printf("UserIds not valid", users)
+		Logger.Printf("UserIds not valid: %+v", users)
 		return false
 	}
 
 	_, err = dbMapper.Connection.Exec(
 		"DELETE FROM board_users WHERE BoardId=?", board.Id)
 	if err != nil {
-		Logger.Printf("could not delete users from board", board.Id)
+		Logger.Printf("could not delete users from board %d", board.Id)
 		return false
 	}
 
@@ -163,7 +163,7 @@ func AddUsersToBoard(board Board, users UserIds) bool {
 				"VALUES (?, ?)", board.Id, user_id)
 	}
 	if err != nil {
-		Logger.Printf("could not insert users", users)
+		Logger.Printf("could not insert users %+v", users)
 		return false
 	}
 	UpdateWebsockets(board.Name, "Users updated")
@@ -183,13 +183,13 @@ func GetMyBoards(boards *Boards, w http.ResponseWriter, r *http.Request) {
 			"users.Id = board_users.UserId "+
 			"where users.Name = ? and boards.Private = 1 order by Id", user)
 	if err != nil {
-		Logger.Printf("could not get boards for user: ", user, err)
+		Logger.Printf("could not get boards for user: %+v - %s", user, err)
 	}
 }
 func GetPublicBoards(boards *Boards) {
 	_, err := dbMapper.Connection.Select(boards,
 		"select * from boards where Private = 0 order by Id")
 	if err != nil {
-		Logger.Printf("could not get public boards: ", err)
+		Logger.Printf("could not get public boards: %s", err)
 	}
 }

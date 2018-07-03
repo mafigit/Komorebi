@@ -51,7 +51,7 @@ func (t Task) Destroy() bool {
 		return true
 	}
 	if _, errDelete := dbMapper.Connection.Delete(&t); errDelete != nil {
-		Logger.Printf("delete of task failed.", errDelete)
+		Logger.Printf("delete of task failed. %s", errDelete)
 		return false
 	}
 
@@ -93,7 +93,7 @@ func GetTaskNested(task_id int) TaskNested {
 	err := dbMapper.Connection.SelectOne(&task,
 		"select * from tasks where Id=?", task_id)
 	if err != nil {
-		Logger.Printf("Error while fetching task", task_id)
+		Logger.Printf("Error while fetching task %d", task_id)
 	}
 
 	task.Users = GetUsersByTaskId(task_id)
@@ -105,7 +105,7 @@ func GetTasksByColumnId(column_id int) Tasks {
 	_, err := dbMapper.Connection.Select(&tasks,
 		"select * from tasks where ColumnId=? order by Id ", column_id)
 	if err != nil {
-		Logger.Printf("Error while fetching tasks", column_id)
+		Logger.Printf("Error while fetching tasks %d", column_id)
 	}
 	return tasks
 }
@@ -116,7 +116,7 @@ func GetTasksByStoryId(story_id int) Tasks {
 	_, err := dbMapper.Connection.Select(&tasks,
 		"select * from tasks where StoryId=? order by Id ", story_id)
 	if err != nil {
-		Logger.Printf("Error while fetching tasks", story_id)
+		Logger.Printf("Error while fetching tasks %d", story_id)
 	}
 	return tasks
 }

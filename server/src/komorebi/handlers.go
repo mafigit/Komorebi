@@ -477,7 +477,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	board_name := vars["board_name"]
 
 	if err != nil {
-		Logger.Printf("could not open websocket connection: ", err)
+		Logger.Printf("could not open websocket connection: %s", err)
 		return
 	}
 
@@ -493,7 +493,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer func() {
-		Logger.Printf("connection closing ", board_name)
+		Logger.Printf("connection closing %s", board_name)
 		con.Ws.Close()
 		delete_ws_from_connections(con.Ws, board_name)
 	}()
@@ -501,7 +501,7 @@ func HandleWs(w http.ResponseWriter, r *http.Request) {
 	connections[board_name] = append(connections[board_name], con)
 	err = ws.WriteMessage(websocket.TextMessage, []byte("Connection established"))
 	if err != nil {
-		Logger.Printf("error on write:", err)
+		Logger.Printf("error on write: %s", err)
 	}
 	ws.ReadMessage()
 }
@@ -518,7 +518,7 @@ func UpdateWebsockets(board_name string, msg string) {
 		err := connections[board_name][i].Ws.WriteMessage(
 			websocket.TextMessage, []byte(json_resp))
 		if err != nil {
-			Logger.Printf("err", err)
+			Logger.Printf("err %s", err)
 		}
 	}
 }
@@ -903,15 +903,15 @@ func getObjectByReqId(req_var string, r *http.Request, model Model) {
 func Exe(file string, args ...string) {
 	file = HookDir + file
 	if _, err := os.Stat(file); err != nil {
-		Logger.Printf("file does not exist: ", file, err)
+		Logger.Printf("file does not exist: %s - %s", file, err)
 		return
 	}
 
 	go func() {
 		out, err := exec.Command(file, args...).Output()
 		if err != nil {
-			Logger.Printf("could not exec command: ", file, err)
+			Logger.Printf("could not exec command: %s - %s", file, err)
 		}
-		Logger.Printf("output of command: ", file, fmt.Sprintf("%s", out))
+		Logger.Printf("output of command: %s - %s", file, fmt.Sprintf("%s", out))
 	}()
 }

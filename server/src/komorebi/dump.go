@@ -79,7 +79,7 @@ func ClearDump(board_name string) {
 	_, err := dbMapper.Connection.Exec(
 		"DELETE FROM dumps WHERE BoardId=?", board.Id)
 	if err != nil {
-		Logger.Printf("could not delete dumps from board", board_name)
+		Logger.Printf("could not delete dumps from board %s", board_name)
 	}
 }
 
@@ -90,7 +90,7 @@ func GetDumpsByBoardId(board_id int) Burndowns {
 	_, err := dbMapper.Connection.Select(&dumps,
 		"select * from dumps where BoardId=?", board_id)
 	if err != nil {
-		Logger.Printf("could not get dumps from board", board_id)
+		Logger.Printf("could not get dumps from board %d", board_id)
 	}
 
 	for _, dump := range dumps {

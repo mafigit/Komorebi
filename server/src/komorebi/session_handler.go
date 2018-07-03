@@ -11,7 +11,7 @@ func CreateSession(w http.ResponseWriter, r *http.Request, username string) {
 	session.Values["logged_id"] = "true"
 	session.Values["username"] = username
 	if err := SessionStore.Save(r, w, session); err != nil {
-		Logger.Printf("error on saving session ", err)
+		Logger.Printf("error on saving session %s", err)
 	}
 }
 
@@ -22,7 +22,7 @@ func DestroySession(w http.ResponseWriter, r *http.Request) {
 		MaxAge: -1,
 	}
 	if err := SessionStore.Save(r, w, session); err != nil {
-		Logger.Printf("error on saving session ", err)
+		Logger.Printf("error on saving session %s", err)
 	}
 }
 
@@ -35,7 +35,7 @@ func getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	session, err := SessionStore.Get(r, "loginSession")
 
 	if err != nil {
-		Logger.Printf("error on getting session ", err)
+		Logger.Printf("error on getting session %s", err)
 	}
 	return session
 }
