@@ -3,6 +3,7 @@ import {ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import BoardActions from './actions/BoardActions';
+import BoardStore from './store/BoardStore';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import LabelIcon from 'material-ui/svg-icons/action/label';
 import AddIcon from 'material-ui/svg-icons/content/add';
@@ -21,6 +22,7 @@ export default class StoryCard extends React.Component {
   }
 
   onClickHandler = () => {
+    BoardStore.setHiTask(null);
     BoardActions.setSelectedStoryId(this.props.story_id);
   }
 

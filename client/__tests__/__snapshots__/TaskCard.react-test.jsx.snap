@@ -3,7 +3,8 @@ exports[`test Should update position of task after clicking on next button 1`] =
   className="task"
   expandable={false}
   expanded={null}
-  initiallyExpanded={false}>
+  initiallyExpanded={false}
+  style={Object {}}>
   <Badge
     badgeContent={<ActionBookmark />}
     primary={false}

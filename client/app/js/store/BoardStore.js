@@ -23,6 +23,7 @@ var selected_board_id = null;
 var burndown_data = null;
 var dod_data = null;
 var story_dod_data = null;
+var hi_task = null;
 
 var message = "";
 var menu_open = false;
@@ -138,7 +139,13 @@ var BoardStore = assign({}, EventEmitter.prototype, {
     return tasks;
   },
   getTasksToDisplay: function() {
-    tasks_to_display = selected_stories.reduce((acc, story_id) => {
+    var my_stories = [];
+    if (hi_task) {
+      my_stories.push(BoardStore.getStoryIdByTaskId(hi_task));
+    } else {
+      my_stories = selected_stories;
+    }
+    tasks_to_display = my_stories.reduce((acc, story_id) => {
       acc[story_id] = BoardStore.getTaskByStoryId(story_id);
       return acc;
     }, {});
@@ -199,6 +206,13 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   getTaskShowDialogOpen: () => {
     return task_show_dialog_open;
   },
+  getStoryIdByTaskId: (task_id) => {
+    var _task = tasks.find((task) => {
+      return task.id === Number(task_id);
+    });
+    if (_task) { return _task.story_id; }
+    return null;
+  },
   getStoryShowId: () => {
     return story_show_id;
   },
@@ -240,6 +254,12 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getStoryById: (story_id) => {
     return stories.find((story) => { return story.id === story_id; });
+  },
+  getHiTask: () => {
+    return hi_task;
+  },
+  setHiTask: (task) => {
+    hi_task = task;
   },
   emitChange: function() {
     this.emit(CHANGE_EVENT);
