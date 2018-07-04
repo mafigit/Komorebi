@@ -27,11 +27,13 @@ var hi_task = null;
 var archived_stories = null;
 
 var message = "";
+var logged_in = false;
 var archived_stories_open = false;
 var menu_open = false;
 var show_user_assign = false;
 var show_board_list = false;
 var show_user_manage = false;
+var show_login = false;
 var column_dialog_open = false;
 var chart_dialog_open = false;
 var dod_dialog_open = false;
@@ -87,6 +89,12 @@ var BoardStore = assign({}, EventEmitter.prototype, {
   },
   getShowUserManage: function() {
     return show_user_manage;
+  },
+  getShowLogin: function() {
+    return show_login;
+  },
+  getLoggedin: function() {
+    return logged_in;
   },
   getUsers: function() {
     return users;
@@ -321,6 +329,32 @@ var assignUsersToBoard = () => {
       check_401(response);
     });
   }
+};
+
+var logoutUser = () => {
+  var url = "/logout";
+  return Ajax.getJson(url).then(response => {
+    if (response.status == 200) {
+      MessageActions.showMessage("Successfully logged out");
+    }
+  });
+};
+
+var loginUser = (user_data) => {
+  var url = "/login";
+  return Ajax.postJson(url, user_data).then(response => {
+    if(response.status == 200) {
+      show_login = false;
+      logged_in = true;
+      MessageActions.showMessage("Successfully logged in");
+      BoardStore.emitChange();
+    } else {
+      var err = JSON.parse(response.response);
+      if (err.messages && err.messages.login) {
+        MessageActions.showMessage(err.messages.login);
+      }
+    }
+  });
 };
 
 var fetchUsersByBoardId = (board_id) => {
@@ -1065,6 +1099,7 @@ AppDispatcher.register(function(action) {
       show_user_assign = true;
       show_board_list = false;
       show_user_manage = false;
+      show_login = false;
       selected_board_id = null;
       BoardStore.emitChange();
       break;
@@ -1072,6 +1107,7 @@ AppDispatcher.register(function(action) {
       show_board_list = true;
       show_user_assign = false;
       show_user_manage = false;
+      show_login = false;
       selected_board_id = null;
       BoardStore.emitChange();
       break;
@@ -1079,7 +1115,29 @@ AppDispatcher.register(function(action) {
       show_user_manage = true;
       show_user_assign = false;
       show_board_list = false;
+      show_login = false;
       selected_board_id = null;
+      BoardStore.emitChange();
+      break;
+    case "SHOW_LOGIN":
+      show_login = true;
+      show_user_manage = false;
+      show_user_assign = false;
+      show_board_list = false;
+      selected_board_id = null;
+      BoardStore.emitChange();
+      break;
+    case "CLOSE_LOGIN":
+      show_login = false;
+      BoardStore.emitChange();
+      break;
+    case "LOGIN_USER":
+      loginUser(action.data);
+      BoardStore.emitChange();
+      break;
+    case "LOGOUT_USER":
+      logoutUser();
+      logged_in = false;
       BoardStore.emitChange();
       break;
     default:

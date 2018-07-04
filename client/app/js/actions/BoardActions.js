@@ -369,10 +369,31 @@ var BoardActions = {
       actionType: "SHOW_USER_MANAGE"
     });
   },
+  showLogin: () => {
+    AppDispatcher.dispatch({
+      actionType: "SHOW_LOGIN"
+    });
+  },
+  closeLogin: () => {
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_LOGIN"
+    });
+  },
   toggleUserById: (user_id) => {
     AppDispatcher.dispatch({
       user_id: user_id,
       actionType: "TOGGLE_USER_BY_ID"
+    });
+  },
+  loginUser: (user_data) => {
+    AppDispatcher.dispatch({
+      data: user_data,
+      actionType: "LOGIN_USER"
+    });
+  },
+  logoutUser: () => {
+    AppDispatcher.dispatch({
+      actionType: "LOGOUT_USER"
     });
   },
   selectBoard: (board_id) => {

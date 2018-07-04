@@ -4,13 +4,18 @@ import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import BoardActions from './actions/BoardActions';
+import BoardStore from './store/BoardStore';
 
 class MyMenu extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = this.getState();
+  }
+
+  getState = () => {
     if (this.props.landing) {
-      this.menu_items = [
+      var menue_items = [
         {
           name: "Add Board",
           action: BoardActions.openBoardDialog
@@ -26,10 +31,24 @@ class MyMenu extends React.Component {
         {
           name: "Board List",
           action: BoardActions.showBoardList
-        }
+        },
       ];
+      if (BoardStore.getLoggedin()) {
+        menue_items.push(
+          {
+            name: "Logout",
+            action: BoardActions.logoutUser
+          });
+      } else {
+        menue_items.push(
+          {
+            name: "Login",
+            action: BoardActions.showLogin
+          });
+      }
+      return { menue: menue_items };
     } else {
-      this.menu_items = [
+      var menu_items = [
         {
           name: "Add Task",
           action: BoardActions.showTaskDialog
@@ -58,14 +77,26 @@ class MyMenu extends React.Component {
           name: "Archived Stories",
           action: BoardActions.showArchivedStories
         }
-
       ];
+      return { menue: menu_items };
     }
   }
 
   handle_menue_action = (action) => {
     BoardActions.toggleBoardMenu();
     action();
+  }
+
+  _onChange = () => {
+    this.setState(this.getState());
+  }
+
+  componentWillUnmount = () => {
+    BoardStore.removeChangeListener(this._onChange);
+  }
+
+  componentDidMount = () => {
+    BoardStore.addChangeListener(this._onChange);
   }
 
   render() {
@@ -79,7 +110,7 @@ class MyMenu extends React.Component {
           onRequestClose={this.props.touchAwayHandler}
         >
           <Menu>
-            {this.menu_items.map((item, key) => {
+            {this.getState().menue.map((item, key) => {
               return <MenuItem
                 key={key}
                 primaryText={item.name}
