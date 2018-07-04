@@ -96,10 +96,20 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
 	if LoggedIn(w, r) && BoardAuthorized(w, r, board.Name) {
 		json.NewEncoder(w).Encode(board)
 	} else {
-		http.Error(w, "Not authorized", 401)
+		response.Success = false
+		response.Messages["authorization"] = append(response.Messages["authorization"],
+			"You are not authorized to see this board.")
+		w.WriteHeader(401)
+		json.NewEncoder(w).Encode(response)
+		return
 	}
 }
 
@@ -643,7 +653,7 @@ func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 	if !LoggedIn(w, r) || !IsAdmin(w, r) {
 		response.Success = false
 		response.Messages["authorization"] = append(response.Messages["authorization"],
-			"You are not authorized to assign a user to this board.")
+			"You are not authorized to assign an user to this board.")
 		w.WriteHeader(401)
 		json.NewEncoder(w).Encode(response)
 		return

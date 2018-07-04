@@ -253,7 +253,7 @@ resp=`curl -H "Content-Type: application/json" -d '{"name":"testpriv","private":
 test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
 echo "no admin should not assign a user to a board"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/3/assign_users 2>/dev/null`
-test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to assign a user to this board.\"]}}" "${resp}"
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to assign an user to this board.\"]}}" "${resp}"
 echo "make user to admin"
 ../../add_admin.sh komorebi.db August
 echo "Get board without cookie: get only public boards"
