@@ -383,6 +383,7 @@ var deleteColumn = (id) => {
 var deleteUser = (id) => {
   var url = `/users/${id}`;
   return Ajax.delete(url, {"Accept": "application/json"}).then(response => {
+    check_401(response);
     if(response.status == 200) {
       fetchUsers().then(fetchUsersByBoardId.bind(this, selected_board_id)).then(() => {
         BoardStore.emitChange();
@@ -718,6 +719,7 @@ var addUser = (data) => {
 var updateUser = (data) => {
   var url = `/users/${data.id}`;
   return Ajax.postJson(url, data).then(response => {
+    check_401(response);
     var response_obj = JSON.parse(response.responseText);
     if (response_obj.success) {
       ErrorActions.removeUserErrors();

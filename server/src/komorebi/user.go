@@ -92,11 +92,13 @@ func NewUser(name string, passwd string, image_path string) User {
 func (u *User) Save() bool {
 
 	if u.Id != 0 {
-		// on update an user, keep the salt
+		// on update an user, keep the salt and IsAdmin
+		// IsAdmin could only be set by cli
 		var old_user User
 		dbMapper.Connection.SelectOne(&old_user,
 			"select * from users where Id=?", u.Id)
 		u.Salt = old_user.Salt
+		u.IsAdmin = old_user.IsAdmin
 
 		if len(u.HashedPasswd) <= 0 {
 			// update user without setting a new password: keep old password
@@ -148,6 +150,17 @@ func (u User) Validate() (bool, map[string][]string) {
 	}
 
 	return success, errors
+}
+
+func GetUserByName(name string) User {
+	var user User
+
+	err := dbMapper.Connection.SelectOne(&user,
+		"select * from users where Name=?", name)
+	if err != nil {
+		Logger.Printf("failed to get user %s, error: %s", name, err)
+	}
+	return user
 }
 
 func GetUsersByBoardId(board_id int) Users {

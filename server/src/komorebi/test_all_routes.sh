@@ -223,20 +223,20 @@ echo "Create user hans-peter"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"hans-peter", "image_path":"/public/franz.jpg"}' localhost:8080/users 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{},\"id\":2}" $resp
 
-echo "Delete user hans-peter"
+echo "Delete user hans-peter should fail because we are no admin"
 resp=`curl  -X DELETE localhost:8080/users/2 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"Not allowed: You are not logged in\"]}}" "${resp}"
 
 echo "Get all users"
 resp=`curl localhost:8080/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false},{\"id\":2,\"name\":\"hans-peter\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
 
-echo "Update user franz with name august"
+echo "Update user franz with name august should fail because we are not admin or franz himself"
 resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{}}" $resp
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"Not allowed: You are not logged in\"]}}" "${resp}"
 
-echo "Login should fail with wrong password for user August"
-resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcde" }' localhost:8080/login 2>/dev/null`
+echo "Login should fail with wrong password for user franz"
+resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"Franz", "password":"abcde" }' localhost:8080/login 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"login\":[\"Login failed\"]}}" "${resp}"
 
 echo "Login should fail with wrong username"
@@ -253,14 +253,14 @@ resp=`curl -H "Content-Type: application/json" -d '{"name":"testpriv","private":
 test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
 echo "no admin should not assign a user to a board"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/3/assign_users 2>/dev/null`
-test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to assign an user to this board.\"]}}" "${resp}"
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"Not allowed: You are not logged in\"]}}" "${resp}"
 echo "make user to admin"
-../../add_admin.sh komorebi.db August
+../../add_admin.sh komorebi.db Franz
 echo "Get board without cookie: get only public boards"
 resp=`curl  localhost:8080/boards 2>/dev/null`
 test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":false}]" $resp
-echo "Login with user August"
-resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcd" }' localhost:8080/login 2>/dev/null`
+echo "Login with user Franz"
+resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"Franz", "password":"abcd" }' localhost:8080/login 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 echo "admin should be authorized to assign a user to a board"
 resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/3/assign_users 2>/dev/null`
@@ -272,13 +272,13 @@ test_match "[{\"id\":1,\"name\":\"gz\",\"updated_at\":[0-9]{19},\"private\":fals
 
 ### Assign users to Board
 
-echo "Assign user august to board foo"
+echo "Assign user Franz to board foo"
 resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/boards/1/assign_users 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from board foo"
 resp=`curl localhost:8080/boards/1/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
 
 echo "Assign no user to board foo"
 resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/boards/1/assign_users 2>/dev/null`
@@ -302,7 +302,7 @@ test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get users from task 1"
 resp=`curl localhost:8080/tasks/1/users 2>/dev/null`
-test_match "\[{\"id\":1,\"name\":\"August\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
+test_match "\[{\"id\":1,\"name\":\"Franz\",\"updated_at\":[0-9]{19},\"image_path\":\"/public/franz.jpg\",\"password\":\"\",\"disabled\":false}\]" $resp
 
 echo "Assign no user to task 1"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[]}' localhost:8080/tasks/1/assign_users 2>/dev/null`
@@ -317,11 +317,32 @@ resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[99999]}' localho
 test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
 
 echo "Update user franz with disabled=true"
-resp=`curl -H "Content-Type: application/json" -d '{"name":"August", "disabled":true, "id":1 }' localhost:8080/users/1 2>/dev/null`
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"name":"Franz", "disabled":true, "id":1 }' localhost:8080/users/1 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 echo "Assign disabled user to task 1"
 resp=`curl -H "Content-Type: application/json" -d '{"user_ids":[1]}' localhost:8080/tasks/1/assign_users 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"user_ids\":[\"UserIds not valid.\"]}}" "${resp}"
+
+
+
+### Test actions which are only allowed for admins
+
+echo "Update user franz with name august"
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "image_path":"/public/franz.jpg", "id":1 }' localhost:8080/users/1 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" "${resp}"
+
+  # after update user name we have to logout and login again
+  echo "Logout with user August"
+  resp=`curl --cookie-jar "cookie.txt" --cookie "cookie.txt" localhost:8080/logout 2>/dev/null`
+  test_equal "{\"success\":true,\"messages\":{}}" $resp
+  echo "Login with user August"
+  resp=`curl --cookie-jar "cookie.txt" -H "Content-Type: application/json" -d '{"name":"August", "password":"abcd" }' localhost:8080/login 2>/dev/null`
+  test_equal "{\"success\":true,\"messages\":{}}" $resp
+
+
+echo "Delete user hans-peter"
+resp=`curl --cookie "cookie.txt" -X DELETE localhost:8080/users/2 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{}}" "${resp}"
 
 
 ### Definiton of Done routes

@@ -101,7 +101,11 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 		Messages: make(map[string][]string),
 	}
 
-	if LoggedIn(w, r) && BoardAuthorized(w, r, board.Name) {
+	if !check_login(w, r) {
+		return
+	}
+
+	if BoardAuthorized(w, r, board.Name) {
 		json.NewEncoder(w).Encode(board)
 	} else {
 		response.Success = false
@@ -323,10 +327,27 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 func UserUpdate(w http.ResponseWriter, r *http.Request) {
 	var update_user User
 	var old_user User
+
 	getObjectByReqId("user_id", r, &old_user)
 
 	if err := json.NewDecoder(r.Body).Decode(&update_user); err != nil {
 		w.WriteHeader(400)
+		return
+	}
+
+	if !check_login(w, r) {
+		return
+	}
+
+	if !IsAdmin(w, r) || GetLoggedInUser(w, r).Id != update_user.Id {
+		response := Response{
+			Success:  false,
+			Messages: make(map[string][]string),
+		}
+		response.Messages["authorization"] = append(response.Messages["authorization"],
+			"You are not authorized to edit the user.")
+		w.WriteHeader(401)
+		json.NewEncoder(w).Encode(response)
 		return
 	}
 
@@ -335,6 +356,23 @@ func UserUpdate(w http.ResponseWriter, r *http.Request) {
 
 func UserDelete(w http.ResponseWriter, r *http.Request) {
 	var user User
+
+	if !check_login(w, r) {
+		return
+	}
+
+	if !IsAdmin(w, r) {
+		response := Response{
+			Success:  true,
+			Messages: make(map[string][]string),
+		}
+		response.Success = false
+		response.Messages["authorization"] = append(response.Messages["authorization"],
+			"You are not authorized to delete the user")
+		w.WriteHeader(401)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
 	getObjectByReqId("user_id", r, &user)
 	modelDelete(&user, w, r)
 }
@@ -640,6 +678,23 @@ func GetUsersFromTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
+func check_login(w http.ResponseWriter, r *http.Request) bool {
+	msg := "Not allowed: You are not logged in"
+	response := Response{
+		Success:  true,
+		Messages: make(map[string][]string),
+	}
+
+	if !LoggedIn(w, r) {
+		response.Success = false
+		response.Messages["authorization"] = append(response.Messages["authorization"], msg)
+		w.WriteHeader(401)
+		json.NewEncoder(w).Encode(response)
+		return false
+	}
+	return true
+}
+
 func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 	var users UserIds
 	var board Board
@@ -650,20 +705,24 @@ func AssignUsersToBoard(w http.ResponseWriter, r *http.Request) {
 		Messages: make(map[string][]string),
 	}
 
-	if !LoggedIn(w, r) || !IsAdmin(w, r) {
-		response.Success = false
-		response.Messages["authorization"] = append(response.Messages["authorization"],
-			"You are not authorized to assign an user to this board.")
-		w.WriteHeader(401)
-		json.NewEncoder(w).Encode(response)
-		return
-	}
-
 	if board.Id <= 0 {
 		response.Success = false
 		response.Messages["board_id"] = append(response.Messages["board_id"],
 			"BoardId does not exist.")
 		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	if !check_login(w, r) {
+		return
+	}
+
+	if !IsAdmin(w, r) {
+		response.Success = false
+		response.Messages["authorization"] = append(response.Messages["authorization"],
+			"You are not authorized to assign an user to this board.")
+		w.WriteHeader(401)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
