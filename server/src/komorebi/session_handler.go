@@ -40,6 +40,10 @@ func getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
 	return session
 }
 
+func GetLoggedInUser(w http.ResponseWriter, r *http.Request) User {
+	return GetUserByName(GetLoggedInUsername(w, r))
+}
+
 func GetLoggedInUsername(w http.ResponseWriter, r *http.Request) string {
 	sess := getSession(w, r)
 	user := sess.Values["username"]
