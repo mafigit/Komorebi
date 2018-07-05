@@ -124,7 +124,8 @@ export default class Column extends React.Component {
   }
 
   render () {
-    var style = this.props.highlighted ? {backgroundColor: "f5f5f5"} : {};
+    var shadow = "rgba(0, 0, 0, 99) 0px 1px 60px, rgba(0, 0, 0, 0.12) 0px 1px 4px";
+    var style = this.props.highlighted ? {boxShadow: shadow} : {};
     var story = BoardStore.getStoryById(this.props.task_story_id);
     var name = <span>{this.props.name}</span>;
     var icon = <BookMarkIcon color={story.color}/>;
