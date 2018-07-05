@@ -345,6 +345,63 @@ resp=`curl --cookie "cookie.txt" -X DELETE localhost:8080/users/2 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" "${resp}"
 
 
+
+### Check Authentication
+
+echo "Check Authentication: First create a private board with columns, stories and tasks"
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"name":"priv","private":true}' localhost:8080/boards 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{},\"id\":4}" $resp
+# create column
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"name":"colmn_for_priv_board", "position":1, "board_id":4}' localhost:8080/columns 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
+# create story
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"name":"story_name","desc":"foo","points":5,"requirements":"","board_id":4 }' localhost:8080/stories 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
+# create task
+resp=`curl --cookie "cookie.txt" -H "Content-Type: application/json" -d '{"name":"foo", "desc":"desc", "story_id":3, "column_id":3}' localhost:8080/tasks 2>/dev/null`
+test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
+
+echo "Now check that an user without login can not read/update/delete the private board/story/task/column"
+echo "Get private board should fail"
+resp=`curl -H "Accept: application/json" localhost:8080/priv 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"Not allowed: You are not logged in\"]}}" "${resp}"
+echo "Update private board should fail"
+resp=`curl  -H "Content-Type: application/json" -d '{"name":"priv2","id":4}' localhost:8080/boards/4 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to update the board.\"]}}" "${resp}"
+echo "Delete private board should fail"
+resp=`curl -X DELETE localhost:8080/boards/4 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to delete the board.\"]}}" "${resp}"
+
+echo "Get column from private board should fail"
+resp=`curl  localhost:8080/columns/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to get the column\"]}}" "${resp}"
+echo "Delete column from private board should fail"
+resp=`curl -X DELETE localhost:8080/columns/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to delete the column\"]}}" "${resp}"
+
+echo "Get story from private board should fail"
+resp=`curl  localhost:8080/stories/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to get the stories\"]}}" "${resp}"
+echo "Update story from private board should fail"
+resp=`curl -H "Content-Type: application/json" -d '{"id":3,"name":"do_that","points":5,"board_id":4,"color":"blue"}' localhost:8080/stories/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to update the story\"]}}" "${resp}"
+echo "Delete story from private board should fail"
+resp=`curl -X DELETE localhost:8080/stories/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to delete the story\"]}}" "${resp}"
+
+echo "Get task from private board should fail"
+resp=`curl localhost:8080/stories/3/tasks 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to get the tasks\"]}}" "${resp}"
+echo "Update task from private board should fail"
+resp=`curl -H "Content-Type: application/json" -d '{"name":"bar", "desc":"desc", "story_id":3, "column_id":3, "id":3}' localhost:8080/tasks/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to update the task\"]}}" "${resp}"
+echo "Delete task from private board should fail"
+resp=`curl -X DELETE localhost:8080/tasks/3 2>/dev/null`
+test_equal "{\"success\":false,\"messages\":{\"authorization\":[\"You are not authorized to delete the task\"]}}" "${resp}"
+
+
+
+
 ### Definiton of Done routes
 
 echo "Get (empty) Definition of dones for board foo"
@@ -376,46 +433,46 @@ test_match "[{\"id\":1,\"name\":\"HA testen\",\"updated_at\":[0-9]{19},\"comment
 ### Column move route
 echo "Create column WIP for board foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"WIP", "position":1, "board_id":1}' localhost:8080/columns 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{},\"id\":3}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":4}" $resp
 
 echo "Create column DONE for board foo"
 resp=`curl  -H "Content-Type: application/json" -d '{"name":"DONE", "position":2, "board_id":1}' localhost:8080/columns 2>/dev/null`
-test_equal "{\"success\":true,\"messages\":{},\"id\":4}" $resp
+test_equal "{\"success\":true,\"messages\":{},\"id\":5}" $resp
 
 echo "Get column WIP"
-resp=`curl  localhost:8080/columns/3 2>/dev/null`
-test_match "{\"id\":3,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
+resp=`curl  localhost:8080/columns/4 2>/dev/null`
+test_match "{\"id\":4,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
 
 echo "Get column DONE"
-resp=`curl  localhost:8080/columns/4 2>/dev/null`
-test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
+resp=`curl  localhost:8080/columns/5 2>/dev/null`
+test_match "{\"id\":5,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
 
 echo "Move column DONE to left"
-resp=`curl  -H "Content-Type: application/json" -d '{"direction":"left"}' localhost:8080/columns/4/move 2>/dev/null`
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"left"}' localhost:8080/columns/5/move 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get column DONE"
-resp=`curl  localhost:8080/columns/4 2>/dev/null`
-test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
+resp=`curl  localhost:8080/columns/5 2>/dev/null`
+test_match "{\"id\":5,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
 
 echo "Get column WIP"
-resp=`curl  localhost:8080/columns/3 2>/dev/null`
-test_match "{\"id\":3,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
+resp=`curl  localhost:8080/columns/4 2>/dev/null`
+test_match "{\"id\":4,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
 
 echo "Move column DONE to right"
-resp=`curl  -H "Content-Type: application/json" -d '{"direction":"right"}' localhost:8080/columns/4/move 2>/dev/null`
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"right"}' localhost:8080/columns/5/move 2>/dev/null`
 test_equal "{\"success\":true,\"messages\":{}}" $resp
 
 echo "Get column WIP"
-resp=`curl  localhost:8080/columns/3 2>/dev/null`
-test_match "{\"id\":3,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
+resp=`curl  localhost:8080/columns/4 2>/dev/null`
+test_match "{\"id\":4,\"name\":\"WIP\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":1,\"tasks\":\[*\]}" $resp
 
 echo "Get column DONE"
-resp=`curl  localhost:8080/columns/4 2>/dev/null`
-test_match "{\"id\":4,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
+resp=`curl  localhost:8080/columns/5 2>/dev/null`
+test_match "{\"id\":5,\"name\":\"DONE\",\"updated_at\":[0-9]{19},\"board_id\":1,\"position\":2,\"tasks\":\[*\]}" $resp
 
 echo "Get error when moving right column to right"
-resp=`curl  -H "Content-Type: application/json" -d '{"direction":"right"}' localhost:8080/columns/4/move 2>/dev/null`
+resp=`curl  -H "Content-Type: application/json" -d '{"direction":"right"}' localhost:8080/columns/5/move 2>/dev/null`
 test_equal "{\"success\":false,\"messages\":{\"direction\":[\"Direction not valid.\"]}}" "${resp}"
 
 echo "Get error when moving left column to left"

@@ -54,6 +54,12 @@ func GetLoggedInUsername(w http.ResponseWriter, r *http.Request) string {
 }
 
 func BoardAuthorized(w http.ResponseWriter, r *http.Request, board_name string) bool {
+	var board Board
+	GetByName(&board, board_name)
+	if !board.Private {
+		return true
+	}
+
 	sess_user := GetLoggedInUsername(w, r)
 	if len(sess_user) <= 0 {
 		return false
