@@ -4,6 +4,7 @@ import Dialog from 'material-ui/Dialog';
 import {List, ListItem} from 'material-ui/List';
 import BoardActions from './actions/BoardActions';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import UnarchiveIcon from 'material-ui/svg-icons/action/settings-backup-restore';
 
 export default class ArchivedStories extends React.Component {
   constructor(props) {
@@ -49,8 +50,10 @@ export default class ArchivedStories extends React.Component {
         style={btnstyle} key={story.name} disabled={true}>
         {story.points}
       </FloatingActionButton>;
+      var rightIcon = <UnarchiveIcon
+        onTouchTap={BoardActions.unarchiveStory.bind(this, story)} />;
       
-      return <ListItem primaryText={story.name}
+      return <ListItem primaryText={story.name} rightIcon={rightIcon}
         key={story.name} leftIcon={leftIcon} secondaryText={date} />;
     });
     return <Dialog

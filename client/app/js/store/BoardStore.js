@@ -796,6 +796,12 @@ var archiveStory = (story_id) => {
   return Ajax.postJson(url, story);
 };
 
+var unarchiveStory = (story) => {
+  story.archived = false;
+  var url = `/stories/${story.id}`;
+  return Ajax.postJson(url, story);
+};
+
 var addStoryFromIssue = (issue) => {
   var board_id = BoardStore.getBoardId();
   return Ajax.getJson(`/create_story_by_issue/${board_id}/${issue}`).then(
@@ -839,6 +845,11 @@ AppDispatcher.register(function(action) {
     case "ARCHIVE_STORY":
       archiveStory(action.id);
       fetchArchivedStories();
+      break;
+    case "UNARCHIVE_STORY":
+      unarchiveStory(action.data);
+      fetchStories().
+        then(() => {BoardStore.emitChange();});
       break;
     case "DELETE_TASK":
       deleteTask(action.id);

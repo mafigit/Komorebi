@@ -42,6 +42,18 @@ var BoardActions = {
       actionType: "CLOSE_STORY_SHOW_DIALOG",
     });
   },
+  unarchiveStory: (story) => {
+    AppDispatcher.dispatch({
+      actionType: "UNARCHIVE_STORY",
+      data: story
+    });
+    AppDispatcher.dispatch({
+      actionType: "FETCH_ARCHIVED_STORIES",
+    });
+    AppDispatcher.dispatch({
+      actionType: "CLOSE_ARCHIVED_STORIES",
+    });
+  },
   deleteTask: (id) => {
     AppDispatcher.dispatch({
       actionType: "DELETE_TASK",
