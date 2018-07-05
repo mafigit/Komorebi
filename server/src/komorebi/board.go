@@ -175,15 +175,22 @@ func GetMyBoards(boards *Boards, w http.ResponseWriter, r *http.Request) {
 	if len(user) <= 0 {
 		return
 	}
-	_, err := dbMapper.Connection.Select(boards,
-		"select * from boards where Private = 0 "+
-			"UNION ALL "+
-			"select boards.* from boards left join board_users ON "+
-			"board_users.BoardId = boards.Id left join users ON "+
-			"users.Id = board_users.UserId "+
-			"where users.Name = ? and boards.Private = 1 order by Id", user)
-	if err != nil {
-		Logger.Printf("could not get boards for user: %+v - %s", user, err)
+	if IsAdmin(w, r) {
+		_, err := dbMapper.Connection.Select(boards, "select * from boards")
+		if err != nil {
+			Logger.Printf("could not get boards for admin: %s", err)
+		}
+	} else {
+		_, err := dbMapper.Connection.Select(boards,
+			"select * from boards where Private = 0 "+
+				"UNION ALL "+
+				"select boards.* from boards left join board_users ON "+
+				"board_users.BoardId = boards.Id left join users ON "+
+				"users.Id = board_users.UserId "+
+				"where users.Name = ? and boards.Private = 1 order by Id", user)
+		if err != nil {
+			Logger.Printf("could not get boards for user: %+v - %s", user, err)
+		}
 	}
 }
 func GetPublicBoards(boards *Boards) {

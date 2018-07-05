@@ -77,7 +77,7 @@ func main() {
 		Path:     "/",
 		MaxAge:   60 * 60 * 24 * 7,
 		Secure:   false,
-		HttpOnly: true,
+		HttpOnly: false,
 	}
 
 	komorebi.FailedLoginCount = make(map[string]int)

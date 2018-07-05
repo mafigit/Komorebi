@@ -21,20 +21,20 @@ class MyMenu extends React.Component {
           action: BoardActions.openBoardDialog
         },
         {
-          name: "Manage Users",
-          action: BoardActions.showUserManage
-        },
-        {
-          name: "User Assgin",
-          action: BoardActions.showUserAssign
-        },
-        {
           name: "Board List",
           action: BoardActions.showBoardList
         },
       ];
-      if (BoardStore.getLoggedin()) {
+      if (BoardStore.getLoggedin() || document.cookie.length > 0) {
         menue_items.push(
+          {
+            name: "Manage Users",
+            action: BoardActions.showUserManage
+          },
+          {
+            name: "User Assgin",
+            action: BoardActions.showUserAssign
+          },
           {
             name: "Logout",
             action: BoardActions.logoutUser

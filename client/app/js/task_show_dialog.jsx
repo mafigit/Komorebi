@@ -9,6 +9,7 @@ import {BottomNavigation, BottomNavigationItem} from
   'material-ui/BottomNavigation';
 import DeleteForeverIcon from 'material-ui/svg-icons/action/delete-forever';
 import EditIcon from 'material-ui/svg-icons/editor/mode-edit';
+import ShareIcon from 'material-ui/svg-icons/social/share.js';
 
 const icon_style = {
   display: "initial"
@@ -18,6 +19,7 @@ export default class TaskShowDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      show_share_link: false,
       task_id: null,
       name: "",
       desc: "",
@@ -39,6 +41,10 @@ export default class TaskShowDialog extends React.Component {
     }
   }
 
+  onClickShare = () => {
+    this.setState({show_share_link: !this.state.show_share_link});
+  }
+
   onClickDestroy = () => {
     BoardActions.showConfirmation(() => {
       BoardActions.deleteTask(this.props.task_id);
@@ -51,8 +57,10 @@ export default class TaskShowDialog extends React.Component {
   }
 
   showForm = () => {
-    var show_link = window.location.protocol + "//" + window.location.host +
+    var show_link_style = this.state.show_share_link ? {} : {display: "none"};
+    var link = window.location.protocol + "//" + window.location.host +
       window.location.pathname + "?task=" + this.props.task_id;
+    var show_link_div = <div style={show_link_style}>{link}</div>;
     var img = undefined;
     if (this.state.user) {
       if (this.state.user.image_path) {
@@ -70,11 +78,11 @@ export default class TaskShowDialog extends React.Component {
       ><Card className="task">
           <CardHeader titleStyle={{fontSize: 20}}
             title={this.state.name}
-            subtitle={show_link}
             avatar={img}
           />
           <CardText className="task-text">
             <ReactMarkdown source={this.state.desc}/>
+            {show_link_div}
           </CardText>
         </Card>
         <br />
@@ -85,6 +93,9 @@ export default class TaskShowDialog extends React.Component {
           <BottomNavigationItem label="Edit"
             icon={<EditIcon style={icon_style} />}
             onTouchTap={this.onClickEdit} />
+          <BottomNavigationItem label="Share"
+            icon={<ShareIcon style={icon_style} />}
+            onTouchTap={this.onClickShare} />
         </BottomNavigation>
       </Dialog>
     );

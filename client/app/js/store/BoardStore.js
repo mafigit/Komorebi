@@ -335,6 +335,7 @@ var logoutUser = () => {
   var url = "/logout";
   return Ajax.getJson(url).then(response => {
     if (response.status == 200) {
+      fetchBoards();
       MessageActions.showMessage("Successfully logged out");
     }
   });
@@ -347,6 +348,7 @@ var loginUser = (user_data) => {
       show_login = false;
       logged_in = true;
       MessageActions.showMessage("Successfully logged in");
+      fetchBoards();
       BoardStore.emitChange();
     } else {
       var err = JSON.parse(response.response);
@@ -448,6 +450,7 @@ var deleteTask = (id) => {
 var fetchBoards = () => {
   return Ajax.getJson('/boards').then(response => {
     boards = JSON.parse(response.response);
+    BoardStore.emitChange();
   });
 };
 
@@ -1014,7 +1017,7 @@ AppDispatcher.register(function(action) {
       BoardStore.emitChange();
       break;
     case "FETCH_BOARDS":
-      fetchBoards().then(() => {BoardStore.emitChange();});
+      fetchBoards();
       break;
     case "FETCH_USERS":
       fetchUsers().then(() => {BoardStore.emitChange();});

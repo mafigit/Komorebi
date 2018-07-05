@@ -13,7 +13,6 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
     initiallyExpanded={false}>
     <CardHeader
       avatar={null}
-      subtitle="about://blank?task=1"
       title=""
       titleStyle={
         Object {
@@ -26,6 +25,14 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
         containerTagName="div"
         parserOptions={Object {}}
         source="" />
+      <div
+        style={
+          Object {
+            "display": "none",
+          }
+        }>
+        about://blank?task=1
+      </div>
     </CardText>
   </Card>
   <br />
@@ -51,6 +58,17 @@ exports[`<TaskShowdialog /> Should render TaskDialog 1`] = `
           } />
       }
       label="Edit"
+      onTouchTap={[Function]} />
+    <BottomNavigationItem
+      icon={
+        <SocialShare
+          style={
+            Object {
+              "display": "initial",
+            }
+          } />
+      }
+      label="Share"
       onTouchTap={[Function]} />
   </BottomNavigation>
 </Dialog>

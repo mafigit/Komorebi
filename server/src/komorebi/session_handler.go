@@ -59,6 +59,9 @@ func BoardAuthorized(w http.ResponseWriter, r *http.Request, board_name string) 
 		return false
 	}
 
+	if IsAdmin(w, r) {
+		return true
+	}
 	authorized, err := dbMapper.Connection.SelectInt(
 		"Select 1 from board_users LEFT JOIN boards "+
 			"ON boards.Id = board_users.BoardId LEFT JOIN users "+
