@@ -25,11 +25,18 @@ class App extends React.Component {
     return {
       board_id: BoardStore.getBoardId(),
       board_title: BoardStore.getBoardTitle(),
-      columns: BoardStore.getColumns(),
       stories: BoardStore.getStories(),
-      tasks: BoardStore.getTasks()
     };
   };
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return (nextProps.hi_task !== this.props.hi_task ||
+      nextProps.landing !== this.props.landing ||
+      nextState.board_title !== this.state.board_title ||
+      nextState.board_id !== this.state.board_id ||
+      nextState.stories !== this.state.stories
+    );
+  }
 
   _onChange = () => {
     this.setState(this.getBoardState());

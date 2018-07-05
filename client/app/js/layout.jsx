@@ -9,6 +9,12 @@ class Layout extends React.Component {
     this.state = {menu_open: false};
   }
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return (nextState.menu_open !== this.state.menu_open ||
+      nextProps.title !== this.props.title
+    );
+  }
+
   handleTouchTapMenuBtn = (event) => {
     event.preventDefault();
     this.setState({menu_open: true, menu_achor: event.currentTarget});

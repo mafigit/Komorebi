@@ -24,6 +24,12 @@ export default class ArchivedStories extends React.Component {
     };
   }
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return (nextState.open !== this.state.open ||
+      nextState.data !== this.state.data
+    );
+  }
+
   _onChange = () => {
     this.setState(this.getState());
   }

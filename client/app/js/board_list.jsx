@@ -12,6 +12,7 @@ export default class BoardList extends React.Component {
     super(props);
     this.state = this.getState();
   }
+
   getState = () => {
     if (this.props.assign) {
       return {
@@ -23,6 +24,12 @@ export default class BoardList extends React.Component {
       };
     }
   };
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return (nextProps.assign !== this.props.assign ||
+      nextState.boards !== this.state.boards
+    );
+  }
 
   _onChange = () => {
     this.setState(this.getState());

@@ -25,6 +25,17 @@ export default class BoardLayout extends Layout  {
     this.setState(this.getDialogState());
   }
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return (nextProps.title !== this.props.title ||
+      nextProps.children !== this.props.children ||
+      nextState.menu_open !== this.state.menu_open ||
+      nextState.column_open !== this.state.column_open ||
+      nextState.story_edit_open !== this.state.story_edit_open ||
+      nextState.story_from_issue_edit_open !== this.state.story_from_issue_edit_open ||
+      nextState.task_open !== this.state.task_open
+    );
+  }
+
   getDialogState = () => {
     return {
       menu_open: BoardStore.getMenuOpen(),
