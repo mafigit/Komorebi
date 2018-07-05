@@ -557,7 +557,12 @@ var initWebsocket = () => {
   if (!board_title) { return; }
   var port = (location.port ? ':' + location.port : '');
   var uri = window.location.hostname + port;
-  var socket = new WebSocket("ws://" + uri + "/" + board_title + "/ws");
+  var socket;
+  if (window.location.protocol === "https:") {
+    socket = new WebSocket("wss://" + uri + "/" + board_title + "/ws");
+  } else {
+    socket = new WebSocket("ws://" + uri + "/" + board_title + "/ws");
+  }
   socket.onmessage = (ws_message) => {
     let con_string = "Connection established";
     var message_data =
