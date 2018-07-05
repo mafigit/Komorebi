@@ -61,9 +61,11 @@ export default class UserDialog extends React.Component {
     var form_data = {
       name: this.getInputValue(this.refs.user_name, "input"),
       image_path: this.getInputValue(this.refs.user_image_path, "input"),
-      disabled: this.getInputValue(this.refs.user_disabled, "input"),
       password: this.getInputValue(this.refs.user_password, "input"),
     };
+    if (this.state.user.id) {
+      form_data["disabled"] = this.getInputValue(this.refs.user_disabled, "input");
+    }
 
     if (this.state.user.id) {
       BoardActions.updateUser(this.state.user);
@@ -118,7 +120,7 @@ export default class UserDialog extends React.Component {
         />
         <br />
         <br />
-        Add a Password (Please note, there is no encypted connection)
+        Add a Password
         <br />
         <TextField ref="user_password" hintText="User Password"
           errorText={this.state.error.password} type="password"

@@ -148,7 +148,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		response.Messages["login"] = append(response.Messages["login"],
 			"Login failed")
 
-		w.WriteHeader(200)
+		w.WriteHeader(401)
 		json.NewEncoder(w).Encode(response)
 		return
 	}
@@ -339,7 +339,11 @@ func UserUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !IsAdmin(w, r) || GetLoggedInUser(w, r).Id != update_user.Id {
+	if IsAdmin(w, r) {
+		modelUpdate(&old_user, &update_user, "user_id", w, r)
+		return
+	}
+	if GetLoggedInUser(w, r).Id != update_user.Id {
 		response := Response{
 			Success:  false,
 			Messages: make(map[string][]string),

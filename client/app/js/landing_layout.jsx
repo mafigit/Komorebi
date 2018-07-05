@@ -12,6 +12,7 @@ import MsgSnackbar from './msg_snackbar';
 import BoardList from './board_list';
 import UserAssign from './user_assign';
 import UserManage from './user_manage';
+import UserLogin from './user_login';
 
 class LandingLayout extends Layout  {
   constructor(props) {
@@ -86,6 +87,7 @@ class LandingLayout extends Layout  {
         handleClose={this.handleBoardDialogClose}
       />
       {content}
+      <UserLogin />
       {this.props.children}
       <MsgSnackbar/>
      </div>;
