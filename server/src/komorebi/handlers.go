@@ -96,11 +96,6 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := Response{
-		Success:  true,
-		Messages: make(map[string][]string),
-	}
-
 	if !check_login(w, r) {
 		return
 	}
@@ -108,12 +103,7 @@ func BoardShow(w http.ResponseWriter, r *http.Request) {
 	if BoardAuthorized(w, r, board.Name) {
 		json.NewEncoder(w).Encode(board)
 	} else {
-		response.Success = false
-		response.Messages["authorization"] = append(response.Messages["authorization"],
-			"You are not authorized to see this board.")
-		w.WriteHeader(401)
-		json.NewEncoder(w).Encode(response)
-		return
+		send401(w, "You are not authorized to see this board.")
 	}
 }
 
@@ -128,8 +118,12 @@ func GetBurndownFromBoard(w http.ResponseWriter, r *http.Request) {
 func GetStories(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
-	stories := GetStoriesByBoardName(board_name)
-	json.NewEncoder(w).Encode(stories)
+	if BoardAuthorized(w, r, board_name) {
+		stories := GetStoriesByBoardName(board_name)
+		json.NewEncoder(w).Encode(stories)
+	} else {
+		send401(w, "You are not authorized to get the stories.")
+	}
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -260,21 +254,45 @@ func BoardUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(&old_board, &update_board, "board_id", w, r)
+	if BoardAuthorized(w, r, old_board.Name) {
+		modelUpdate(&old_board, &update_board, "board_id", w, r)
+	} else {
+		send401(w, "You are not authorized to update the board.")
+	}
+}
+
+func send401(w http.ResponseWriter, msg string) {
+	response := Response{
+		Success:  false,
+		Messages: make(map[string][]string),
+	}
+	response.Messages["authorization"] = append(response.Messages["authorization"], msg)
+
+	w.WriteHeader(401)
+	json.NewEncoder(w).Encode(response)
 }
 
 func TasksGetByColumn(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	column_id := vars["column_id"]
 	id, _ := strconv.Atoi(column_id)
-	tasks := GetTasksByColumnId(id)
-	json.NewEncoder(w).Encode(tasks)
+
+	if BoardAuthorized(w, r, GetBoardByColumnId(id).Name) {
+		tasks := GetTasksByColumnId(id)
+		json.NewEncoder(w).Encode(tasks)
+	} else {
+		send401(w, "You are not authorized to get the tasks")
+	}
 }
 
 func BoardDelete(w http.ResponseWriter, r *http.Request) {
 	var board Board
 	getObjectByReqId("board_id", r, &board)
-	modelDelete(&board, w, r)
+	if BoardAuthorized(w, r, board.Name) {
+		modelDelete(&board, w, r)
+	} else {
+		send401(w, "You are not authorized to delete the board.")
+	}
 }
 
 func ColumnGet(w http.ResponseWriter, r *http.Request) {
@@ -285,8 +303,13 @@ func ColumnGet(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-	nested_column := GetNestedColumnByColumnId(column.Id)
-	json.NewEncoder(w).Encode(nested_column)
+
+	if BoardAuthorized(w, r, GetBoardByColumnId(column.Id).Name) {
+		nested_column := GetNestedColumnByColumnId(column.Id)
+		json.NewEncoder(w).Encode(nested_column)
+	} else {
+		send401(w, "You are not authorized to get the column")
+	}
 }
 
 func ColumnCreate(w http.ResponseWriter, r *http.Request) {
@@ -390,8 +413,15 @@ func ColumnUpdate(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-	update_column.BoardId = old_column.BoardId
-	modelUpdate(&old_column, &update_column, "column_id", w, r)
+
+	var board Board
+	GetById(&board, old_column.BoardId)
+	if BoardAuthorized(w, r, board.Name) {
+		update_column.BoardId = old_column.BoardId
+		modelUpdate(&old_column, &update_column, "column_id", w, r)
+	} else {
+		send401(w, "You are not authorized to update the column")
+	}
 }
 
 func ColumnMove(w http.ResponseWriter, r *http.Request) {
@@ -409,6 +439,13 @@ func ColumnMove(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 		return
 	}
+
+	board := GetBoardByColumnId(column.Id)
+	if !BoardAuthorized(w, r, board.Name) {
+		send401(w, "You are not authorized to move the column")
+		return
+	}
+
 	type Direction struct {
 		Direction string `json:"direction"`
 	}
@@ -438,7 +475,13 @@ func ColumnMove(w http.ResponseWriter, r *http.Request) {
 func ColumnDelete(w http.ResponseWriter, r *http.Request) {
 	var column Column
 	getObjectByReqId("column_id", r, &column)
-	modelDelete(&column, w, r)
+
+	board := GetBoardByColumnId(column.Id)
+	if BoardAuthorized(w, r, board.Name) {
+		modelDelete(&column, w, r)
+	} else {
+		send401(w, "You are not authorized to delete the column")
+	}
 }
 
 func modelDelete(m Model, w http.ResponseWriter, r *http.Request) {
@@ -473,7 +516,13 @@ func StoryGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(story)
+	var board Board
+	GetById(&board, story.BoardId)
+	if BoardAuthorized(w, r, board.Name) {
+		json.NewEncoder(w).Encode(story)
+	} else {
+		send401(w, "You are not authorized to get the stories")
+	}
 }
 
 func StoryCreate(w http.ResponseWriter, r *http.Request) {
@@ -483,9 +532,16 @@ func StoryCreate(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
+
 	story = NewStory(story.Name, story.Desc, story.Requirements, story.Points,
 		story.BoardId, story.Color, story.IssueNr)
-	modelCreate(&story, w, r)
+	var board Board
+	GetById(&board, story.BoardId)
+	if BoardAuthorized(w, r, board.Name) {
+		modelCreate(&story, w, r)
+	} else {
+		send401(w, "You are not authorized to create the story")
+	}
 }
 
 func StoryUpdate(w http.ResponseWriter, r *http.Request) {
@@ -498,7 +554,13 @@ func StoryUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(&old_story, &update_story, "story_id", w, r)
+	var board Board
+	GetById(&board, old_story.BoardId)
+	if BoardAuthorized(w, r, board.Name) {
+		modelUpdate(&old_story, &update_story, "story_id", w, r)
+	} else {
+		send401(w, "You are not authorized to update the story")
+	}
 }
 
 func StoryDelete(w http.ResponseWriter, r *http.Request) {
@@ -508,7 +570,14 @@ func StoryDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(story_id)
 	var story Story
 	GetById(&story, id)
-	modelDelete(&story, w, r)
+
+	var board Board
+	GetById(&board, story.BoardId)
+	if BoardAuthorized(w, r, board.Name) {
+		modelDelete(&story, w, r)
+	} else {
+		send401(w, "You are not authorized to delete the story")
+	}
 }
 
 func delete_ws_from_connections(ws *websocket.Conn, board_name string) {
@@ -581,7 +650,12 @@ func TaskGet(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(task_id)
 
 	task := GetTaskNested(id)
-	json.NewEncoder(w).Encode(task)
+	board := GetBoardByColumnId(task.Task.ColumnId)
+	if BoardAuthorized(w, r, board.Name) {
+		json.NewEncoder(w).Encode(task)
+	} else {
+		send401(w, "You are not authorized to get the task")
+	}
 }
 
 func TasksGet(w http.ResponseWriter, r *http.Request) {
@@ -590,7 +664,16 @@ func TasksGet(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(story_id)
 
 	tasks := GetTasksByStoryId(id)
-	json.NewEncoder(w).Encode(tasks)
+
+	var story Story
+	GetById(&story, id)
+	var board Board
+	GetById(&board, story.BoardId)
+	if BoardAuthorized(w, r, board.Name) {
+		json.NewEncoder(w).Encode(tasks)
+	} else {
+		send401(w, "You are not authorized to get the tasks")
+	}
 }
 
 func TaskCreate(w http.ResponseWriter, r *http.Request) {
@@ -602,7 +685,12 @@ func TaskCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	task = NewTask(task.Name, task.Desc, task.StoryId, task.ColumnId)
-	modelCreate(&task, w, r)
+
+	if BoardAuthorized(w, r, GetBoardByColumnId(task.ColumnId).Name) {
+		modelCreate(&task, w, r)
+	} else {
+		send401(w, "You are not authorized to create the task")
+	}
 }
 
 func TaskUpdate(w http.ResponseWriter, r *http.Request) {
@@ -615,13 +703,22 @@ func TaskUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	modelUpdate(&old_task, &update_task, "task_id", w, r)
+	if BoardAuthorized(w, r, GetBoardByColumnId(old_task.ColumnId).Name) {
+		modelUpdate(&old_task, &update_task, "task_id", w, r)
+	} else {
+		send401(w, "You are not authorized to update the task")
+	}
 }
 
 func TaskDelete(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	getObjectByReqId("task_id", r, &task)
-	modelDelete(&task, w, r)
+
+	if BoardAuthorized(w, r, GetBoardByColumnId(task.ColumnId).Name) {
+		modelDelete(&task, w, r)
+	} else {
+		send401(w, "You are not authorized to delete the task")
+	}
 }
 
 func AssignUsersToTask(w http.ResponseWriter, r *http.Request) {
@@ -645,6 +742,11 @@ func AssignUsersToTask(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewDecoder(r.Body).Decode(&users); err != nil {
 		w.WriteHeader(400)
+		return
+	}
+
+	if !BoardAuthorized(w, r, GetBoardByColumnId(task.ColumnId).Name) {
+		send401(w, "You are not authorized to assign the user to the task")
 		return
 	}
 
@@ -678,8 +780,12 @@ func GetUsersFromTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := GetUsersByTaskId(task.Id)
-	json.NewEncoder(w).Encode(users)
+	if BoardAuthorized(w, r, GetBoardByColumnId(task.ColumnId).Name) {
+		users := GetUsersByTaskId(task.Id)
+		json.NewEncoder(w).Encode(users)
+	} else {
+		send401(w, "You are not authorized to get the user from the task")
+	}
 }
 
 func check_login(w http.ResponseWriter, r *http.Request) bool {
@@ -787,14 +893,25 @@ func GetUsersFromBoard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users := GetUsersByBoardId(board.Id)
-	json.NewEncoder(w).Encode(users)
+	if BoardAuthorized(w, r, board.Name) {
+		users := GetUsersByBoardId(board.Id)
+		json.NewEncoder(w).Encode(users)
+	} else {
+		send401(w, "You are not authorized to get the user from the board")
+	}
 }
 
 func GetFeatureAndCreateStory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	issue := vars["issue"]
 	board_id, _ := strconv.Atoi(vars["board_id"])
+
+	var board Board
+	GetById(&board, board_id)
+	if !BoardAuthorized(w, r, board.Name) {
+		send401(w, "You are not authorized to create the story")
+		return
+	}
 
 	ret, story := getStoryFromIssue(issue, board_id)
 
@@ -868,8 +985,12 @@ func StoryDodGet(w http.ResponseWriter, r *http.Request) {
 func BoardArchivedGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	board_name := vars["board_name"]
-	stories := GetArchivedStoriesByBoardName(board_name)
-	json.NewEncoder(w).Encode(stories)
+	if BoardAuthorized(w, r, board_name) {
+		stories := GetArchivedStoriesByBoardName(board_name)
+		json.NewEncoder(w).Encode(stories)
+	} else {
+		send401(w, "You are not authrozied to get the archive from the board")
+	}
 }
 
 func StoryDodUpdate(w http.ResponseWriter, r *http.Request) {
