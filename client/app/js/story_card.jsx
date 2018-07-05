@@ -49,7 +49,11 @@ export default class StoryCard extends React.Component {
 
   render() {
     var leftIcon = <LabelOutlineIcon color={this.props.color} onClick={this.onClickColorIconHandler}/>;
-    if (this.props.active) {
+    var hi_story_id = 0;
+    if (BoardStore.getHiTask()) {
+      hi_story_id = BoardStore.getStoryIdByTaskId(BoardStore.getHiTask());
+    }
+    if (this.props.active || (this.props.story_id === hi_story_id)) {
       leftIcon = <LabelIcon color={this.props.color} onClick={this.onClickColorIconHandler}/>;
     }
     var rightIcon = (
