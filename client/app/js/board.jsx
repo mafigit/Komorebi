@@ -39,6 +39,16 @@ export default class Board extends React.Component {
     };
   };
 
+  shouldComponentUpdate = (nextProps, nextState) => {
+    return (nextState.story_view_open !== this.state.story_view_open ||
+      nextState.story_id !== this.state.story_id ||
+      nextState.task_view_open !== this.state.task_view_open ||
+      nextState.task_id !== this.state.task_id ||
+      nextState.columns !== this.state.columns ||
+      nextState.tasks_to_display !== this.state.tasks_to_display
+    );
+  }
+
   componentWillUnmount = () => {
     BoardStore.removeChangeListener(this._onChange);
   }
